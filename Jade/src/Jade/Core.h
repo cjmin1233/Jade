@@ -9,3 +9,5 @@
 #else
     #error Jade only supports Windows for now!
 #endif  // JADE_PLATFORM_WINDOWS
+
+#define FMT_UNICODE 0   // Disable unicode support in fmt library

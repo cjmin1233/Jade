@@ -1,0 +1,3 @@
+[submodule "Jade/vendor/spdlog"]
+	path = Jade/vendor/spdlog
+	url = https://github.com/gabime/spdlog
