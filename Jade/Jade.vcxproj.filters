@@ -19,6 +19,12 @@
     <ClInclude Include="src\Jade\Log.h">
       <Filter>Jade</Filter>
     </ClInclude>
+    <ClInclude Include="src\Jade\Events\Event.h" />
+    <ClInclude Include="src\Jade\Events\ApplicationEvent.h" />
+    <ClInclude Include="src\Jade\Events\KeyEvent.h" />
+    <ClInclude Include="src\Jade\KeyCodes.h" />
+    <ClInclude Include="src\Jade\Events\MouseEvent.h" />
+    <ClInclude Include="src\Jade\MouseCodes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Jade\Application.cpp">

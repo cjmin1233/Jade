@@ -11,3 +11,6 @@
 #endif  // JADE_PLATFORM_WINDOWS
 
 #define FMT_UNICODE 0   // Disable unicode support in fmt library
+
+#define BIT(x) (1 << x)
+#define PURE = 0
