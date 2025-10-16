@@ -1,3 +1,6 @@
 [submodule "Jade/vendor/spdlog"]
 	path = Jade/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Jade/vendor/GLFW"]
+	path = Jade/vendor/GLFW
+	url = https://github.com/cjmin1233/glfw
