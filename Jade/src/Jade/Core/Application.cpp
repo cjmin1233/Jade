@@ -1,6 +1,8 @@
+#include "jdpch.h"
+
 #include "Application.h"
-#include "Events/Event.h"
-#include "Events/ApplicationEvent.h"
+#include "Jade/Events/Event.h"
+#include "Jade/Events/ApplicationEvent.h"
 #include "Log.h"
 
 namespace Jade

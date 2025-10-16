@@ -1,9 +1,9 @@
 #pragma once
 // For use by Jade applications
 
-#include "Jade/Application.h"
-#include "Jade/Log.h"
+#include "Jade/Core/Application.h"
+#include "Jade/Core/Log.h"
 
 // ---Entry Point-----------------
-#include "Jade/EntryPoint.h"
+#include "Jade/Core/EntryPoint.h"
 // -------------------------------

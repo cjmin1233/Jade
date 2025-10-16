@@ -1,7 +1,5 @@
 #pragma once
-#include <sstream>
-
-#include "Jade/KeyCodes.h"
+#include "Jade/Core/KeyCodes.h"
 #include "Event.h"
 
 namespace Jade

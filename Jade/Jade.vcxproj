@@ -76,7 +76,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>jdpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>JADE_PLATFORM_WINDOWS;JADE_BUILD_DLL;JADE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>vendor\spdlog\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -97,7 +98,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>jdpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>JADE_PLATFORM_WINDOWS;JADE_BUILD_DLL;JADE_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>vendor\spdlog\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -122,7 +124,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>jdpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>JADE_PLATFORM_WINDOWS;JADE_BUILD_DLL;JADE_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>vendor\spdlog\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -147,20 +150,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Jade.h" />
-    <ClInclude Include="src\Jade\Application.h" />
-    <ClInclude Include="src\Jade\Core.h" />
-    <ClInclude Include="src\Jade\EntryPoint.h" />
-    <ClInclude Include="src\Jade\Events\Event.h" />
+    <ClInclude Include="src\Jade\Core\Application.h" />
+    <ClInclude Include="src\Jade\Core\Core.h" />
+    <ClInclude Include="src\Jade\Core\EntryPoint.h" />
+    <ClInclude Include="src\Jade\Core\KeyCodes.h" />
+    <ClInclude Include="src\Jade\Core\Log.h" />
+    <ClInclude Include="src\Jade\Core\MouseCodes.h" />
     <ClInclude Include="src\Jade\Events\ApplicationEvent.h" />
+    <ClInclude Include="src\Jade\Events\Event.h" />
     <ClInclude Include="src\Jade\Events\KeyEvent.h" />
     <ClInclude Include="src\Jade\Events\MouseEvent.h" />
-    <ClInclude Include="src\Jade\MouseCodes.h" />
-    <ClInclude Include="src\Jade\Log.h" />
-    <ClInclude Include="src\Jade\KeyCodes.h" />
+    <ClInclude Include="src\jdpch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Jade\Application.cpp" />
-    <ClCompile Include="src\Jade\Log.cpp" />
+    <ClCompile Include="src\Jade\Core\Application.cpp" />
+    <ClCompile Include="src\Jade\Core\Log.cpp" />
+    <ClCompile Include="src\jdpch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

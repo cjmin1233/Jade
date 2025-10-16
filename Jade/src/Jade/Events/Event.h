@@ -1,8 +1,5 @@
 #pragma once
-#include <string>
-#include <functional>
-
-#include "Jade/Core.h"
+#include "Jade/Core/Core.h"
 
 namespace Jade
 {

@@ -4,34 +4,54 @@
     <Filter Include="Jade">
       <UniqueIdentifier>{794D877C-6584-880D-0E71-6E10FA86040F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Jade\Core">
+      <UniqueIdentifier>{71C5D823-DD2F-8D9A-266E-3E4092176BEF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Jade\Events">
+      <UniqueIdentifier>{3DF74182-A9AC-BA77-32A1-B44E9E55B17B}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Jade.h" />
-    <ClInclude Include="src\Jade\Application.h">
-      <Filter>Jade</Filter>
+    <ClInclude Include="src\Jade\Core\Application.h">
+      <Filter>Jade\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Jade\Core.h">
-      <Filter>Jade</Filter>
+    <ClInclude Include="src\Jade\Core\Core.h">
+      <Filter>Jade\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Jade\EntryPoint.h">
-      <Filter>Jade</Filter>
+    <ClInclude Include="src\Jade\Core\EntryPoint.h">
+      <Filter>Jade\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Jade\Log.h">
-      <Filter>Jade</Filter>
+    <ClInclude Include="src\Jade\Core\KeyCodes.h">
+      <Filter>Jade\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Jade\Events\Event.h" />
-    <ClInclude Include="src\Jade\Events\ApplicationEvent.h" />
-    <ClInclude Include="src\Jade\Events\KeyEvent.h" />
-    <ClInclude Include="src\Jade\KeyCodes.h" />
-    <ClInclude Include="src\Jade\Events\MouseEvent.h" />
-    <ClInclude Include="src\Jade\MouseCodes.h" />
+    <ClInclude Include="src\Jade\Core\Log.h">
+      <Filter>Jade\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Jade\Core\MouseCodes.h">
+      <Filter>Jade\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Jade\Events\ApplicationEvent.h">
+      <Filter>Jade\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Jade\Events\Event.h">
+      <Filter>Jade\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Jade\Events\KeyEvent.h">
+      <Filter>Jade\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Jade\Events\MouseEvent.h">
+      <Filter>Jade\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\jdpch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Jade\Application.cpp">
-      <Filter>Jade</Filter>
+    <ClCompile Include="src\Jade\Core\Application.cpp">
+      <Filter>Jade\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Jade\Log.cpp">
-      <Filter>Jade</Filter>
+    <ClCompile Include="src\Jade\Core\Log.cpp">
+      <Filter>Jade\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\jdpch.cpp" />
   </ItemGroup>
 </Project>

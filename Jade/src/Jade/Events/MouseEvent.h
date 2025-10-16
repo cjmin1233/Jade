@@ -1,8 +1,6 @@
 #pragma once
-#include <sstream>
-
 #include "Event.h"
-#include "Jade/MouseCodes.h"
+#include "Jade/Core/MouseCodes.h"
 
 namespace Jade
 {

@@ -20,6 +20,9 @@ project "Jade"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "jdpch.h"
+    pchsource "Jade/src/jdpch.cpp"
+
     files
     {
         "%{prj.name}/src/**.h",
@@ -28,7 +31,7 @@ project "Jade"
 
     includedirs
     {
-        "%{prj.name}/vendor/spdlog/include"
+        "%{prj.name}/vendor/spdlog/include",
         "%{prj.name}/src"
     }
 
