@@ -20,7 +20,6 @@ namespace Jade
 
 // Core log macros
 #define JADE_CORE_TRACE(...)            ::Jade::Log::GetCoreLogger()->trace(__VA_ARGS__)
-#define JADE_CORE_DEBUG(...)            ::Jade::Log::GetCoreLogger()->debug(__VA_ARGS__)
 #define JADE_CORE_INFO(...)             ::Jade::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define JADE_CORE_WARN(...)             ::Jade::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define JADE_CORE_ERROR(...)            ::Jade::Log::GetCoreLogger()->error(__VA_ARGS__)
@@ -28,7 +27,6 @@ namespace Jade
 
 // Client log macros
 #define JADE_TRACE(...)                 ::Jade::Log::GetClientLogger()->trace(__VA_ARGS__)
-#define JADE_DEBUG(...)                 ::Jade::Log::GetClientLogger()->debug(__VA_ARGS__)
 #define JADE_INFO(...)                  ::Jade::Log::GetClientLogger()->info(__VA_ARGS__)
 #define JADE_WARN(...)                  ::Jade::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define JADE_ERROR(...)                 ::Jade::Log::GetClientLogger()->error(__VA_ARGS__)

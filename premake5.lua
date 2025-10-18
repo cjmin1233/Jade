@@ -11,17 +11,24 @@ workspace "Jade"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include directories relative to root folder (solution directory)
+IncludeDir = {}
+IncludeDir["GLFW"] = "Jade/vendor/GLFW/include"
+
+include "Jade/vendor/GLFW"
+
 project "Jade"
-    location "Jade"
     kind "SharedLib"
+    location "Jade"
     language "C++"
     cppdialect "C++20"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
     pchheader "jdpch.h"
-    pchsource "Jade/src/jdpch.cpp"
+    pchsource "%{prj.name}/src/jdpch.cpp"
 
     files
     {
@@ -32,11 +39,18 @@ project "Jade"
     includedirs
     {
         "%{prj.name}/vendor/spdlog/include",
-        "%{prj.name}/src"
+        "%{prj.name}/src",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links
+    {
+        "GLFW",
+        "opengl32.lib",
+        "dwmapi.lib"
     }
 
     filter "system:windows"
-        staticruntime "On"
         systemversion "latest"
 
         defines
@@ -52,14 +66,17 @@ project "Jade"
 
     filter "configurations:Debug"
         defines "JADE_DEBUG"
+        runtime "Debug"
         symbols "On"
 
     filter "configurations:Release"
         defines "JADE_RELEASE"
+        runtime "Release"
         optimize "On"
 
     filter "configurations:Dist"
         defines "JADE_DIST"
+        runtime "Release"
         optimize "On"
 
 project "Sandbox"
@@ -67,6 +84,7 @@ project "Sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -89,21 +107,21 @@ project "Sandbox"
     }
 
     filter "system:windows"
-        staticruntime "On"
         systemversion "latest"
+
         defines
         {
             "JADE_PLATFORM_WINDOWS"
         }
 
-        filter "configurations:Debug"
-            defines "JADE_DEBUG"
-            symbols "On"
+    filter "configurations:Debug"
+        defines "JADE_DEBUG"
+        symbols "On"
 
-        filter "configurations:Release"
-            defines "JADE_RELEASE"
-            optimize "On"
+    filter "configurations:Release"
+        defines "JADE_RELEASE"
+        optimize "On"
 
-        filter "configurations:Dist"
-            defines "JADE_DIST"
-            optimize "On"
+    filter "configurations:Dist"
+        defines "JADE_DIST"
+        optimize "On"

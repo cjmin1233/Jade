@@ -10,6 +10,12 @@
     <Filter Include="Jade\Events">
       <UniqueIdentifier>{3DF74182-A9AC-BA77-32A1-B44E9E55B17B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Jade.h" />
@@ -31,6 +37,9 @@
     <ClInclude Include="src\Jade\Core\MouseCodes.h">
       <Filter>Jade\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Jade\Core\Window.h">
+      <Filter>Jade\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Jade\Events\ApplicationEvent.h">
       <Filter>Jade\Events</Filter>
     </ClInclude>
@@ -43,6 +52,9 @@
     <ClInclude Include="src\Jade\Events\MouseEvent.h">
       <Filter>Jade\Events</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\jdpch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +63,9 @@
     </ClCompile>
     <ClCompile Include="src\Jade\Core\Log.cpp">
       <Filter>Jade\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\jdpch.cpp" />
   </ItemGroup>
