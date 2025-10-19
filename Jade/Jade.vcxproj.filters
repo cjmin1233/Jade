@@ -31,6 +31,12 @@
     <ClInclude Include="src\Jade\Core\KeyCodes.h">
       <Filter>Jade\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Jade\Core\Layer.h">
+      <Filter>Jade\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Jade\Core\LayerStack.h">
+      <Filter>Jade\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Jade\Core\Log.h">
       <Filter>Jade\Core</Filter>
     </ClInclude>
@@ -59,6 +65,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Jade\Core\Application.cpp">
+      <Filter>Jade\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Jade\Core\Layer.cpp">
+      <Filter>Jade\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Jade\Core\LayerStack.cpp">
       <Filter>Jade\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Jade\Core\Log.cpp">
