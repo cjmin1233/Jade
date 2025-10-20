@@ -4,3 +4,6 @@
 [submodule "Jade/vendor/GLFW"]
 	path = Jade/vendor/GLFW
 	url = https://github.com/cjmin1233/glfw
+[submodule "Jade/vendor/imgui"]
+	path = Jade/vendor/imgui
+	url = https://github.com/cjmin1233/imgui

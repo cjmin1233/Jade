@@ -34,6 +34,7 @@ public:
     SandboxApp() 
     {
         PushLayer(new ExampleLayer());
+        PushOverlay(new Jade::ImGuiLayer());
     }
     ~SandboxApp() {}
 };

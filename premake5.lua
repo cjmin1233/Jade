@@ -15,9 +15,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "Jade/vendor/GLFW/include"
 IncludeDir["Glad"] = "Jade/vendor/Glad/include"
+IncludeDir["ImGui"] = "Jade/vendor/imgui"
 
 include "Jade/vendor/GLFW"
 include "Jade/vendor/Glad"
+include "Jade/vendor/imgui"
 
 project "Jade"
     kind "SharedLib"
@@ -43,13 +45,15 @@ project "Jade"
         "%{prj.name}/vendor/spdlog/include",
         "%{prj.name}/src",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}"
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.ImGui}"
     }
 
     links
     {
         "GLFW",
         "Glad",
+        "ImGui",
         "opengl32.lib",
         "dwmapi.lib"
     }

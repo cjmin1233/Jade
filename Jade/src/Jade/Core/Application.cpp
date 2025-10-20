@@ -11,16 +11,18 @@ namespace Jade
 {
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 
+    Application* Application::s_Instance = nullptr;
+
     Application::Application()
         : m_Window(std::unique_ptr<Window>(Window::Create()))
         , m_Running(true)
         , m_LayerStack()
     {
-        // m_Window = std::unique_ptr<Window>(Window::Create());
-        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+        JADE_CORE_ASSERT(!s_Instance, "Application already exists!");
+        s_Instance = this;
 
-        unsigned int id;
-        glGenVertexArrays(1, &id);
+        m_Window = std::unique_ptr<Window>(Window::Create());
+        m_Window->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
     }
 
     Application::~Application()
