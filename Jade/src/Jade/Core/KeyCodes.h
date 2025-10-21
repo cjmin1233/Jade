@@ -2,10 +2,10 @@
 
 namespace Jade
 {
-    using KeyCode = unsigned __int16;
+	using KeyCode = unsigned short;
 
-    namespace Key
-    {
+	namespace Key
+	{
 		enum : KeyCode
 		{
 			// From glfw3.h
@@ -140,5 +140,5 @@ namespace Jade
 			RightSuper = 347,
 			Menu = 348
 		};
-    }
+	}
 }
