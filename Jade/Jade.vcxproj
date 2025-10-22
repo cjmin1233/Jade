@@ -165,6 +165,7 @@ copy /B /Y ..\bin\Dist-windows-x86_64\Jade\Jade.dll "..\bin\Dist-windows-x86_64\
     <ClInclude Include="src\Jade\Core\Log.h" />
     <ClInclude Include="src\Jade\Core\MouseCodes.h" />
     <ClInclude Include="src\Jade\Core\Window.h" />
+    <ClInclude Include="src\Jade\Core\Input.h" />
     <ClInclude Include="src\Jade\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Jade\Events\Event.h" />
     <ClInclude Include="src\Jade\Events\KeyEvent.h" />
@@ -173,6 +174,7 @@ copy /B /Y ..\bin\Dist-windows-x86_64\Jade\Jade.dll "..\bin\Dist-windows-x86_64\
     <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\jdpch.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Jade\Core\Application.cpp" />
@@ -185,6 +187,7 @@ copy /B /Y ..\bin\Dist-windows-x86_64\Jade\Jade.dll "..\bin\Dist-windows-x86_64\
     <ClCompile Include="src\jdpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

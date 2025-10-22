@@ -26,6 +26,9 @@ namespace Jade
 
     void ImGuiLayer::OnAttach()
     {
+        JADE_INFO("ImGuiLayer Attached");
+
+        // ImGui 컨텍스트 생성 및 초기화
         ImGui::CreateContext();
         ImGui::StyleColorsDark();
 
@@ -43,6 +46,7 @@ namespace Jade
 
     void ImGuiLayer::OnDetach()
     {
+        JADE_INFO("ImGuiLayer Detached");
     }
 
     void ImGuiLayer::OnUpdate()
@@ -74,6 +78,8 @@ namespace Jade
 
     void ImGuiLayer::OnEvent(Event& event)
     {
+        JADE_TRACE("ImGuiLayer Event Received: {0}", event.ToString());
+
         EventDispatcher dispatcher(event);
 
         dispatcher.Dispatch<MouseButtonPressedEvent>(JADE_BIND_EVENT_FN(ImGuiLayer::OnMouseButtonPressedEvent));

@@ -19,7 +19,7 @@ public:
     void OnUpdate() override
     {
         // Update logic here
-        JADE_INFO("ExampleLayer Updating");
+        // JADE_INFO("ExampleLayer Updating");
     }
 
     void OnEvent(Jade::Event& event) override
@@ -33,7 +33,7 @@ class SandboxApp : public Jade::Application
 public:
     SandboxApp() 
     {
-        PushLayer(new ExampleLayer());
+        // PushLayer(new ExampleLayer());
         PushOverlay(new Jade::ImGuiLayer());
     }
     ~SandboxApp() {}

@@ -39,6 +39,8 @@ namespace Jade
         virtual void SetVSync(bool enabled) PURE;
         virtual bool IsVSync() const PURE;
 
+        virtual void* GetNativeWindow() const PURE;
+
         static Window* Create(const WindowProps& props = WindowProps());
     };
 }
