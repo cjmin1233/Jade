@@ -94,7 +94,8 @@
       <ImportLibrary>..\bin\Debug-windows-x86_64\Jade\Jade.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>copy /B /Y ..\bin\Debug-windows-x86_64\Jade\Jade.dll ..\bin\Debug-windows-x86_64\Sandbox</Command>
+      <Command>IF NOT EXIST ..\bin\Debug-windows-x86_64\Sandbox (mkdir ..\bin\Debug-windows-x86_64\Sandbox)
+copy /B /Y ..\bin\Debug-windows-x86_64\Jade\Jade.dll "..\bin\Debug-windows-x86_64\Sandbox"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -121,7 +122,8 @@
       <ImportLibrary>..\bin\Release-windows-x86_64\Jade\Jade.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>copy /B /Y ..\bin\Release-windows-x86_64\Jade\Jade.dll ..\bin\Release-windows-x86_64\Sandbox</Command>
+      <Command>IF NOT EXIST ..\bin\Release-windows-x86_64\Sandbox (mkdir ..\bin\Release-windows-x86_64\Sandbox)
+copy /B /Y ..\bin\Release-windows-x86_64\Jade\Jade.dll "..\bin\Release-windows-x86_64\Sandbox"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -148,7 +150,8 @@
       <ImportLibrary>..\bin\Dist-windows-x86_64\Jade\Jade.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
-      <Command>copy /B /Y ..\bin\Dist-windows-x86_64\Jade\Jade.dll ..\bin\Dist-windows-x86_64\Sandbox</Command>
+      <Command>IF NOT EXIST ..\bin\Dist-windows-x86_64\Sandbox (mkdir ..\bin\Dist-windows-x86_64\Sandbox)
+copy /B /Y ..\bin\Dist-windows-x86_64\Jade\Jade.dll "..\bin\Dist-windows-x86_64\Sandbox"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

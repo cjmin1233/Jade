@@ -10,6 +10,10 @@
     #error Jade only supports Windows for now!
 #endif  // JADE_PLATFORM_WINDOWS
 
+#ifdef JADE_DEBUG
+#define JADE_ENABLE_ASSERTS
+#endif
+
 #ifdef JADE_ENABLE_ASSERTS
     #define JADE_ASSERT(x, ...) { if(!(x)) { JADE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
     #define JADE_CORE_ASSERT(x, ...) { if(!(x)) { JADE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } } 

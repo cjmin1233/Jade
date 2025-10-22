@@ -17,9 +17,11 @@ IncludeDir["GLFW"] = "Jade/vendor/GLFW/include"
 IncludeDir["Glad"] = "Jade/vendor/Glad/include"
 IncludeDir["ImGui"] = "Jade/vendor/imgui"
 
-include "Jade/vendor/GLFW"
-include "Jade/vendor/Glad"
-include "Jade/vendor/imgui"
+group "Dependencies"
+    include "Jade/vendor/GLFW"
+    include "Jade/vendor/Glad"
+    include "Jade/vendor/imgui"
+group ""
 
 project "Jade"
     kind "SharedLib"
@@ -68,9 +70,10 @@ project "Jade"
             "GLFW_INCLUDE_NONE"
         }
 
-        postbuildcommands
+        postbuildcommands 
         {
-            ("{COPYFILE} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+            "{MKDIR} ../bin/" .. outputdir .. "/Sandbox",
+            "{COPYFILE} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox\""
         }
 
     filter "configurations:Debug"
