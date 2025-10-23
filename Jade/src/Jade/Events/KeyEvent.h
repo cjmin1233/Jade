@@ -7,21 +7,21 @@ namespace Jade
     class JADE_API KeyEvent : public Event
     {
     public:
-        inline KeyCode GetKeyCode() const { return m_KeyCode; }
+        inline Key::KeyCode GetKeyCode() const { return m_KeyCode; }
 
         EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 
     protected:
-        KeyEvent(const KeyCode keycode)
+        KeyEvent(const Key::KeyCode keycode)
             : m_KeyCode(keycode) {}
 
-        KeyCode m_KeyCode;
+        Key::KeyCode m_KeyCode;
     };
 
     class JADE_API KeyPressedEvent : public KeyEvent
     {
     public:
-        KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
+        KeyPressedEvent(const Key::KeyCode keycode, bool isRepeat = false)
             : KeyEvent(keycode), m_IsRepeat(isRepeat) {}
 
         inline bool IsRepeat() const { return m_IsRepeat; }
@@ -29,7 +29,7 @@ namespace Jade
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "KeyPressedEvent: " << m_KeyCode << " (repeat = " << m_IsRepeat << ")";
+            ss << "KeyPressedEvent: " << Key::KeyCodeToString(m_KeyCode) << " (repeat = " << m_IsRepeat << ")";
             return ss.str();
         }
 
@@ -42,13 +42,13 @@ namespace Jade
     class JADE_API KeyReleasedEvent : public KeyEvent
     {
     public:
-        KeyReleasedEvent(const KeyCode keycode)
+        KeyReleasedEvent(const Key::KeyCode keycode)
             : KeyEvent(keycode) {}
 
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "KeyReleasedEvent: " << m_KeyCode;
+            ss << "KeyReleasedEvent: " << Key::KeyCodeToString(m_KeyCode);
             return ss.str();
         }
 
@@ -58,13 +58,13 @@ namespace Jade
     class JADE_API KeyTypedEvent : public KeyEvent
     {
     public:
-        KeyTypedEvent(const KeyCode keycode)
+        KeyTypedEvent(const Key::KeyCode keycode)
             : KeyEvent(keycode) {}
 
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "KeyTypedEvent: " << m_KeyCode;
+            ss << "KeyTypedEvent: " << Key::KeyCodeToString(m_KeyCode);
             return ss.str();
         }
 

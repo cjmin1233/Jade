@@ -181,6 +181,7 @@ copy /B /Y ..\bin\Dist-windows-x86_64\Jade\Jade.dll "..\bin\Dist-windows-x86_64\
     <ClCompile Include="src\Jade\Core\Layer.cpp" />
     <ClCompile Include="src\Jade\Core\LayerStack.cpp" />
     <ClCompile Include="src\Jade\Core\Log.cpp" />
+    <ClCompile Include="src\Jade\Core\KeyCodes.cpp" />
     <ClCompile Include="src\Jade\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />

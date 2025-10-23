@@ -101,5 +101,6 @@
     </ClCompile>
     <ClCompile Include="src\jdpch.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="src\Jade\Core\KeyCodes.cpp" />
   </ItemGroup>
 </Project>

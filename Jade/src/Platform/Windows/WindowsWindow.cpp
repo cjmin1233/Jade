@@ -84,19 +84,19 @@ namespace Jade
                 {
                     case GLFW_PRESS:
                     {
-                        KeyPressedEvent event((KeyCode)key, false);
+                        KeyPressedEvent event((Key::KeyCode)key, false);
                         data.EventCallback(event);
                         break;
                     }
                     case GLFW_RELEASE:
                     {
-                        KeyReleasedEvent event((KeyCode)key);
+                        KeyReleasedEvent event((Key::KeyCode)key);
                         data.EventCallback(event);
                         break;
                     }
                     case GLFW_REPEAT:
                     {
-                        KeyPressedEvent event((KeyCode)key, true);
+                        KeyPressedEvent event((Key::KeyCode)key, true);
                         data.EventCallback(event);
                         break;
                     }
@@ -107,7 +107,7 @@ namespace Jade
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
                 
-                KeyTypedEvent event((KeyCode)keycode);
+                KeyTypedEvent event((Key::KeyCode)keycode);
                 data.EventCallback(event);
             });
 

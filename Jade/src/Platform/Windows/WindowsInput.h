@@ -10,7 +10,7 @@ namespace Jade
         ~WindowsInput() = default;
 
     protected:
-        virtual bool IsKeyPressedImpl(KeyCode keyCode) override;
+        virtual bool IsKeyPressedImpl(Key::KeyCode keyCode) override;
 
         virtual bool IsMouseButtonPressedImpl(MouseCode button) override;
         virtual std::pair<float, float> GetMousePositionImpl() override;

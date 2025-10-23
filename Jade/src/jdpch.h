@@ -1,6 +1,7 @@
 #pragma once
 //  
 #include <iostream>
+#include <sstream>
 #include <memory>
 #include <utility>
 #include <algorithm>
@@ -8,7 +9,6 @@
 
 // Data Structure
 #include <string>
-#include <sstream>
 #include <vector>
 #include <array>
 #include <unordered_map>

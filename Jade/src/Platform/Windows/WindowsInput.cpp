@@ -9,11 +9,11 @@ namespace Jade
 {
     Input* Input::s_Instance = new WindowsInput();
 
-    bool WindowsInput::IsKeyPressedImpl(KeyCode keyCode)
+    bool WindowsInput::IsKeyPressedImpl(Key::KeyCode keyCode)
     {
         // Windows-specific key press detection logic
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-        int state = glfwGetKey(window, keyCode);
+        int state = glfwGetKey(window, static_cast<int>(keyCode));
 
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
@@ -22,7 +22,7 @@ namespace Jade
     {
         // Windows-specific mouse button press detection logic
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-        int state = glfwGetMouseButton(window, button);
+        int state = glfwGetMouseButton(window, static_cast<int>(button));
         return state == GLFW_PRESS;
     }
 
