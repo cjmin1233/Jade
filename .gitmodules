@@ -7,3 +7,6 @@
 [submodule "Jade/vendor/imgui"]
 	path = Jade/vendor/imgui
 	url = https://github.com/cjmin1233/imgui
+[submodule "Jade/vendor/glm"]
+	path = Jade/vendor/glm
+	url = https://github.com/g-truc/glm

@@ -16,6 +16,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Jade/vendor/GLFW/include"
 IncludeDir["Glad"] = "Jade/vendor/Glad/include"
 IncludeDir["ImGui"] = "Jade/vendor/imgui"
+IncludeDir["glm"] = "Jade/vendor/glm"
 
 group "Dependencies"
     include "Jade/vendor/GLFW"
@@ -39,7 +40,9 @@ project "Jade"
     files
     {
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/glm/glm/**.hpp",
+        "%{prj.name}/vendor/glm/glm/**.inl",
     }
 
     includedirs
@@ -48,7 +51,8 @@ project "Jade"
         "%{prj.name}/src",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
-        "%{IncludeDir.ImGui}"
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.glm}",
     }
 
     links
@@ -57,7 +61,7 @@ project "Jade"
         "Glad",
         "ImGui",
         "opengl32.lib",
-        "dwmapi.lib"
+        "dwmapi.lib",
     }
 
     filter "system:windows"
@@ -67,7 +71,7 @@ project "Jade"
         {
             "JADE_PLATFORM_WINDOWS",
             "JADE_BUILD_DLL",
-            "GLFW_INCLUDE_NONE"
+            "GLFW_INCLUDE_NONE",
         }
 
         postbuildcommands 
@@ -104,18 +108,19 @@ project "Sandbox"
     files
     {
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
     }
 
     includedirs
     {
         "Jade/vendor/spdlog/include",
-        "Jade/src"
+        "Jade/src",
+        "%{IncludeDir.glm}",
     }
 
     links
     {
-        "Jade"
+        "Jade",
     }
 
     filter "system:windows"
@@ -123,7 +128,7 @@ project "Sandbox"
 
         defines
         {
-            "JADE_PLATFORM_WINDOWS"
+            "JADE_PLATFORM_WINDOWS",
         }
 
     filter "configurations:Debug"
