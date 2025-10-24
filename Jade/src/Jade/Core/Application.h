@@ -4,6 +4,7 @@
 #include "Jade/Core/Window.h"
 #include "Jade/Events/Event.h"
 #include "Jade/Events/ApplicationEvent.h"
+#include "Jade/ImGui/ImGuiLayer.h"
 
 class Layer;
 
@@ -29,8 +30,9 @@ namespace Jade
         bool OnWindowClose(WindowCloseEvent& e);
 
         std::unique_ptr<Window> m_Window;
-        bool m_Running;
+        ImGuiLayer* m_ImGuiLayer;
         LayerStack m_LayerStack;
+        bool m_Running;
 
     private:
         static Application* s_Instance;

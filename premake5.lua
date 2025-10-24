@@ -115,6 +115,7 @@ project "Sandbox"
     {
         "Jade/vendor/spdlog/include",
         "Jade/src",
+        "Jade/vendor",
         "%{IncludeDir.glm}",
     }
 

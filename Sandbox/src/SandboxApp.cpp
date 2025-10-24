@@ -1,4 +1,6 @@
-#include "Jade.h"
+#include <Jade.h>
+
+#include "imgui/imgui.h"
 
 class ExampleLayer : public Jade::Layer
 {
@@ -22,6 +24,13 @@ public:
         // JADE_INFO("ExampleLayer Updating");
     }
 
+    virtual void OnImGuiRender() override
+    {
+        //ImGui::Begin("Example Layer");
+        //ImGui::Text("Hello from ExampleLayer!");
+        //ImGui::End();
+    }
+
     void OnEvent(Jade::Event& event) override
     {
         JADE_TRACE("ExampleLayer Event Received: {0}", event.ToString());
@@ -33,8 +42,7 @@ class SandboxApp : public Jade::Application
 public:
     SandboxApp() 
     {
-        // PushLayer(new ExampleLayer());
-        PushOverlay(new Jade::ImGuiLayer());
+        PushLayer(new ExampleLayer());
     }
     ~SandboxApp() {}
 };

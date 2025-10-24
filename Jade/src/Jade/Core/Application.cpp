@@ -1,9 +1,9 @@
 #include "jdpch.h"
 
-#include "Application.h"
-#include "Log.h"
-#include "Layer.h"
-#include "LayerStack.h"
+#include "Jade/Core/Application.h"
+#include "Jade/Core/Log.h"
+#include "Jade/Core/Layer.h"
+#include "Jade/Core/LayerStack.h"
 
 #include <glad/glad.h>
 
@@ -13,18 +13,22 @@ namespace Jade
 
     Application::Application()
         : m_Window(std::unique_ptr<Window>(Window::Create()))
-        , m_Running(true)
+        , m_ImGuiLayer(new ImGuiLayer())
         , m_LayerStack()
+        , m_Running(true)
     {
         JADE_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
         m_Window = std::unique_ptr<Window>(Window::Create());
         m_Window->SetEventCallback(JADE_BIND_EVENT_FN(Application::OnEvent));
+
+        PushOverlay(m_ImGuiLayer);
     }
 
     Application::~Application()
     {
+        delete m_ImGuiLayer;
     }
 
     void Application::Run()
@@ -38,6 +42,14 @@ namespace Jade
             {
                 layer->OnUpdate();
             }
+
+            // ImGui Rendering
+            m_ImGuiLayer->Begin();
+            for(Layer* layer : m_LayerStack)
+            {
+                layer->OnImGuiRender();
+            }
+            m_ImGuiLayer->End();
 
             m_Window->OnUpdate();
         }
