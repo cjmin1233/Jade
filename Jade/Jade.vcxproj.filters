@@ -16,8 +16,14 @@
     <Filter Include="src\Jade\ImGui">
       <UniqueIdentifier>{1AD662D6-06A4-56DC-EF37-C702DBA43241}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Jade\Renderer">
+      <UniqueIdentifier>{963ECD88-0255-CB1E-4BCC-5640B7219CA6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\OpenGL">
+      <UniqueIdentifier>{35A49437-A105-7245-2A73-B8F796D3A804}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Platform\Windows">
       <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
@@ -92,6 +98,12 @@
     </ClInclude>
     <ClInclude Include="src\Jade\ImGui\ImGuiLayer.h">
       <Filter>src\Jade\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Jade\Renderer\GraphicsContext.h">
+      <Filter>src\Jade\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsInput.h">
       <Filter>src\Platform\Windows</Filter>
@@ -1381,6 +1393,9 @@
     </ClCompile>
     <ClCompile Include="src\Jade\ImGui\ImGuiLayer.cpp">
       <Filter>src\Jade\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>

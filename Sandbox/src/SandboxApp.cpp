@@ -20,8 +20,7 @@ public:
 
     void OnUpdate() override
     {
-        // Update logic here
-        // JADE_INFO("ExampleLayer Updating");
+        JADE_INFO("ExampleLayer Updating");
     }
 
     virtual void OnImGuiRender() override

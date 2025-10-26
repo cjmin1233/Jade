@@ -28,18 +28,18 @@ namespace Jade
 
         virtual ~Window() {}
 
-        virtual void OnUpdate() PURE;
+        virtual void OnUpdate() = 0;
 
-        virtual unsigned int GetWidth() const PURE;
-        virtual unsigned int GetHeight() const PURE;
+        virtual unsigned int GetWidth() const = 0;
+        virtual unsigned int GetHeight() const = 0;
 
         // Window attributes
-        virtual void SetEventCallback(const EventCallbackFn& callback) PURE;
+        virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
 
-        virtual void SetVSync(bool enabled) PURE;
-        virtual bool IsVSync() const PURE;
+        virtual void SetVSync(bool enabled) = 0;
+        virtual bool IsVSync() const = 0;
 
-        virtual void* GetNativeWindow() const PURE;
+        virtual void* GetNativeWindow() const = 0;
 
         static Window* Create(const WindowProps& props = WindowProps());
     };

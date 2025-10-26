@@ -4,8 +4,7 @@
 #include "Jade/Events/ApplicationEvent.h"
 #include "Jade/Events/KeyEvent.h"
 #include "Jade/Events/MouseEvent.h"
-
-#include <glad/glad.h>
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Jade
 {
@@ -22,6 +21,9 @@ namespace Jade
     }
 
     WindowsWindow::WindowsWindow(const WindowProps& props)
+        : m_Window(nullptr)
+        , m_Context(nullptr)
+        , m_Data()
     {
         Init(props);
     }
@@ -29,6 +31,7 @@ namespace Jade
     WindowsWindow::~WindowsWindow()
     {
         Shutdown();
+        delete m_Context;
     }
 
     void WindowsWindow::Init(const WindowProps& props)
@@ -51,9 +54,11 @@ namespace Jade
 
         m_Window = glfwCreateWindow((int)props.Width, (int)props.Height,
             m_Data.Title.c_str(), nullptr, nullptr);
-        glfwMakeContextCurrent(m_Window);
-        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        JADE_CORE_ASSERT(status, "Failed to initialize Glad!");
+
+        // Create OpenGL context
+        m_Context = new OpenGLContext(m_Window);
+        m_Context->Init();
+
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
 
@@ -159,7 +164,7 @@ namespace Jade
     void WindowsWindow::OnUpdate()
     {
         glfwPollEvents();
-        glfwSwapBuffers(m_Window);
+        m_Context->SwapBuffers();
     }
 
     void WindowsWindow::SetVSync(bool enabled)

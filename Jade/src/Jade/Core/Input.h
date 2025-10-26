@@ -27,12 +27,12 @@ namespace Jade
         inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 
     protected:
-        virtual bool IsKeyPressedImpl(Key::KeyCode keyCode) PURE;
+        virtual bool IsKeyPressedImpl(Key::KeyCode keyCode) = 0;
 
-        virtual bool IsMouseButtonPressedImpl(MouseCode button) PURE;
-        virtual std::pair<float, float> GetMousePositionImpl() PURE;
-        virtual float GetMouseXImpl() PURE;
-        virtual float GetMouseYImpl() PURE;
+        virtual bool IsMouseButtonPressedImpl(MouseCode button) = 0;
+        virtual std::pair<float, float> GetMousePositionImpl() = 0;
+        virtual float GetMouseXImpl() = 0;
+        virtual float GetMouseYImpl() = 0;
 
     protected:
         Input() = default;

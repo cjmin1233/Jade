@@ -1,5 +1,6 @@
 #pragma once
 #include "Jade/Core/Window.h"
+#include "Jade/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>
 
@@ -35,13 +36,15 @@ namespace Jade
 
     private:
         GLFWwindow* m_Window;
+        GraphicsContext* m_Context;
 
         struct WindowData
         {
-            std::string Title;
-            unsigned int Width, Height;
-            bool VSync;
-            EventCallbackFn EventCallback;
+            std::string Title = "";
+            unsigned int Width = 0;
+            unsigned int Height = 0;
+            bool VSync = false;
+            EventCallbackFn EventCallback = nullptr;
         };
 
         WindowData m_Data;
