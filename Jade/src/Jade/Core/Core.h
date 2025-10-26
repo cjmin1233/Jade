@@ -1,11 +1,15 @@
 #pragma once
 
 #ifdef JADE_PLATFORM_WINDOWS
+#if JADE_DYNAMIC_LINK
     #ifdef JADE_BUILD_DLL
         #define JADE_API __declspec(dllexport)
     #else
         #define JADE_API __declspec(dllimport)
     #endif  // JADE_BUILD_DLL
+#else  
+    #define JADE_API
+#endif  // JADE_DYNAMIC_LINK
 #else
     #error Jade only supports Windows for now!
 #endif  // JADE_PLATFORM_WINDOWS

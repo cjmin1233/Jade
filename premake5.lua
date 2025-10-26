@@ -25,11 +25,11 @@ group "Dependencies"
 group ""
 
 project "Jade"
-    kind "SharedLib"
+    kind "StaticLib"
     location "Jade"
     language "C++"
     cppdialect "C++20"
-    staticruntime "off"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -43,6 +43,11 @@ project "Jade"
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/vendor/glm/glm/**.hpp",
         "%{prj.name}/vendor/glm/glm/**.inl",
+    }
+
+    defines
+    {
+        "_CRT_SECURE_NO_WARNINGS"    
     }
 
     includedirs
@@ -61,7 +66,6 @@ project "Jade"
         "Glad",
         "ImGui",
         "opengl32.lib",
-        "dwmapi.lib",
     }
 
     filter "system:windows"
@@ -74,33 +78,27 @@ project "Jade"
             "GLFW_INCLUDE_NONE",
         }
 
-        postbuildcommands 
-        {
-            "{MKDIR} ../bin/" .. outputdir .. "/Sandbox",
-            "{COPYFILE} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox\""
-        }
-
     filter "configurations:Debug"
         defines "JADE_DEBUG"
         runtime "Debug"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines "JADE_RELEASE"
         runtime "Release"
-        optimize "On"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "JADE_DIST"
         runtime "Release"
-        optimize "On"
+        optimize "on"
 
 project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
-    staticruntime "off"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -134,12 +132,12 @@ project "Sandbox"
 
     filter "configurations:Debug"
         defines "JADE_DEBUG"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines "JADE_RELEASE"
-        optimize "On"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "JADE_DIST"
-        optimize "On"
+        optimize "on"

@@ -26,9 +26,9 @@ public:
 
     virtual void OnImGuiRender() override
     {
-        //ImGui::Begin("Example Layer");
-        //ImGui::Text("Hello from ExampleLayer!");
-        //ImGui::End();
+        ImGui::Begin("Example Layer");
+        ImGui::Text("Hello from ExampleLayer!");
+        ImGui::End();
     }
 
     void OnEvent(Jade::Event& event) override
