@@ -1372,6 +1372,9 @@
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
     <ClInclude Include="src\Jade\Renderer\Shader.h" />
+    <ClInclude Include="src\Jade\Renderer\Renderer.h" />
+    <ClInclude Include="src\Jade\Renderer\Buffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Jade\Core\Application.cpp">
@@ -1408,5 +1411,8 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Jade\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Jade\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Jade\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
   </ItemGroup>
 </Project>

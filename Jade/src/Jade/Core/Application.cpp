@@ -4,6 +4,7 @@
 #include "Jade/Core/Log.h"
 #include "Jade/Core/Layer.h"
 #include "Jade/Core/LayerStack.h"
+#include "Jade/Renderer/Buffer.h"
 
 #include <glad/glad.h>
 
@@ -16,10 +17,10 @@ namespace Jade
         , m_ImGuiLayer(new ImGuiLayer())
         , m_LayerStack()
         , m_VertexArray(0)
-        , m_VertexBuffer(0)
-        , m_IndexBuffer(0)
         , m_Running(true)
         , m_Shader(nullptr)
+        , m_VertexBuffer(nullptr)
+        , m_IndexBuffer(nullptr)
     {
         JADE_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
@@ -30,11 +31,9 @@ namespace Jade
         PushOverlay(m_ImGuiLayer);
 
         // Vertex Array
-        glGenVertexArrays(1, &m_VertexArray);
+        // glGenVertexArrays(1, &m_VertexArray);
+        glCreateVertexArrays(1, &m_VertexArray);
         glBindVertexArray(m_VertexArray);
-        // Vertex Buffer
-        glGenBuffers(1, &m_VertexBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
 
         // -1.0f to 1.0f
         float vertices[3 * 4]=
@@ -45,23 +44,22 @@ namespace Jade
              -1.f,  1.f, 0.0f,
         };
 
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        // Vertex Buffer
+        m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
             3 * sizeof(float), nullptr);
 
-        // Index Buffer
-        glGenBuffers(1, &m_IndexBuffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-
-        unsigned int indices[] = 
+        uint32_t indices[] = 
         { 
             0, 1, 2, 
             2, 3, 0
         };
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
-            sizeof(indices), indices, GL_STATIC_DRAW);
+
+        // Index Buffer
+        m_IndexBuffer.reset(IndexBuffer::Create(indices, 
+            sizeof(indices) / sizeof(uint32_t)));
 
         std::string vertexSrc = R"(
             #version 330 core
@@ -105,7 +103,8 @@ namespace Jade
             m_Shader->Bind();
 
             glBindVertexArray(m_VertexArray);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+            glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), 
+                GL_UNSIGNED_INT, nullptr);
 
             for(Layer* layer : m_LayerStack)
             {
