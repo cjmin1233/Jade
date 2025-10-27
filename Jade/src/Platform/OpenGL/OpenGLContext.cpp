@@ -18,6 +18,11 @@ namespace Jade
         glfwMakeContextCurrent(m_WindowHandle);
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         JADE_CORE_ASSERT(status, "Failed to initialize Glad!");
+
+        JADE_CORE_INFO("OpenGL Info:");
+        JADE_CORE_INFO("  Vendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        JADE_CORE_INFO("  Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+        JADE_CORE_INFO("  Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
     }
     void OpenGLContext::SwapBuffers()
     {

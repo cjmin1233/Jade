@@ -378,3 +378,6 @@ Intermediates/
 **.vcxproj.filters
 **.vcxproj.user
 **.csproj
+
+# imgui.ini
+imgui.ini
