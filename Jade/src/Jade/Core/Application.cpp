@@ -19,6 +19,7 @@ namespace Jade
         , m_VertexBuffer(0)
         , m_IndexBuffer(0)
         , m_Running(true)
+        , m_Shader(nullptr)
     {
         JADE_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
@@ -38,10 +39,10 @@ namespace Jade
         // -1.0f to 1.0f
         float vertices[3 * 4]=
         {
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-             -0.5f,  0.5f, 0.0f,
+            -1.f, -1.f, 0.0f,
+             1.f, -1.f, 0.0f,
+             1.f,  1.f, 0.0f,
+             -1.f,  1.f, 0.0f,
         };
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -61,11 +62,37 @@ namespace Jade
         };
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 
             sizeof(indices), indices, GL_STATIC_DRAW);
+
+        std::string vertexSrc = R"(
+            #version 330 core
+            layout(location = 0) in vec3 a_Position;
+
+            out vec3 v_Position;
+
+            void main()
+            {
+                gl_Position = vec4(a_Position, 1.0);
+                v_Position = a_Position;
+            }
+        )";
+
+        std::string fragmentSrc = R"(
+            #version 330 core
+            layout(location = 0) out vec4 color;
+
+            in vec3 v_Position;
+
+            void main()
+            {
+                color = vec4(v_Position*0.5+0.5, 1.0);
+            }
+        )";
+
+        m_Shader.reset(new Shader(vertexSrc, fragmentSrc));
     }
 
     Application::~Application()
     {
-        delete m_ImGuiLayer;
     }
 
     void Application::Run()
@@ -74,6 +101,8 @@ namespace Jade
         {
             glClearColor(.2f, .2f, .2f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT);
+
+            m_Shader->Bind();
 
             glBindVertexArray(m_VertexArray);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

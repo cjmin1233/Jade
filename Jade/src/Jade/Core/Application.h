@@ -5,6 +5,7 @@
 #include "Jade/Events/Event.h"
 #include "Jade/Events/ApplicationEvent.h"
 #include "Jade/ImGui/ImGuiLayer.h"
+#include "Jade/Renderer/Shader.h"
 
 class Layer;
 
@@ -35,6 +36,8 @@ namespace Jade
 
         unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
         bool m_Running;
+
+        std::unique_ptr<Shader> m_Shader;
 
     private:
         static Application* s_Instance;

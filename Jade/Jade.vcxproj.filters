@@ -1371,6 +1371,7 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="src\Jade\Renderer\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Jade\Core\Application.cpp">
@@ -1406,5 +1407,6 @@
     <ClCompile Include="src\jdpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Jade\Renderer\Shader.cpp" />
   </ItemGroup>
 </Project>
