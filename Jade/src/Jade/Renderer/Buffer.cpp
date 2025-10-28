@@ -1,5 +1,6 @@
 #include "jdpch.h"
 
+#include "Jade/Core/Log.h"
 #include "Jade/Renderer/Buffer.h"
 #include "Jade/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"

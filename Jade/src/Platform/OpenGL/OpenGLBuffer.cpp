@@ -9,6 +9,7 @@ namespace Jade
 #pragma region VertexBuffer
     OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
         : m_RendererID(0)
+        , m_Layout()
     {
         glCreateBuffers(1, &m_RendererID);
         glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
