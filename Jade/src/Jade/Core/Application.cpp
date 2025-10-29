@@ -6,41 +6,11 @@
 #include "Jade/Core/LayerStack.h"
 #include "Jade/Renderer/Buffer.h"
 #include "Jade/Renderer/VertexArray.h"
-
-#include <glad/glad.h>
+#include "Jade/Renderer/Renderer.h"
 
 namespace Jade
 {
     Application* Application::s_Instance = nullptr;
-
-    /// <summary>
-    /// Converts ShaderDataType to OpenGL base type.
-    /// </summary>
-    static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
-    {
-        switch (type)
-        {
-        case ShaderDataType::Float:   return GL_FLOAT;
-        case ShaderDataType::Float2:  return GL_FLOAT;
-        case ShaderDataType::Float3:  return GL_FLOAT;
-        case ShaderDataType::Float4:  return GL_FLOAT;
-
-        case ShaderDataType::Mat3:    return GL_FLOAT;
-        case ShaderDataType::Mat4:    return GL_FLOAT;
-
-        case ShaderDataType::Int:     return GL_INT;
-        case ShaderDataType::Int2:    return GL_INT;
-        case ShaderDataType::Int3:    return GL_INT;
-        case ShaderDataType::Int4:    return GL_INT;
-
-        case ShaderDataType::Bool:    return GL_BOOL;
-        default:
-            break;
-        }
-
-        JADE_CORE_ASSERT(false, "Unknown ShaderDataType!");
-        return 0;
-    }
 
     Application::Application()
         : m_Window(std::unique_ptr<Window>(Window::Create()))
@@ -200,18 +170,20 @@ namespace Jade
     {
         while (m_Running)
         {
-            glClearColor(.2f, .2f, .2f, 1.f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+            RenderCommand::Clear();
 
+            // Render environment.
+            Renderer::BeginScene();
+
+            // Render Objects.
             m_BlueShader->Bind();
-            m_SquareVA->Bind();
-            glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetCount(),
-                GL_UNSIGNED_INT, nullptr);
+            Renderer::Submit(m_SquareVA);
 
             m_Shader->Bind();
-            m_VertexArray->Bind();
-            glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(),
-                GL_UNSIGNED_INT, nullptr);
+            Renderer::Submit(m_VertexArray);
+
+            Renderer::EndScene();
 
             for(Layer* layer : m_LayerStack)
             {

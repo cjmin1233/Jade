@@ -10,10 +10,10 @@ namespace Jade
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::None:
-            JADE_CORE_ASSERT(false, "RendererAPI::None is not supported");
+        case RendererAPI::API::None:
+            JADE_CORE_ASSERT(false, "RendererAPI::API::None is not supported");
             return nullptr;
-        case RendererAPI::OpenGL:
+        case RendererAPI::API::OpenGL:
             return new OpenGLVertexArray();
         default:
             break;

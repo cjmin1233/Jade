@@ -120,6 +120,7 @@ namespace Jade
 
     void Shader::Bind() const
     {
+        // glUseProgram sets the current active shader program
         glUseProgram(m_RendererID);
     }
 
