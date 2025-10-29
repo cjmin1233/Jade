@@ -17,10 +17,6 @@ namespace Jade
     {
     }
 
-    ImGuiLayer::~ImGuiLayer()
-    {
-    }
-
     void ImGuiLayer::OnAttach()
     {
         JADE_INFO("ImGuiLayer Attached");

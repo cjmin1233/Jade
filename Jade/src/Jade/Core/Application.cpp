@@ -196,10 +196,6 @@ namespace Jade
 #pragma endregion
     }
 
-    Application::~Application()
-    {
-    }
-
     void Application::Run()
     {
         while (m_Running)

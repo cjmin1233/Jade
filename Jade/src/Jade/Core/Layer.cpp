@@ -8,8 +8,4 @@ namespace Jade
         : m_DebugName(debugName)
     {
     }
-
-    Layer::~Layer()
-    {
-    }
 }
