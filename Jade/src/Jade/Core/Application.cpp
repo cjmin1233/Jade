@@ -21,6 +21,8 @@ namespace Jade
         , m_VertexArray(nullptr)
         , m_BlueShader(nullptr)
         , m_SquareVA(nullptr)
+        , m_OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f)
+        , m_PerspectiveCamera(45.0f, 1.6f / 0.9f, 0.1f, 100.0f)
     {
         JADE_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
@@ -30,6 +32,72 @@ namespace Jade
 
         PushOverlay(m_ImGuiLayer);
 
+//#pragma region Cube Setup
+//        // Vertex Array
+//        m_VertexArray.reset(VertexArray::Create());
+//
+//        // 8 vertices, each with 3 position floats
+//        float positions[8 * 3] = {
+//            // x,    y,    z
+//            -0.5f, -0.5f, -0.5f, // 0: left-bottom-back
+//             0.5f, -0.5f, -0.5f, // 1: right-bottom-back
+//             0.5f,  0.5f, -0.5f, // 2: right-top-back
+//            -0.5f,  0.5f, -0.5f, // 3: left-top-back
+//            -0.5f, -0.5f,  0.5f, // 4: left-bottom-front
+//             0.5f, -0.5f,  0.5f, // 5: right-bottom-front
+//             0.5f,  0.5f,  0.5f, // 6: right-top-front
+//            -0.5f,  0.5f,  0.5f  // 7: left-top-front
+//        };
+//
+//        // 8 vertices, each with 4 color floats (RGBA)
+//        float colors[8 * 4] = {
+//            1.0f, 0.0f, 0.0f, 1.0f, // 0: red
+//            0.0f, 1.0f, 0.0f, 1.0f, // 1: green
+//            0.0f, 0.0f, 1.0f, 1.0f, // 2: blue
+//            1.0f, 1.0f, 0.0f, 1.0f, // 3: yellow
+//            1.0f, 0.0f, 1.0f, 1.0f, // 4: magenta
+//            0.0f, 1.0f, 1.0f, 1.0f, // 5: cyan
+//            1.0f, 1.0f, 1.0f, 1.0f, // 6: white
+//            0.0f, 0.0f, 0.0f, 1.0f  // 7: black
+//        };
+//
+//        // Position VBO
+//        std::shared_ptr<VertexBuffer> positionBuffer;
+//        positionBuffer.reset(VertexBuffer::Create(positions, sizeof(positions)));
+//        positionBuffer->SetLayout({
+//            {ShaderDataType::Float3, "a_Position"}
+//            });
+//        m_VertexArray->AddVertexBuffer(positionBuffer);
+//
+//        // Color VBO
+//        std::shared_ptr<VertexBuffer> colorBuffer;
+//        colorBuffer.reset(VertexBuffer::Create(colors, sizeof(colors)));
+//        colorBuffer->SetLayout({
+//            {ShaderDataType::Float4, "a_Color"}
+//            });
+//        m_VertexArray->AddVertexBuffer(colorBuffer);
+//
+//        // 36 indices (12 triangles)
+//        uint32_t indices[] = {
+//            // Back face
+//            0, 1, 2, 2, 3, 0,
+//            // Front face
+//            4, 5, 6, 6, 7, 4,
+//            // Left face
+//            0, 3, 7, 7, 4, 0,
+//            // Right face
+//            1, 5, 6, 6, 2, 1,
+//            // Bottom face
+//            0, 1, 5, 5, 4, 0,
+//            // Top face
+//            3, 2, 6, 6, 7, 3
+//        };
+//
+//        std::shared_ptr<IndexBuffer> indexBuffer;
+//        indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+//        m_VertexArray->SetIndexBuffer(indexBuffer);
+//#pragma endregion
+
 #pragma region Triangle Setup
         // Vertex Array
         m_VertexArray.reset(VertexArray::Create());
@@ -38,7 +106,7 @@ namespace Jade
         float positions[3 * 3] = {
             -0.5f, -0.5f, 0.0f,
              0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
+             0.0f,  0.5f, 0.0f,
         };
 
         // 색상 데이터 (3 vertices, 4 floats each)
@@ -111,11 +179,13 @@ namespace Jade
             layout(location = 0) in vec3 a_Position;
             layout(location = 1) in vec4 a_Color;
 
+            uniform mat4 u_ViewProjection;
+
             out vec4 v_Color;
 
             void main()
             {
-                gl_Position = vec4(a_Position, 1.0);
+                gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
                 v_Color = a_Color;
             }
         )";
@@ -140,11 +210,13 @@ namespace Jade
             #version 330 core
             layout(location = 0) in vec3 a_Position;
 
+            uniform mat4 u_ViewProjection;
+
             out vec3 v_Position; 
 
             void main()
             {
-                gl_Position = vec4(a_Position, 1.0);
+                gl_Position = u_ViewProjection * vec4(a_Position, 1.0);
                 v_Position = a_Position;
             }
         )";
@@ -174,14 +246,22 @@ namespace Jade
             RenderCommand::Clear();
 
             // Render environment.
-            Renderer::BeginScene();
+#pragma region Orthographic Camera Update
+            m_OrthographicCamera.SetPosition({ 0.0f, 0.0f, 1.0f });
+            m_OrthographicCamera.SetRotation({ 0.0f, 0.0f, 0.0f });
+            Renderer::BeginScene(m_OrthographicCamera);
+#pragma endregion
+
+#pragma region Perspective Camera Update
+            //m_PerspectiveCamera.SetPosition({ 0.0f, 0.5f, 3.0f });
+            //m_PerspectiveCamera.SetRotation({ 15.0f, 30.0f, 0.0f });
+            //Renderer::BeginScene(m_PerspectiveCamera);
+#pragma endregion
 
             // Render Objects.
-            m_BlueShader->Bind();
-            Renderer::Submit(m_SquareVA);
+            //Renderer::Submit(m_BlueShader, m_SquareVA);
 
-            m_Shader->Bind();
-            Renderer::Submit(m_VertexArray);
+            Renderer::Submit(m_Shader, m_VertexArray);
 
             Renderer::EndScene();
 

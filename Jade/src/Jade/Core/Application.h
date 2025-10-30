@@ -8,6 +8,8 @@
 #include "Jade/Renderer/Shader.h"
 #include "Jade/Renderer/Buffer.h"
 #include "Jade/Renderer/VertexArray.h"
+#include "Jade/Renderer/OrthographicCamera.h"
+#include "Jade/Renderer/PerspectiveCamera.h"
 
 class Layer;
 
@@ -43,6 +45,9 @@ namespace Jade
 
         std::shared_ptr<Shader> m_BlueShader;
         std::shared_ptr<VertexArray> m_SquareVA;
+
+        OrthographicCamera m_OrthographicCamera;
+        PerspectiveCamera m_PerspectiveCamera;
 
     private:
         static Application* s_Instance;
