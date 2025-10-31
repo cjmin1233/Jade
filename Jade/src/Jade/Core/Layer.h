@@ -8,7 +8,10 @@ namespace Jade
     class JADE_API Layer
     {
     public:
-        Layer(const std::string& debugName = "Layer");
+        Layer(const std::string& debugName = "Layer")
+            : m_DebugName(debugName)
+        {
+        }
         virtual ~Layer() = default;
 
         virtual void OnAttach() {}
