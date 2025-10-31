@@ -2,8 +2,6 @@
 
 #include "Jade/Renderer/Camera.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace Jade
 {
     Camera::Camera() 
