@@ -1,6 +1,7 @@
 #pragma once
 #include "Jade/Core/Core.h"
 #include "Jade/Events/Event.h"
+#include "Jade/Core/Timestep.h"
 
 namespace Jade
 {
@@ -12,7 +13,7 @@ namespace Jade
 
         virtual void OnAttach() {}
         virtual void OnDetach() {}
-        virtual void OnUpdate() {}
+        virtual void OnUpdate(Timestep ts) {}
         virtual void OnImGuiRender() {}
         virtual void OnEvent(Event& event) {}
 

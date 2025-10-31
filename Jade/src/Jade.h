@@ -6,6 +6,18 @@
 #include "Jade/Core/Layer.h"
 #include "Jade/ImGui/ImGuiLayer.h"
 #include "Jade/Core/Input.h"
+#include "Jade/Core/KeyCodes.h"
+#include "Jade/Core/Timestep.h"
+
+#pragma region Renderer APIs
+#include "Jade/Renderer/Renderer.h"
+#include "Jade/Renderer/RenderCommand.h"
+#include "Jade/Renderer/RendererAPI.h"
+#include "Jade/Renderer/Shader.h"
+#include "Jade/Renderer/Buffer.h"
+#include "Jade/Renderer/VertexArray.h"
+#include "Jade/Renderer/OrthographicCamera.h"
+#pragma endregion
 
 // ---Entry Point-----------------
 #include "Jade/Core/EntryPoint.h"
