@@ -1,6 +1,7 @@
 #include "jdpch.h"
 
 #include "Jade/Renderer/Renderer.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Jade
 {
@@ -24,9 +25,15 @@ namespace Jade
         const std::shared_ptr<VertexArray>& vertexArray,
         const glm::mat4& transform)
     {
-        shader->Bind();
-        shader->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-        shader->UploadUniformMat4("u_Transform", transform);
+        const std::shared_ptr<OpenGLShader> openGLShader = std::static_pointer_cast<OpenGLShader>(shader);
+
+        if (openGLShader)
+        {
+            openGLShader->Bind();
+            openGLShader->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+            openGLShader->UploadUniformMat4("u_Transform", transform);
+        }
+
         vertexArray->Bind();
         RenderCommand::DrawIndexed(vertexArray);
     }
