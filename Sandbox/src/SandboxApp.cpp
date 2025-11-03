@@ -40,14 +40,14 @@ public:
         };
 
         // 위치 VBO
-        std::shared_ptr<Jade::VertexBuffer> positionBuffer;
+        Jade::Ref<Jade::VertexBuffer> positionBuffer;
         positionBuffer.reset(Jade::VertexBuffer::Create(positions, sizeof(positions)));
         positionBuffer->SetLayout({
             {Jade::ShaderDataType::Float3, "a_Position"}
             });
         m_VertexArray->AddVertexBuffer(positionBuffer);
         // 색상 VBO
-        std::shared_ptr<Jade::VertexBuffer> colorBuffer;
+        Jade::Ref<Jade::VertexBuffer> colorBuffer;
         colorBuffer.reset(Jade::VertexBuffer::Create(colors, sizeof(colors)));
         colorBuffer->SetLayout({
             {Jade::ShaderDataType::Float4, "a_Color"}
@@ -60,7 +60,7 @@ public:
             0, 1, 2,
         };
 
-        std::shared_ptr<Jade::IndexBuffer> indexBuffer;
+        Jade::Ref<Jade::IndexBuffer> indexBuffer;
         indexBuffer.reset(Jade::IndexBuffer::Create(indices,
             sizeof(indices) / sizeof(uint32_t)));
         m_VertexArray->SetIndexBuffer(indexBuffer);
@@ -77,7 +77,7 @@ public:
             -0.5f,  0.5f, 0.0f
         };
 
-        std::shared_ptr<Jade::VertexBuffer> squareVB;
+        Jade::Ref<Jade::VertexBuffer> squareVB;
         squareVB.reset(Jade::VertexBuffer::Create(squareVertices,
             sizeof(squareVertices)));
         squareVB->SetLayout({
@@ -90,7 +90,7 @@ public:
             0, 1, 2,
             2, 3, 0
         };
-        std::shared_ptr<Jade::IndexBuffer> squareIB;
+        Jade::Ref<Jade::IndexBuffer> squareIB;
         squareIB.reset(Jade::IndexBuffer::Create(squareIndices,
             sizeof(squareIndices) / sizeof(uint32_t)));
         m_SquareVA->SetIndexBuffer(squareIB);
@@ -242,11 +242,11 @@ public:
     }
 
 private:
-    std::shared_ptr<Jade::Shader> m_Shader;
-    std::shared_ptr<Jade::VertexArray> m_VertexArray;
+    Jade::Ref<Jade::Shader> m_Shader;
+    Jade::Ref<Jade::VertexArray> m_VertexArray;
 
-    std::shared_ptr<Jade::Shader> m_flatColorShader;
-    std::shared_ptr<Jade::VertexArray> m_SquareVA;
+    Jade::Ref<Jade::Shader> m_flatColorShader;
+    Jade::Ref<Jade::VertexArray> m_SquareVA;
     
     Jade::OrthographicCamera m_Camera;
     glm::vec3 m_CameraPosition;

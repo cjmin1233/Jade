@@ -12,7 +12,7 @@ namespace Jade
     Application* Application::s_Instance = nullptr;
 
     Application::Application()
-        : m_Window(std::unique_ptr<Window>(Window::Create()))
+        : m_Window(Scope<Window>(Window::Create()))
         , m_ImGuiLayer(new ImGuiLayer())
         , m_LayerStack()
         , m_LastFrameTime(0.0f)

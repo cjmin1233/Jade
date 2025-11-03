@@ -57,7 +57,7 @@ namespace Jade
         glBindVertexArray(0);
     }
 
-    void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
+    void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
     {
         JADE_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(),
             "Vertex Buffer has no layout!");
@@ -68,7 +68,7 @@ namespace Jade
         uint32_t index = 0;
         for(const auto& vb : m_VertexBuffers)
         {
-            index += vb->GetLayout().GetElementCount();
+            index += (uint32_t)(vb->GetLayout().GetElementCount());
         }
         const auto& layout = vertexBuffer->GetLayout();
         for(const auto& element : layout)
@@ -79,7 +79,7 @@ namespace Jade
                 ShaderDataTypeToOpenGLBaseType(element.Type),
                 element.Normalized ? GL_TRUE : GL_FALSE,
                 layout.GetStride(),
-                (const void*)element.Offset
+                (const void*)(element.Offset)
             );
             index++;
         }
@@ -87,7 +87,7 @@ namespace Jade
         m_VertexBuffers.push_back(vertexBuffer);
     }
 
-    void OpenGLVertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
+    void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
     {
         glBindVertexArray(m_RendererID);
         indexBuffer->Bind();
