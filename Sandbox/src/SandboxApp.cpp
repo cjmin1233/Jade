@@ -15,6 +15,8 @@ public:
         , m_VertexArray(nullptr)
         , m_flatColorShader(nullptr)
         , m_SquareVA(nullptr)
+        , m_TextureShader(nullptr)
+        , m_Texture(nullptr)
         , m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
         , m_CameraPosition(0.0f)
         , m_CameraRotation(0.0f)
@@ -69,19 +71,20 @@ public:
 #pragma region Square Setup
         m_SquareVA.reset(Jade::VertexArray::Create());
 
-        float squareVertices[3 * 4] =
+        float squareVertices[5 * 4] =
         {
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+             0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+             0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
         };
 
         Jade::Ref<Jade::VertexBuffer> squareVB;
         squareVB.reset(Jade::VertexBuffer::Create(squareVertices,
             sizeof(squareVertices)));
         squareVB->SetLayout({
-            {Jade::ShaderDataType::Float3, "a_Position"}
+            {Jade::ShaderDataType::Float3, "a_Position"},
+            {Jade::ShaderDataType::Float2, "a_TexCoord"}
             });
         m_SquareVA->AddVertexBuffer(squareVB);
 
@@ -160,8 +163,45 @@ public:
         )";
 
         m_flatColorShader.reset(Jade::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragSrc));
-#pragma endregion
 
+        std::string textureShaderVertexSrc = R"(
+            #version 330 core
+            layout(location = 0) in vec3 a_Position;
+            layout(location = 1) in vec2 a_TexCoord;
+
+            uniform mat4 u_ViewProjection;
+            uniform mat4 u_Transform;
+
+            out vec2 v_TexCoord;
+
+            void main()
+            {
+                gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+                v_TexCoord = a_TexCoord;
+            }
+        )";
+
+        std::string textureShaderFragSrc = R"(
+            #version 330 core
+
+            in vec2 v_TexCoord;
+
+            uniform sampler2D u_Texture;
+
+            out vec4 color;
+
+            void main()
+            {
+                color = texture(u_Texture, v_TexCoord);
+            }
+        )";
+
+        m_TextureShader.reset(Jade::Shader::Create(textureShaderVertexSrc, textureShaderFragSrc));
+        m_Texture = Jade::Texture2D::Create("assets/textures/test.png");
+
+        std::static_pointer_cast<Jade::OpenGLShader>(m_TextureShader)->Bind();
+        std::static_pointer_cast<Jade::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+#pragma endregion
     }
 
     void OnAttach() override
@@ -213,7 +253,6 @@ public:
         std::static_pointer_cast<Jade::OpenGLShader>(m_flatColorShader)->Bind();
         std::static_pointer_cast<Jade::OpenGLShader>(m_flatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
 
-        // Render Triangle
         for(int y = 0; y < 10; y++)
         {
             for(int x = 0; x < 10; x++)
@@ -224,7 +263,12 @@ public:
                 Jade::Renderer::Submit(m_flatColorShader, m_SquareVA, transform);
             }
         }
-        Jade::Renderer::Submit(m_Shader, m_VertexArray);
+
+        m_Texture->Bind(0);
+        Jade::Renderer::Submit(m_TextureShader, m_SquareVA,
+            glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+        //Jade::Renderer::Submit(m_Shader, m_VertexArray);
         Jade::Renderer::EndScene();
     }
 
@@ -247,6 +291,9 @@ private:
 
     Jade::Ref<Jade::Shader> m_flatColorShader;
     Jade::Ref<Jade::VertexArray> m_SquareVA;
+
+    Jade::Ref<Jade::Shader> m_TextureShader;
+    Jade::Ref<Jade::Texture2D> m_Texture;
     
     Jade::OrthographicCamera m_Camera;
     glm::vec3 m_CameraPosition;

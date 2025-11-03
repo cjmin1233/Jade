@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "Jade/vendor/GLFW/include"
 IncludeDir["Glad"] = "Jade/vendor/Glad/include"
 IncludeDir["ImGui"] = "Jade/vendor/imgui"
 IncludeDir["glm"] = "Jade/vendor/glm"
+IncludeDir["stb_image"] = "Jade/vendor/stb_image"
 
 group "Dependencies"
     include "Jade/vendor/GLFW"
@@ -41,6 +42,8 @@ project "Jade"
     {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/stb_image/**.h",
+        "%{prj.name}/vendor/stb_image/**.cpp",
         "%{prj.name}/vendor/glm/glm/**.hpp",
         "%{prj.name}/vendor/glm/glm/**.inl",
     }
@@ -57,7 +60,8 @@ project "Jade"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
-        "%{IncludeDir.glm}",
+        "%{IncludeDir.glm}",  
+        "%{IncludeDir.stb_image}",
     }
 
     links
