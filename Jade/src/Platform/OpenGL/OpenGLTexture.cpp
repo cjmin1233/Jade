@@ -23,11 +23,29 @@ namespace Jade
         m_Width = width;
         m_Height = height;
 
+        GLenum internalFormat = 0, dataFormat = 0;
+
+        // Determine the image format based on the number of channels
+        if (channels == 4)
+        {
+            internalFormat = GL_RGBA8;
+            dataFormat = GL_RGBA;
+        }
+        else if (channels == 3)
+        {
+            internalFormat = GL_RGB8;
+            dataFormat = GL_RGB;
+        }
+
+        JADE_CORE_ASSERT(internalFormat & dataFormat,
+            "Format not supported!");
+
         // Create OpenGL texture
         // glCreateTextures: generates texture object names
         // glTextureStorage2D: allocates immutable storage for the texture
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-        glTextureStorage2D(m_RendererID, 1, GL_RGBA8, m_Width, m_Height);
+        glTextureStorage2D(m_RendererID, 1, internalFormat,
+            m_Width, m_Height);
 
         // Set texture parameters
         // glTextureParameteri: sets texture parameters
@@ -39,7 +57,7 @@ namespace Jade
 
         // glTextureSubImage2D: specifies a two-dimensional texture subimage
         glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height,
-            channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+            dataFormat, GL_UNSIGNED_BYTE, data);
 
         stbi_image_free(data);
     }

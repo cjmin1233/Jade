@@ -4,6 +4,7 @@
 #include "Jade/Core/Log.h"
 #include "Jade/Core/Layer.h"
 #include "Jade/Core/LayerStack.h"
+#include "Jade/Renderer/Renderer.h"
 
 #include <GLFW/glfw3.h>
 
@@ -22,6 +23,8 @@ namespace Jade
         s_Instance = this;
 
         m_Window->SetEventCallback(JADE_BIND_EVENT_FN(Application::OnEvent));
+
+        Renderer::Init();
 
         PushOverlay(m_ImGuiLayer);
     }
