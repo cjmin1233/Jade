@@ -50,16 +50,15 @@ namespace Jade
 
     class EventDispatcher
     {
-        template<typename T>
-        using EventFn = std::function<bool(T&)>;
     public:
         EventDispatcher(Event& event)
             : m_Event(event)
         {
         }
 
-        template<typename T>
-        bool Dispatch(EventFn<T> func)
+        // F will be deduced by the compiler
+        template<typename T, typename F>
+        bool Dispatch(const F& func)
         {
             if (m_Event.GetEventType() == T::GetStaticType())
             {

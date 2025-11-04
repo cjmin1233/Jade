@@ -38,6 +38,10 @@ namespace Jade
         Input() = default;
         virtual ~Input() = default;
 
+    public:
+        Input(const Input&) = delete;
+        Input& operator=(const Input&) = delete;
+
     private:
         static Input* s_Instance;
     };

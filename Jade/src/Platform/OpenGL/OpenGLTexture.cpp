@@ -44,8 +44,8 @@ namespace Jade
         // glCreateTextures: generates texture object names
         // glTextureStorage2D: allocates immutable storage for the texture
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-        glTextureStorage2D(m_RendererID, 1, internalFormat,
-            m_Width, m_Height);
+        // m_RendererID 텍스처에 1 레벨, internalFormat 포맷, m_Width x m_Height 크기로 저장소 할당
+        glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
         // Set texture parameters
         // glTextureParameteri: sets texture parameters
@@ -55,9 +55,8 @@ namespace Jade
         glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        // glTextureSubImage2D: specifies a two-dimensional texture subimage
-        glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height,
-            dataFormat, GL_UNSIGNED_BYTE, data);
+        // m_RendererID 텍스처의 0번 레벨, (0,0) 위치에서 m_Width x m_Height 영역에 dataFormat 포맷의 data를 복사
+        glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 
         stbi_image_free(data);
     }
