@@ -17,6 +17,7 @@
 #include "Jade/Renderer/Buffer.h"
 #include "Jade/Renderer/VertexArray.h"
 #include "Jade/Renderer/OrthographicCamera.h"
+#include "Jade/Renderer/OrthographicCameraController.h"
 #include "Jade/Renderer/Texture.h"
 #pragma endregion
 

@@ -12,20 +12,14 @@ public:
     ExampleLayer()
         : Layer("ExampleLayer")
         , m_ShaderLibrary()
-        , m_Shader(nullptr)
-        , m_VertexArray(nullptr)
-        , m_flatColorShader(nullptr)
+        , m_TriangleVA(nullptr)
         , m_SquareVA(nullptr)
         , m_Texture(nullptr)
-        , m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
-        , m_CameraPosition(0.0f)
-        , m_CameraRotation(0.0f)
-        , m_CameraMoveSpeed(2.0f)
-        , m_CameraRotationSpeed(90.0f)
+        , m_CameraController(1280.0f / 720.0f, true)
     {   
 #pragma region Triangle Setup
         // Vertex Array
-        m_VertexArray.reset(Jade::VertexArray::Create());
+        m_TriangleVA.reset(Jade::VertexArray::Create());
 
         // 위치 데이터 (3 vertices, 3 floats each)
         float positions[3 * 3] = {
@@ -47,14 +41,14 @@ public:
         positionBuffer->SetLayout({
             {Jade::ShaderDataType::Float3, "a_Position"}
             });
-        m_VertexArray->AddVertexBuffer(positionBuffer);
+        m_TriangleVA->AddVertexBuffer(positionBuffer);
         // 색상 VBO
         Jade::Ref<Jade::VertexBuffer> colorBuffer;
         colorBuffer.reset(Jade::VertexBuffer::Create(colors, sizeof(colors)));
         colorBuffer->SetLayout({
             {Jade::ShaderDataType::Float4, "a_Color"}
             });
-        m_VertexArray->AddVertexBuffer(colorBuffer);
+        m_TriangleVA->AddVertexBuffer(colorBuffer);
 
         // Index Buffer
         uint32_t indices[] =
@@ -65,7 +59,7 @@ public:
         Jade::Ref<Jade::IndexBuffer> indexBuffer;
         indexBuffer.reset(Jade::IndexBuffer::Create(indices,
             sizeof(indices) / sizeof(uint32_t)));
-        m_VertexArray->SetIndexBuffer(indexBuffer);
+        m_TriangleVA->SetIndexBuffer(indexBuffer);
 #pragma endregion
 
 #pragma region Square Setup
@@ -128,8 +122,6 @@ public:
                 color = v_Color;
             }
         )";
-
-        m_Shader = Jade::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc);
 #pragma endregion
 
 #pragma region Square Shader
@@ -161,15 +153,16 @@ public:
                 color = vec4(u_Color, 1.0);
             }
         )";
+#pragma endregion
 
-        m_flatColorShader = Jade::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderFragSrc);
+        m_ShaderLibrary.Add(Jade::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc));
+        m_ShaderLibrary.Add(Jade::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderFragSrc));
 
         auto textureShader = m_ShaderLibrary.Load("assets/shaders/texture.glsl");
         m_Texture = Jade::Texture2D::Create("assets/textures/test.png");
 
         std::static_pointer_cast<Jade::OpenGLShader>(textureShader)->Bind();
         std::static_pointer_cast<Jade::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
-#pragma endregion
     }
 
     void OnAttach() override
@@ -186,42 +179,23 @@ public:
     {
         // Log the timestep
         JADE_TRACE("Timestep: {0} seconds", ts.GetSeconds());
-        // Input Handling
-        // WASD for xz movement
-        if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::A))
-            m_CameraPosition.x -= m_CameraMoveSpeed * ts;
-        else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::D))
-            m_CameraPosition.x += m_CameraMoveSpeed * ts;
-        if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::W))
-            m_CameraPosition.z -= m_CameraMoveSpeed * ts;
-        else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::S))
-            m_CameraPosition.z += m_CameraMoveSpeed * ts;
-        // Q/E for y movement
-        if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::Q))
-            m_CameraPosition.y -= m_CameraMoveSpeed * ts;
-        else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::E))
-            m_CameraPosition.y += m_CameraMoveSpeed * ts;
-
-        // Z/X for z-axis rotation
-        if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::Z))
-            m_CameraRotation.z += m_CameraRotationSpeed * ts;
-        else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::X))
-            m_CameraRotation.z -= m_CameraRotationSpeed * ts;
 
         // Clear Screen
         Jade::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         Jade::RenderCommand::Clear();
 
         // Update Camera
-        m_Camera.SetPosition(m_CameraPosition);
-        m_Camera.SetRotation(m_CameraRotation);
+        m_CameraController.OnUpdate(ts);
 
-        Jade::Renderer::BeginScene(m_Camera);
-
-        std::static_pointer_cast<Jade::OpenGLShader>(m_flatColorShader)->Bind();
-        std::static_pointer_cast<Jade::OpenGLShader>(m_flatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+        Jade::Renderer::BeginScene(m_CameraController.GetCamera());
 
         auto textureShader = m_ShaderLibrary.Get("texture");
+        auto flatColorShader = m_ShaderLibrary.Get("FlatColor");    
+        auto vertexPosColorShader = m_ShaderLibrary.Get("VertexPosColor");
+
+        std::static_pointer_cast<Jade::OpenGLShader>(flatColorShader)->Bind();
+        std::static_pointer_cast<Jade::OpenGLShader>(flatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+
 
         for(int y = 0; y < 10; y++)
         {
@@ -230,7 +204,7 @@ public:
                 glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) *
                     glm::scale(glm::mat4(1.0f), glm::vec3(m_SquareScale));
-                Jade::Renderer::Submit(m_flatColorShader, m_SquareVA, transform);
+                Jade::Renderer::Submit(flatColorShader, m_SquareVA, transform);
             }
         }
 
@@ -238,7 +212,7 @@ public:
         Jade::Renderer::Submit(textureShader, m_SquareVA,
             glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
-        //Jade::Renderer::Submit(m_Shader, m_VertexArray);
+        // Jade::Renderer::Submit(vertexPosColorShader, m_TriangleVA);
         Jade::Renderer::EndScene();
     }
 
@@ -252,26 +226,18 @@ public:
 
     void OnEvent(Jade::Event& event) override
     {
-
+        m_CameraController.OnEvent(event);
     }
 
 private:
     Jade::ShaderLibrary m_ShaderLibrary;
 
-    Jade::Ref<Jade::Shader> m_Shader;
-    Jade::Ref<Jade::VertexArray> m_VertexArray;
-
-    Jade::Ref<Jade::Shader> m_flatColorShader;
+    Jade::Ref<Jade::VertexArray> m_TriangleVA;
     Jade::Ref<Jade::VertexArray> m_SquareVA;
 
     Jade::Ref<Jade::Texture2D> m_Texture;
     
-    Jade::OrthographicCamera m_Camera;
-    glm::vec3 m_CameraPosition;
-    glm::vec3 m_CameraRotation;
-
-    float m_CameraMoveSpeed;
-    float m_CameraRotationSpeed;
+    Jade::OrthographicCameraController m_CameraController;
 
     glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
     float m_SquareScale = 0.1f;
