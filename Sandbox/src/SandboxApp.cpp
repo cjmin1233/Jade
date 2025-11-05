@@ -11,11 +11,11 @@ class ExampleLayer : public Jade::Layer
 public:
     ExampleLayer()
         : Layer("ExampleLayer")
+        , m_ShaderLibrary()
         , m_Shader(nullptr)
         , m_VertexArray(nullptr)
         , m_flatColorShader(nullptr)
         , m_SquareVA(nullptr)
-        , m_TextureShader(nullptr)
         , m_Texture(nullptr)
         , m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
         , m_CameraPosition(0.0f)
@@ -129,7 +129,7 @@ public:
             }
         )";
 
-        m_Shader = Jade::Shader::Create(vertexSrc, fragmentSrc);
+        m_Shader = Jade::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc);
 #pragma endregion
 
 #pragma region Square Shader
@@ -162,13 +162,13 @@ public:
             }
         )";
 
-        m_flatColorShader = Jade::Shader::Create(flatColorShaderVertexSrc, flatColorShaderFragSrc);
+        m_flatColorShader = Jade::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderFragSrc);
 
-        m_TextureShader = Jade::Shader::Create("assets/shaders/texture.glsl");
+        auto textureShader = m_ShaderLibrary.Load("assets/shaders/texture.glsl");
         m_Texture = Jade::Texture2D::Create("assets/textures/test.png");
 
-        std::static_pointer_cast<Jade::OpenGLShader>(m_TextureShader)->Bind();
-        std::static_pointer_cast<Jade::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+        std::static_pointer_cast<Jade::OpenGLShader>(textureShader)->Bind();
+        std::static_pointer_cast<Jade::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 #pragma endregion
     }
 
@@ -221,6 +221,8 @@ public:
         std::static_pointer_cast<Jade::OpenGLShader>(m_flatColorShader)->Bind();
         std::static_pointer_cast<Jade::OpenGLShader>(m_flatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
 
+        auto textureShader = m_ShaderLibrary.Get("texture");
+
         for(int y = 0; y < 10; y++)
         {
             for(int x = 0; x < 10; x++)
@@ -233,7 +235,7 @@ public:
         }
 
         m_Texture->Bind(0);
-        Jade::Renderer::Submit(m_TextureShader, m_SquareVA,
+        Jade::Renderer::Submit(textureShader, m_SquareVA,
             glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
         //Jade::Renderer::Submit(m_Shader, m_VertexArray);
@@ -254,13 +256,14 @@ public:
     }
 
 private:
+    Jade::ShaderLibrary m_ShaderLibrary;
+
     Jade::Ref<Jade::Shader> m_Shader;
     Jade::Ref<Jade::VertexArray> m_VertexArray;
 
     Jade::Ref<Jade::Shader> m_flatColorShader;
     Jade::Ref<Jade::VertexArray> m_SquareVA;
 
-    Jade::Ref<Jade::Shader> m_TextureShader;
     Jade::Ref<Jade::Texture2D> m_Texture;
     
     Jade::OrthographicCamera m_Camera;

@@ -22,15 +22,27 @@ namespace Jade
 
     OpenGLShader::OpenGLShader(const std::string& filepath)
         : m_RendererID(0)
+        , m_Name("")
     {     
         std::string source = ReadFile(filepath);
         auto shaderSources = PreProcess(source);
         CompileShader(shaderSources);
+
+        // Extract name from filepath
+        size_t lastSlash = filepath.find_last_of("/\\");
+        lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+        size_t lastDot = filepath.rfind('.');
+        size_t count = lastDot == std::string::npos ?
+            filepath.size() - lastSlash :
+            lastDot - lastSlash;
+        
+        m_Name = filepath.substr(lastSlash, count);
     }
 
-    OpenGLShader::OpenGLShader(const std::string& vertexSrc,
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc,
         const std::string& fragmentSrc)
         : m_RendererID(0)
+        , m_Name(name)
     {
         std::unordered_map<GLenum, std::string> shaderSources;
         shaderSources[GL_VERTEX_SHADER] = vertexSrc;
@@ -163,9 +175,12 @@ namespace Jade
 
     void OpenGLShader::CompileShader(const std::unordered_map<GLenum, std::string>& shaderSources)
     {
-        GLuint program = m_RendererID = glCreateProgram();
+        m_RendererID = glCreateProgram();
 
-        std::vector<GLenum> glShaderIDs(shaderSources.size());
+        JADE_CORE_ASSERT(shaderSources.size() <= 2,
+            "Jade only supports 2 shaders for now (vertex and fragment)!");
+        size_t glShaderIDIndex = 0;
+        std::array<GLenum, 2> glShaderIDs;
         
         for (const auto& [type, source] : shaderSources)
         {
@@ -203,7 +218,7 @@ namespace Jade
 
             // Attach the compiled shader to the program
             glAttachShader(m_RendererID, shader);
-            glShaderIDs.push_back(shader);
+            glShaderIDs[glShaderIDIndex++] = shader;
         }
 
         // Link our program
