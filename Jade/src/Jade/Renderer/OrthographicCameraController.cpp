@@ -26,18 +26,35 @@ namespace Jade
         // Input Handling
         // WASD for xz movement
         if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::A))
-            m_CameraPosition.x -= m_CameraTranslationSpeed * ts;
+        {
+            m_CameraPosition.x -= cos(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
+            m_CameraPosition.y -= sin(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
+        }
         else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::D))
-            m_CameraPosition.x += m_CameraTranslationSpeed * ts;
+        {
+            m_CameraPosition.x += cos(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
+            m_CameraPosition.y += sin(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
+        }
         if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::W))
+        {
             m_CameraPosition.z -= m_CameraTranslationSpeed * ts;
+        }
         else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::S))
+        {
             m_CameraPosition.z += m_CameraTranslationSpeed * ts;
+        }
+
         // Q/E for y movement
         if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::Q))
-            m_CameraPosition.y -= m_CameraTranslationSpeed * ts;
+        {
+            m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
+            m_CameraPosition.y -= cos(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
+        }
         else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::E))
-            m_CameraPosition.y += m_CameraTranslationSpeed * ts;
+        {
+            m_CameraPosition.x += -sin(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
+            m_CameraPosition.y += cos(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
+        }
 
         if (m_Rotation)
         {
@@ -46,6 +63,12 @@ namespace Jade
                 m_CameraRotation.z += m_CameraRotationSpeed * ts;
             else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::X))
                 m_CameraRotation.z -= m_CameraRotationSpeed * ts;
+
+            // Wrap around rotation
+            if (m_CameraRotation.z > 180.0f)
+                m_CameraRotation.z -= 360.0f;
+            else if (m_CameraRotation.z <= -180.0f)
+                m_CameraRotation.z += 360.0f;
         }
 
         // Update Camera

@@ -36,13 +36,13 @@ namespace Jade
 
     protected:
         Input() = default;
-        virtual ~Input() = default;
+        //virtual ~Input() = default;
 
     public:
         Input(const Input&) = delete;
         Input& operator=(const Input&) = delete;
 
     private:
-        static Input* s_Instance;
+        static Scope<Input> s_Instance;
     };
 }

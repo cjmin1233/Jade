@@ -146,24 +146,30 @@ namespace Jade
 
         const char* typeToken = "#type";
         size_t typeTokenLength = strlen(typeToken);
+        // Start of shader type declaration line
         size_t pos = source.find(typeToken, 0);
 
         while (pos != std::string::npos)
         {
+            // End of shader type declaration line
             size_t eol = source.find_first_of("\r\n", pos);
             JADE_CORE_ASSERT(eol != std::string::npos,
                 "Syntax error: No end of line after shader type declaration!");
 
+            // Start of shader type name (after "#type " keyword)
             size_t begin = pos + typeTokenLength + 1;
             std::string type = source.substr(begin, eol - begin);
             JADE_CORE_ASSERT(ShaderTypeFromString(type),
                 "Invalid shader type specified!");
 
+            // Start of shader code after shader type declaration line
             size_t nextLinePos = source.find_first_not_of("\r\n", eol);
             JADE_CORE_ASSERT(nextLinePos != std::string::npos,
                 "Syntax error: No shader code after shader type declaration!");
 
+            // Find next shader type declaration line
             pos = source.find(typeToken, nextLinePos);
+
             shaderSources[ShaderTypeFromString(type)] =
                 (pos == std::string::npos) ?
                 source.substr(nextLinePos) :

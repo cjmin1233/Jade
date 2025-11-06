@@ -31,7 +31,6 @@ namespace Jade
     WindowsWindow::~WindowsWindow()
     {
         Shutdown();
-        delete m_Context;
     }
 
     void WindowsWindow::Init(const WindowProps& props)
@@ -56,7 +55,7 @@ namespace Jade
             m_Data.Title.c_str(), nullptr, nullptr);
 
         // Create OpenGL context
-        m_Context = new OpenGLContext(m_Window);
+        m_Context = CreateScope<OpenGLContext>(m_Window);
         m_Context->Init();
 
         glfwSetWindowUserPointer(m_Window, &m_Data);

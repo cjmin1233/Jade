@@ -6,7 +6,7 @@
 
 namespace Jade
 {
-    VertexArray* VertexArray::Create()
+    Ref<VertexArray> VertexArray::Create()
     {
         switch (Renderer::GetAPI())
         {
@@ -14,7 +14,7 @@ namespace Jade
             JADE_CORE_ASSERT(false, "RendererAPI::API::None is not supported");
             return nullptr;
         case RendererAPI::API::OpenGL:
-            return new OpenGLVertexArray();
+            return CreateRef<OpenGLVertexArray>();
         default:
             break;
         }

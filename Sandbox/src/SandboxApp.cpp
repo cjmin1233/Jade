@@ -19,7 +19,7 @@ public:
     {   
 #pragma region Triangle Setup
         // Vertex Array
-        m_TriangleVA.reset(Jade::VertexArray::Create());
+        m_TriangleVA = Jade::VertexArray::Create();
 
         // 위치 데이터 (3 vertices, 3 floats each)
         float positions[3 * 3] = {
@@ -37,14 +37,14 @@ public:
 
         // 위치 VBO
         Jade::Ref<Jade::VertexBuffer> positionBuffer;
-        positionBuffer.reset(Jade::VertexBuffer::Create(positions, sizeof(positions)));
+        positionBuffer = Jade::VertexBuffer::Create(positions, sizeof(positions));
         positionBuffer->SetLayout({
             {Jade::ShaderDataType::Float3, "a_Position"}
             });
         m_TriangleVA->AddVertexBuffer(positionBuffer);
         // 색상 VBO
         Jade::Ref<Jade::VertexBuffer> colorBuffer;
-        colorBuffer.reset(Jade::VertexBuffer::Create(colors, sizeof(colors)));
+        colorBuffer = Jade::VertexBuffer::Create(colors, sizeof(colors));
         colorBuffer->SetLayout({
             {Jade::ShaderDataType::Float4, "a_Color"}
             });
@@ -57,13 +57,13 @@ public:
         };
 
         Jade::Ref<Jade::IndexBuffer> indexBuffer;
-        indexBuffer.reset(Jade::IndexBuffer::Create(indices,
-            sizeof(indices) / sizeof(uint32_t)));
+        indexBuffer = Jade::IndexBuffer::Create(indices,
+            sizeof(indices) / sizeof(uint32_t));
         m_TriangleVA->SetIndexBuffer(indexBuffer);
 #pragma endregion
 
 #pragma region Square Setup
-        m_SquareVA.reset(Jade::VertexArray::Create());
+        m_SquareVA = Jade::VertexArray::Create();
 
         float squareVertices[5 * 4] =
         {
@@ -74,8 +74,8 @@ public:
         };
 
         Jade::Ref<Jade::VertexBuffer> squareVB;
-        squareVB.reset(Jade::VertexBuffer::Create(squareVertices,
-            sizeof(squareVertices)));
+        squareVB = Jade::VertexBuffer::Create(squareVertices,
+            sizeof(squareVertices));
         squareVB->SetLayout({
             {Jade::ShaderDataType::Float3, "a_Position"},
             {Jade::ShaderDataType::Float2, "a_TexCoord"}
@@ -88,8 +88,8 @@ public:
             2, 3, 0
         };
         Jade::Ref<Jade::IndexBuffer> squareIB;
-        squareIB.reset(Jade::IndexBuffer::Create(squareIndices,
-            sizeof(squareIndices) / sizeof(uint32_t)));
+        squareIB = Jade::IndexBuffer::Create(squareIndices,
+            sizeof(squareIndices) / sizeof(uint32_t));
         m_SquareVA->SetIndexBuffer(squareIB);
 #pragma endregion
 
