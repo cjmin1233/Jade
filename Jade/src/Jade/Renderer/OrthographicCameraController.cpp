@@ -16,7 +16,9 @@ namespace Jade
         , m_CameraTranslationSpeed(5.0f)
         , m_CameraRotationSpeed(180.0f)
         , m_Rotation(rotation)
+        , m_FitToHeight(true)
     {
+        UpdateCameraProjection();
     }
 
     void OrthographicCameraController::OnUpdate(Timestep ts)
@@ -64,15 +66,28 @@ namespace Jade
     {
         m_ZoomLevel -= e.GetYOffset() * 0.25f;
         m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
-        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+
+        UpdateCameraProjection();
 
         return false;
     }
 
     bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
     {
-        m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-        m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+        if(m_FitToHeight)
+            m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
+        else
+            m_AspectRatio = (float)e.GetHeight() / (float)e.GetWidth();
+
+        UpdateCameraProjection();
+
         return false;
+    }
+    void OrthographicCameraController::UpdateCameraProjection()
+    {
+        if(m_FitToHeight)
+            m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+        else
+            m_Camera.SetProjection(-m_ZoomLevel, m_ZoomLevel, -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel);
     }
 }

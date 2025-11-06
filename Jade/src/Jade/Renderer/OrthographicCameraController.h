@@ -23,6 +23,8 @@ namespace Jade
         bool OnMouseScrolled(MouseScrolledEvent& e);
         bool OnWindowResized(WindowResizeEvent& e);
 
+        void UpdateCameraProjection();
+
     private:
         float m_AspectRatio;
         float m_ZoomLevel;
@@ -35,5 +37,6 @@ namespace Jade
         float m_CameraRotationSpeed;
 
         bool m_Rotation;
+        bool m_FitToHeight;
     };
 }

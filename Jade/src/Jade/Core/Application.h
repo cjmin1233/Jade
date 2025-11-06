@@ -28,6 +28,7 @@ namespace Jade
 
     private:
         bool OnWindowClose(WindowCloseEvent& e);
+        bool OnWindowResize(WindowResizeEvent& e);
 
         Scope<Window> m_Window;
         ImGuiLayer* m_ImGuiLayer;
@@ -35,6 +36,7 @@ namespace Jade
 
         float m_LastFrameTime;
         bool m_Running;
+        bool m_Minimized;
 
     private:
         static Application* s_Instance;
