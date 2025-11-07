@@ -1,10 +1,14 @@
 #include <Jade.h>
 
-#include "Platform/OpenGL/OpenGLShader.h"
+// ---Entry Point-----------------
+#include <Jade/Core/EntryPoint.h>
+// -------------------------------
 
-#include "imgui/imgui.h"
-
+#include <Platform/OpenGL/OpenGLShader.h>
+#include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Sandbox2D.h"
 
 class ExampleLayer : public Jade::Layer
 {
@@ -92,72 +96,9 @@ public:
             sizeof(squareIndices) / sizeof(uint32_t));
         m_SquareVA->SetIndexBuffer(squareIB);
 #pragma endregion
-
-#pragma region Triangle Shader
-        std::string vertexSrc = R"(
-            #version 330 core
-            layout(location = 0) in vec3 a_Position;
-            layout(location = 1) in vec4 a_Color;
-
-            uniform mat4 u_ViewProjection;
-            uniform mat4 u_Transform;
-
-            out vec4 v_Color;
-
-            void main()
-            {
-                gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-                v_Color = a_Color;
-            }
-        )";
-
-        std::string fragmentSrc = R"(
-            #version 330 core
-            layout(location = 0) out vec4 color;
-
-            in vec4 v_Color;
-
-            void main()
-            {
-                color = v_Color;
-            }
-        )";
-#pragma endregion
-
-#pragma region Square Shader
-        std::string flatColorShaderVertexSrc = R"(
-            #version 330 core
-            layout(location = 0) in vec3 a_Position;
-
-            uniform mat4 u_ViewProjection;
-            uniform mat4 u_Transform;
-
-            out vec3 v_Position; 
-
-            void main()
-            {
-                gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-                v_Position = a_Position;
-            }
-        )";
-
-        std::string flatColorShaderFragSrc = R"(
-            #version 330 core
-            layout(location = 0) out vec4 color;
-
-            in vec3 v_Position;
-            uniform vec3 u_Color;
-
-            void main()
-            {
-                color = vec4(u_Color, 1.0);
-            }
-        )";
-#pragma endregion
-
-        m_ShaderLibrary.Add(Jade::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc));
-        m_ShaderLibrary.Add(Jade::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderFragSrc));
-
+        
+        m_ShaderLibrary.Load("assets/shaders/FlatColor.glsl");
+        m_ShaderLibrary.Load("assets/shaders/VertexPosColor.glsl");
         auto textureShader = m_ShaderLibrary.Load("assets/shaders/texture.glsl");
         m_Texture = Jade::Texture2D::Create("assets/textures/test.png");
 
@@ -194,7 +135,7 @@ public:
         auto vertexPosColorShader = m_ShaderLibrary.Get("VertexPosColor");
 
         std::static_pointer_cast<Jade::OpenGLShader>(flatColorShader)->Bind();
-        std::static_pointer_cast<Jade::OpenGLShader>(flatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+        std::static_pointer_cast<Jade::OpenGLShader>(flatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
 
 
         for(int y = 0; y < 10; y++)
@@ -219,7 +160,8 @@ public:
     virtual void OnImGuiRender() override
     {
         ImGui::Begin("Settings");
-        ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+        ImGui::ColorEdit4("Square Color 4", glm::value_ptr(m_SquareColor));
+        // ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
         ImGui::DragFloat("Square Scale", &m_SquareScale, 0.01f, 0.01f, 0.1f, "%.2f");
         ImGui::End();
     }
@@ -239,9 +181,10 @@ private:
     
     Jade::OrthographicCameraController m_CameraController;
 
-    glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
+    glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
     float m_SquareScale = 0.1f;
 };
+
 
 class SandboxApp : public Jade::Application
 {
@@ -249,6 +192,7 @@ public:
     SandboxApp() 
     {
         PushLayer(new ExampleLayer());
+        // PushLayer(new Sandbox2D());
     }
     ~SandboxApp() {}
 };

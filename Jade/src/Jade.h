@@ -20,7 +20,3 @@
 #include "Jade/Renderer/OrthographicCameraController.h"
 #include "Jade/Renderer/Texture.h"
 #pragma endregion
-
-// ---Entry Point-----------------
-#include "Jade/Core/EntryPoint.h"
-// -------------------------------
