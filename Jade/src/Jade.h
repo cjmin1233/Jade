@@ -11,6 +11,7 @@
 
 #pragma region Renderer APIs
 #include "Jade/Renderer/Renderer.h"
+#include "Jade/Renderer/Renderer2D.h"
 #include "Jade/Renderer/RenderCommand.h"
 #include "Jade/Renderer/RendererAPI.h"
 #include "Jade/Renderer/Shader.h"

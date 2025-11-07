@@ -14,7 +14,7 @@ namespace Jade
     {
     public:
         Application();
-        virtual ~Application() = default;
+        virtual ~Application();
 
         void Run();
 

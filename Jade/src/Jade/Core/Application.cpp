@@ -30,6 +30,11 @@ namespace Jade
         PushOverlay(m_ImGuiLayer);
     }
 
+    Application::~Application()
+    {
+        Renderer::Shutdown();
+    }
+
     void Application::Run()             
     {
         while (m_Running)

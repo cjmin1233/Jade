@@ -14,9 +14,5 @@ public:
     virtual void OnEvent(Jade::Event& event) override;
 
 private:
-    Jade::ShaderLibrary m_ShaderLibrary;
-
-    Jade::Ref<Jade::VertexArray> m_TriangleVA;
-
     Jade::OrthographicCameraController m_CameraController;
 };
