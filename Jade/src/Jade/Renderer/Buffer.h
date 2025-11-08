@@ -46,7 +46,7 @@ namespace Jade
         std::string Name;
         ShaderDataType Type;
         uint32_t Size;
-        uint32_t Offset;
+        size_t Offset;
         bool Normalized;
 
         BufferElement() = default;
@@ -113,7 +113,7 @@ namespace Jade
     private:
         void CalculateOffsetsAndStride()
         {
-            uint32_t offset = 0;
+            size_t offset = 0;
             m_Stride = 0;
             for (auto& element : m_Elements)
             {
