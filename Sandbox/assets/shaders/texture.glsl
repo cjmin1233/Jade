@@ -21,10 +21,12 @@ void main()
 in vec2 v_TexCoord;
 
 uniform sampler2D u_Texture;
+uniform vec2 u_TilingFactor;
+uniform vec4 u_TintColor;
 
 out vec4 color;
 
 void main()
 {
-    color = texture(u_Texture, v_TexCoord);
+    color = texture(u_Texture, v_TexCoord * u_TilingFactor) * u_TintColor;
 }

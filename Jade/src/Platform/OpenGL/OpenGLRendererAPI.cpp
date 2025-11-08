@@ -11,6 +11,9 @@ namespace Jade
         // Enable blending for transparency
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Enable depth testing for 3D rendering
+        glEnable(GL_DEPTH_TEST);
     }
 
     void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -21,6 +24,7 @@ namespace Jade
 
     void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
     {
+        // Set the color used when clearing the screen
         glClearColor(color.r, color.g, color.b, color.a);
     }
 

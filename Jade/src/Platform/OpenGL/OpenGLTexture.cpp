@@ -55,6 +55,13 @@ namespace Jade
         glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+        // GL_TEXTURE_WRAP_S: wrapping mode for texture coordinate S
+        // GL_TEXTURE_WRAP_T: wrapping mode for texture coordinate T
+        // Here we use GL_REPEAT for both S and T coordinates -> texture repeats when coordinates are outside [0,1]
+        // If you want to clamp the texture coordinates instead of repeating -> GL_CLAMP_TO_EDGE
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
         // m_RendererID 텍스처의 0번 레벨, (0,0) 위치에서 m_Width x m_Height 영역에 dataFormat 포맷의 data를 복사
         glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
 

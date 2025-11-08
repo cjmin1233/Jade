@@ -2,7 +2,6 @@
 
 #include "Renderer.h"
 #include "Renderer2D.h"
-#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Jade
 {
@@ -42,14 +41,9 @@ namespace Jade
         const Ref<VertexArray>& vertexArray,
         const glm::mat4& transform)
     {
-        const Ref<OpenGLShader> openGLShader = std::static_pointer_cast<OpenGLShader>(shader);
-
-        if (openGLShader)
-        {
-            openGLShader->Bind();
-            openGLShader->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-            openGLShader->UploadUniformMat4("u_Transform", transform);
-        }
+        shader->Bind();
+        shader->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+        shader->SetUniformMat4("u_Transform", transform);
 
         vertexArray->Bind();
         RenderCommand::DrawIndexed(vertexArray);

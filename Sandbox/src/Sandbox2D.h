@@ -2,6 +2,8 @@
 #include <Jade.h>
 #include <Jade/Core/Layer.h>
 
+#include <glm/glm.hpp>
+
 class Sandbox2D : public Jade::Layer
 {
 public:
@@ -15,4 +17,9 @@ public:
 
 private:
     Jade::OrthographicCameraController m_CameraController;
+
+    Jade::Ref<Jade::Texture2D> m_Texture;
+    glm::vec2 m_SquareSize;
+    glm::vec2 m_TilingFactor;
+    glm::vec4 m_SquareColor;
 };

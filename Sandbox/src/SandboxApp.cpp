@@ -4,7 +4,6 @@
 #include <Jade/Core/EntryPoint.h>
 // -------------------------------
 
-#include <Platform/OpenGL/OpenGLShader.h>
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -102,8 +101,8 @@ public:
         auto textureShader = m_ShaderLibrary.Load("assets/shaders/texture.glsl");
         m_Texture = Jade::Texture2D::Create("assets/textures/test.png");
 
-        std::static_pointer_cast<Jade::OpenGLShader>(textureShader)->Bind();
-        std::static_pointer_cast<Jade::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
+        textureShader->Bind();
+        textureShader->SetUniformInt("u_Texture", 0);
     }
 
     void OnAttach() override
@@ -134,8 +133,8 @@ public:
         auto flatColorShader = m_ShaderLibrary.Get("FlatColor");    
         auto vertexPosColorShader = m_ShaderLibrary.Get("VertexPosColor");
 
-        std::static_pointer_cast<Jade::OpenGLShader>(flatColorShader)->Bind();
-        std::static_pointer_cast<Jade::OpenGLShader>(flatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
+        flatColorShader->Bind();
+        flatColorShader->SetUniformFloat4("u_Color", m_SquareColor);
 
 
         for(int y = 0; y < 10; y++)

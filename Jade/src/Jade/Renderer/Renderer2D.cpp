@@ -5,7 +5,7 @@
 #include "Shader.h"
 #include "RenderCommand.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Jade
 {
@@ -13,6 +13,7 @@ namespace Jade
     {
         Ref<VertexArray> QuadVertexArray;
         Ref<Shader> QuadShader;
+        Ref<Shader> TextureShader;
     };
 
     static Renderer2DStorage* s_Data;
@@ -22,17 +23,18 @@ namespace Jade
         s_Data = new Renderer2DStorage();
         s_Data->QuadVertexArray = VertexArray::Create();
 
-        float squareVertices[3 * 4] = 
+        float squareVertices[5 * 4] = 
         {
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+             0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+             0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
         };
 
         Ref<VertexBuffer> squareVB = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
         squareVB->SetLayout({
-            { ShaderDataType::Float3, "a_Position" }
+            { ShaderDataType::Float3, "a_Position" },
+            { ShaderDataType::Float2, "a_TexCoord" }
             });
         s_Data->QuadVertexArray->AddVertexBuffer(squareVB);
 
@@ -41,6 +43,9 @@ namespace Jade
         s_Data->QuadVertexArray->SetIndexBuffer(squareIB);
 
         s_Data->QuadShader = Shader::Create("assets/shaders/FlatColor.glsl");
+        s_Data->TextureShader = Shader::Create("assets/shaders/Texture.glsl");
+        s_Data->TextureShader->Bind();
+        s_Data->TextureShader->SetUniformInt("u_Texture", 0);
     }
 
     void Renderer2D::Shutdown()
@@ -50,9 +55,11 @@ namespace Jade
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera)
     {
-        auto shader = std::static_pointer_cast<OpenGLShader>(s_Data->QuadShader);
-        shader->Bind();
-        shader->UploadUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+        s_Data->QuadShader->Bind();
+        s_Data->QuadShader->SetUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+
+        s_Data->TextureShader->Bind();
+        s_Data->TextureShader->SetUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
     }
 
     void Renderer2D::EndScene()
@@ -66,15 +73,36 @@ namespace Jade
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
-        auto shader = std::static_pointer_cast<OpenGLShader>(s_Data->QuadShader);
+        Ref<Shader> shader = s_Data->QuadShader;
         shader->Bind();
 
-        shader->UploadUniformFloat4("u_Color", color);
+        shader->SetUniformFloat4("u_Color", color);
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-        shader->UploadUniformMat4("u_Transform", transform);
+        shader->SetUniformMat4("u_Transform", transform);
 
+        s_Data->QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    {
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    {
+        Ref<Shader> shader = s_Data->TextureShader;
+
+        shader->Bind();
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * /* Rotation * */
+            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        shader->SetUniformMat4("u_Transform", transform);
+        shader->SetUniformFloat2("u_TilingFactor", tilingFactor);
+        shader->SetUniformFloat4("u_TintColor", tintColor);
+        texture->Bind(0);
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
     }
