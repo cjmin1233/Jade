@@ -8,7 +8,8 @@
 
 namespace Jade
 {
-    static bool s_GLFWInitialized = false;
+    //static bool s_GLFWInitialized = false;
+    static uint8_t s_GLFWWindowCount = 0;
 
     static void GLFWErrorCallback(int error, const char* description)
     {
@@ -42,17 +43,20 @@ namespace Jade
         JADE_CORE_INFO("Creating window {0} ({1}, {2})",
             props.Title, props.Width, props.Height);
 
-        if(!s_GLFWInitialized)
+        // Initialize GLFW if needed
+        if(s_GLFWWindowCount == 0)
         {
-            // TODO: glfwTerminate on shutdown
+            JADE_CORE_INFO("Initializing GLFW library");
+
             int success = glfwInit();
             JADE_CORE_ASSERT(success, "Could not initialize GLFW!");
             glfwSetErrorCallback(GLFWErrorCallback);
-            s_GLFWInitialized = true;
         }
 
+        // Create GLFW window
         m_Window = glfwCreateWindow((int)props.Width, (int)props.Height,
             m_Data.Title.c_str(), nullptr, nullptr);
+        ++s_GLFWWindowCount;
 
         // Create OpenGL context
         m_Context = CreateScope<OpenGLContext>(m_Window);
@@ -61,6 +65,7 @@ namespace Jade
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
 
+#pragma region GLFW Callbacks
         // Set GLFW callbacks here
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
             {
@@ -153,11 +158,20 @@ namespace Jade
                 MouseMovedEvent event((float)xPos, (float)yPos);
                 data.EventCallback(event);
             });
+#pragma endregion
     }
 
     void WindowsWindow::Shutdown()
     {
         glfwDestroyWindow(m_Window);
+
+        --s_GLFWWindowCount;
+
+        if(s_GLFWWindowCount == 0)
+        {
+            JADE_CORE_INFO("Terminating GLFW library");
+            glfwTerminate();
+        }
     }
 
     void WindowsWindow::OnUpdate()
