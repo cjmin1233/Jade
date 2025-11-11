@@ -7,7 +7,7 @@
 
 namespace Jade
 {
-    class JADE_API Input
+    class Input
     {
     public:
         inline static bool IsKeyPressed(Key::KeyCode keyCode)

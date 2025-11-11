@@ -8,7 +8,7 @@
 
 namespace Jade
 {
-    class JADE_API Log
+    class Log
     {
     public:
         static void Init();

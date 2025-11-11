@@ -1,9 +1,9 @@
 #include "jdpch.h"
 
-#include "Renderer2D.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "RenderCommand.h"
+#include "Jade/Renderer/Renderer2D.h"
+#include "Jade/Renderer/VertexArray.h"
+#include "Jade/Renderer/Shader.h"
+#include "Jade/Renderer/RenderCommand.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 

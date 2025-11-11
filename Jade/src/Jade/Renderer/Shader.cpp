@@ -15,7 +15,7 @@ namespace Jade
                 JADE_CORE_ASSERT(false, "RendererAPI::API::None is not supported");
                 return nullptr;
             case RendererAPI::API::OpenGL:
-                return std::make_shared<OpenGLShader>(filepath);
+                return CreateRef<OpenGLShader>(filepath);
             default:
                 break;
         }
@@ -31,7 +31,7 @@ namespace Jade
                 JADE_CORE_ASSERT(false, "RendererAPI::API::None is not supported");
                 return nullptr;
             case RendererAPI::API::OpenGL:
-                return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+                return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
             default:
                 break;
         }

@@ -1,10 +1,10 @@
 #pragma once
-#include "Event.h"
+#include "Jade/Events/Event.h"
 #include "Jade/Core/MouseCodes.h"
 
 namespace Jade
 {
-    class JADE_API MouseMovedEvent : public Event
+    class MouseMovedEvent : public Event
     {
     public:
         MouseMovedEvent(const float x, const float y)
@@ -27,7 +27,7 @@ namespace Jade
         float m_MouseX, m_MouseY;
     };
 
-    class JADE_API MouseScrolledEvent : public Event
+    class MouseScrolledEvent : public Event
     {
     public:
         MouseScrolledEvent(const float xOffset, const float yOffset)
@@ -51,7 +51,7 @@ namespace Jade
         float m_XOffset, m_YOffset;
     };
 
-    class JADE_API MouseButtonEvent : public Event
+    class MouseButtonEvent : public Event
     {
     public:
         inline MouseCode GetMouseButton() const { return m_Button; }
@@ -66,7 +66,7 @@ namespace Jade
         MouseCode m_Button;
     };
 
-    class JADE_API MouseButtonPressedEvent : public MouseButtonEvent
+    class MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
         MouseButtonPressedEvent(const MouseCode button)
@@ -82,7 +82,7 @@ namespace Jade
         EVENT_CLASS_TYPE(MouseButtonPressed)
     };
 
-    class JADE_API MouseButtonReleasedEvent : public MouseButtonEvent
+    class MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
         MouseButtonReleasedEvent(const MouseCode button)

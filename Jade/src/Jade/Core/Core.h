@@ -1,38 +1,26 @@
 #pragma once
+#include <memory>
+
 // Platform detection using predefined macros
 #ifdef _WIN32
-// Windows x64/x86
-#ifdef _WIN64
-// Windows x64
-#define JADE_PLATFORM_WINDOWS
-#else
-// Windows x86
-#error "x86 Builds are not supported!"
-#endif // _WIN64
-#elif defined(__ANDROID__)
-#define JADE_PLATFORM_ANDROID
-#error "Android platform is not supported yet!"
-#elif defined(__linux__)
-#define JADE_PLATFORM_LINUX
-#error "Linux platform is not supported yet!"
-#else
-#error "Only Windows platform is supported!"
-#endif // _WIN32
-
-
-#ifdef JADE_PLATFORM_WINDOWS
-#if JADE_DYNAMIC_LINK
-    #ifdef JADE_BUILD_DLL
-        #define JADE_API __declspec(dllexport)
+    // Windows x64/x86
+    #ifdef _WIN64
+        // Windows x64
+        #define JADE_PLATFORM_WINDOWS
     #else
-        #define JADE_API __declspec(dllimport)
-    #endif  // JADE_BUILD_DLL
-#else  
-    #define JADE_API
-#endif  // JADE_DYNAMIC_LINK
+        // Windows x86
+        #error "x86 Builds are not supported!"
+    #endif // _WIN64
+
+#elif defined(__ANDROID__)
+    #define JADE_PLATFORM_ANDROID
+    #error "Android platform is not supported yet!"
+#elif defined(__linux__)
+    #define JADE_PLATFORM_LINUX
+    #error "Linux platform is not supported yet!"
 #else
-    #error Jade only supports Windows for now!
-#endif  // JADE_PLATFORM_WINDOWS
+    #error "Only Windows platform is supported!"
+#endif // _WIN32
 
 #ifdef JADE_DEBUG
 #define JADE_ENABLE_ASSERTS
@@ -50,8 +38,6 @@
 
 #define BIT(x) (1 << x)
 #define JADE_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
-
-#include <memory>
 
 namespace Jade
 {

@@ -6,7 +6,7 @@
 
 namespace Jade
 {
-    class JADE_API LayerStack
+    class LayerStack
     {
     public:
         LayerStack();

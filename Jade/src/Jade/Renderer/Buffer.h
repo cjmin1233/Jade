@@ -1,4 +1,5 @@
 #pragma once
+
 namespace Jade
 {
     enum class ShaderDataType

@@ -1,10 +1,10 @@
 #pragma once
 #include "Jade/Core/KeyCodes.h"
-#include "Event.h"
+#include "Jade/Events/Event.h"
 
 namespace Jade
 {
-    class JADE_API KeyEvent : public Event
+    class KeyEvent : public Event
     {
     public:
         inline Key::KeyCode GetKeyCode() const { return m_KeyCode; }
@@ -18,7 +18,7 @@ namespace Jade
         Key::KeyCode m_KeyCode;
     };
 
-    class JADE_API KeyPressedEvent : public KeyEvent
+    class KeyPressedEvent : public KeyEvent
     {
     public:
         KeyPressedEvent(const Key::KeyCode keycode, bool isRepeat = false)
@@ -39,7 +39,7 @@ namespace Jade
         bool m_IsRepeat;
     };
 
-    class JADE_API KeyReleasedEvent : public KeyEvent
+    class KeyReleasedEvent : public KeyEvent
     {
     public:
         KeyReleasedEvent(const Key::KeyCode keycode)
@@ -55,7 +55,7 @@ namespace Jade
         EVENT_CLASS_TYPE(KeyReleased)
     };
 
-    class JADE_API KeyTypedEvent : public KeyEvent
+    class KeyTypedEvent : public KeyEvent
     {
     public:
         KeyTypedEvent(const Key::KeyCode keycode)

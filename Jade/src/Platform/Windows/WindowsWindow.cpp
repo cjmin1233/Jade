@@ -1,6 +1,6 @@
 #include "jdpch.h"      
 
-#include "WindowsWindow.h"
+#include "Platform/Windows/WindowsWindow.h"
 #include "Jade/Events/ApplicationEvent.h"
 #include "Jade/Events/KeyEvent.h"
 #include "Jade/Events/MouseEvent.h"
@@ -16,9 +16,9 @@ namespace Jade
         JADE_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
     }
 
-    Window* Window::Create(const WindowProps& props)
+    Scope<Window> Window::Create(const WindowProps& props)
     {
-        return new WindowsWindow(props);
+        return CreateScope<WindowsWindow>(props);
     }
 
     WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -44,7 +44,7 @@ namespace Jade
             props.Title, props.Width, props.Height);
 
         // Initialize GLFW if needed
-        if(s_GLFWWindowCount == 0)
+        if (s_GLFWWindowCount == 0)
         {
             JADE_CORE_INFO("Initializing GLFW library");
 
@@ -89,64 +89,64 @@ namespace Jade
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-                switch(action)
+                switch (action)
                 {
-                    case GLFW_PRESS:
-                    {
-                        KeyPressedEvent event((Key::KeyCode)key, false);
-                        data.EventCallback(event);
-                        break;
-                    }
-                    case GLFW_RELEASE:
-                    {
-                        KeyReleasedEvent event((Key::KeyCode)key);
-                        data.EventCallback(event);
-                        break;
-                    }
-                    case GLFW_REPEAT:
-                    {
-                        KeyPressedEvent event((Key::KeyCode)key, true);
-                        data.EventCallback(event);
-                        break;
-                    }
+                case GLFW_PRESS:
+                {
+                    KeyPressedEvent event((Key::KeyCode)key, false);
+                    data.EventCallback(event);
+                    break;
+                }
+                case GLFW_RELEASE:
+                {
+                    KeyReleasedEvent event((Key::KeyCode)key);
+                    data.EventCallback(event);
+                    break;
+                }
+                case GLFW_REPEAT:
+                {
+                    KeyPressedEvent event((Key::KeyCode)key, true);
+                    data.EventCallback(event);
+                    break;
+                }
                 }
             });
 
         glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-                
+
                 KeyTypedEvent event((Key::KeyCode)keycode);
                 data.EventCallback(event);
             });
 
-        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, 
+        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window,
             int button, int action, int mods)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-                
-                switch(action)
+
+                switch (action)
                 {
-                    case GLFW_PRESS:
-                    {
-                        MouseButtonPressedEvent event((MouseCode)button);
-                        data.EventCallback(event);
-                        break;
-                    }
-                    case GLFW_RELEASE:
-                    {
-                        MouseButtonReleasedEvent event((MouseCode)button);
-                        data.EventCallback(event);
-                        break;
-                    }
+                case GLFW_PRESS:
+                {
+                    MouseButtonPressedEvent event((MouseCode)button);
+                    data.EventCallback(event);
+                    break;
+                }
+                case GLFW_RELEASE:
+                {
+                    MouseButtonReleasedEvent event((MouseCode)button);
+                    data.EventCallback(event);
+                    break;
+                }
                 }
             });
 
-        glfwSetScrollCallback(m_Window, [](GLFWwindow* window, 
+        glfwSetScrollCallback(m_Window, [](GLFWwindow* window,
             double xOffset, double yOffset)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-                
+
                 MouseScrolledEvent event((float)xOffset, (float)yOffset);
                 data.EventCallback(event);
             });
@@ -154,7 +154,7 @@ namespace Jade
         glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
             {
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-                
+
                 MouseMovedEvent event((float)xPos, (float)yPos);
                 data.EventCallback(event);
             });
@@ -167,7 +167,7 @@ namespace Jade
 
         --s_GLFWWindowCount;
 
-        if(s_GLFWWindowCount == 0)
+        if (s_GLFWWindowCount == 0)
         {
             JADE_CORE_INFO("Terminating GLFW library");
             glfwTerminate();
@@ -182,7 +182,7 @@ namespace Jade
 
     void WindowsWindow::SetVSync(bool enabled)
     {
-        if(enabled)
+        if (enabled)
             glfwSwapInterval(1);
         else
             glfwSwapInterval(0);

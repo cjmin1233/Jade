@@ -119,6 +119,7 @@ namespace Jade
         if (in)
         {
             in.seekg(0, std::ios::end);
+            // Get size of file
             size_t size = in.tellg();
             if (size != -1)
             {

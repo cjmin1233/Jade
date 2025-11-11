@@ -39,15 +39,14 @@ public:
         };
 
         // 위치 VBO
-        Jade::Ref<Jade::VertexBuffer> positionBuffer;
-        positionBuffer = Jade::VertexBuffer::Create(positions, sizeof(positions));
+        Jade::Ref<Jade::VertexBuffer> positionBuffer = Jade::VertexBuffer::Create(positions, sizeof(positions));
         positionBuffer->SetLayout({
             {Jade::ShaderDataType::Float3, "a_Position"}
             });
         m_TriangleVA->AddVertexBuffer(positionBuffer);
+
         // 색상 VBO
-        Jade::Ref<Jade::VertexBuffer> colorBuffer;
-        colorBuffer = Jade::VertexBuffer::Create(colors, sizeof(colors));
+        Jade::Ref<Jade::VertexBuffer> colorBuffer = Jade::VertexBuffer::Create(colors, sizeof(colors));
         colorBuffer->SetLayout({
             {Jade::ShaderDataType::Float4, "a_Color"}
             });
@@ -59,8 +58,7 @@ public:
             0, 1, 2,
         };
 
-        Jade::Ref<Jade::IndexBuffer> indexBuffer;
-        indexBuffer = Jade::IndexBuffer::Create(indices,
+        Jade::Ref<Jade::IndexBuffer> indexBuffer = Jade::IndexBuffer::Create(indices,
             sizeof(indices) / sizeof(uint32_t));
         m_TriangleVA->SetIndexBuffer(indexBuffer);
 #pragma endregion
@@ -76,8 +74,7 @@ public:
             -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
         };
 
-        Jade::Ref<Jade::VertexBuffer> squareVB;
-        squareVB = Jade::VertexBuffer::Create(squareVertices,
+        Jade::Ref<Jade::VertexBuffer> squareVB = Jade::VertexBuffer::Create(squareVertices,
             sizeof(squareVertices));
         squareVB->SetLayout({
             {Jade::ShaderDataType::Float3, "a_Position"},
@@ -90,8 +87,7 @@ public:
             0, 1, 2,
             2, 3, 0
         };
-        Jade::Ref<Jade::IndexBuffer> squareIB;
-        squareIB = Jade::IndexBuffer::Create(squareIndices,
+        Jade::Ref<Jade::IndexBuffer> squareIB = Jade::IndexBuffer::Create(squareIndices,
             sizeof(squareIndices) / sizeof(uint32_t));
         m_SquareVA->SetIndexBuffer(squareIB);
 #pragma endregion
@@ -135,13 +131,16 @@ public:
 
         flatColorShader->Bind();
         flatColorShader->SetUniformFloat4("u_Color", m_SquareColor);
+        textureShader->Bind();
+        textureShader->SetUniformFloat2("u_TilingFactor", glm::vec2(1.0f));
+        textureShader->SetUniformFloat4("u_TintColor", glm::vec4(1.0f));
 
 
         for(int y = 0; y < 10; y++)
         {
             for(int x = 0; x < 10; x++)
             {
-                glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
+                glm::vec3 pos(x * 0.11f, y * 0.11f, -0.1f);
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) *
                     glm::scale(glm::mat4(1.0f), glm::vec3(m_SquareScale));
                 Jade::Renderer::Submit(flatColorShader, m_SquareVA, transform);
@@ -190,8 +189,8 @@ class SandboxApp : public Jade::Application
 public:
     SandboxApp() 
     {
-        //PushLayer(new ExampleLayer());
-        PushLayer(new Sandbox2D());
+        PushLayer(new ExampleLayer());
+        //PushLayer(new Sandbox2D());
     }
     ~SandboxApp() {}
 };

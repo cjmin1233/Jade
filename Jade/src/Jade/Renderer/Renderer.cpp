@@ -1,7 +1,7 @@
 #include "jdpch.h"
 
-#include "Renderer.h"
-#include "Renderer2D.h"
+#include "Jade/Renderer/Renderer.h"
+#include "Jade/Renderer/Renderer2D.h"
 
 namespace Jade
 {
