@@ -17,6 +17,7 @@
 // Jade api
 #include "Jade/Core/Core.h"
 #include "Jade/Core/Log.h"
+#include "Jade/Debug/Instrumentor.h"
 
 #ifdef JADE_PLATFORM_WINDOWS
 #include <Windows.h>

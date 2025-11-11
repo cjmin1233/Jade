@@ -189,8 +189,8 @@ class SandboxApp : public Jade::Application
 public:
     SandboxApp() 
     {
-        PushLayer(new ExampleLayer());
-        //PushLayer(new Sandbox2D());
+        // PushLayer(new ExampleLayer());
+        PushLayer(new Sandbox2D());
     }
     ~SandboxApp() {}
 };
