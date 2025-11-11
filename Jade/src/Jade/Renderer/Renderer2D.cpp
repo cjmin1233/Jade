@@ -12,8 +12,8 @@ namespace Jade
     struct Renderer2DStorage
     {
         Ref<VertexArray> QuadVertexArray;
-        Ref<Shader> QuadShader;
         Ref<Shader> TextureShader;
+        Ref<Texture2D> WhiteTexture;
     };
 
     static Renderer2DStorage* s_Data;
@@ -42,7 +42,10 @@ namespace Jade
         Ref<IndexBuffer> squareIB = IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
         s_Data->QuadVertexArray->SetIndexBuffer(squareIB);
 
-        s_Data->QuadShader = Shader::Create("assets/shaders/FlatColor.glsl");
+        s_Data->WhiteTexture = Texture2D::Create(1, 1);
+        uint32_t whiteTextureData = 0xffffffff;
+        s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
+
         s_Data->TextureShader = Shader::Create("assets/shaders/Texture.glsl");
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetUniformInt("u_Texture", 0);
@@ -55,9 +58,6 @@ namespace Jade
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera)
     {
-        s_Data->QuadShader->Bind();
-        s_Data->QuadShader->SetUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-
         s_Data->TextureShader->Bind();
         s_Data->TextureShader->SetUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
     }
@@ -73,16 +73,16 @@ namespace Jade
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
-        Ref<Shader> shader = s_Data->QuadShader;
-        shader->Bind();
-
-        shader->SetUniformFloat4("u_Color", color);
+        s_Data->WhiteTexture->Bind(0);
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-        shader->SetUniformMat4("u_Transform", transform);
+        
+        s_Data->TextureShader->SetUniformMat4("u_Transform", transform);
+        s_Data->TextureShader->SetUniformFloat4("u_TintColor", color);
 
         s_Data->QuadVertexArray->Bind();
+
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
     }
 
@@ -93,16 +93,15 @@ namespace Jade
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
-        Ref<Shader> shader = s_Data->TextureShader;
+        texture->Bind(0);
 
-        shader->Bind();
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * /* Rotation * */
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-        shader->SetUniformMat4("u_Transform", transform);
-        shader->SetUniformFloat2("u_TilingFactor", tilingFactor);
-        shader->SetUniformFloat4("u_TintColor", tintColor);
-        texture->Bind(0);
+        s_Data->TextureShader->SetUniformMat4("u_Transform", transform);
+        s_Data->TextureShader->SetUniformFloat2("u_TilingFactor", tilingFactor);
+        s_Data->TextureShader->SetUniformFloat4("u_TintColor", tintColor);
+
         s_Data->QuadVertexArray->Bind();
         RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
     }

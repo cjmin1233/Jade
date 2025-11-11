@@ -38,9 +38,9 @@ void Sandbox2D::OnUpdate(Jade::Timestep ts)
     Jade::RenderCommand::Clear();
 
     Jade::Renderer2D::BeginScene(m_CameraController.GetCamera());
+    Jade::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, m_SquareSize, m_Texture, m_TilingFactor, m_SquareColor);
     Jade::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
     Jade::Renderer2D::DrawQuad({ 0.5f, 0.0f, 0.0f }, { 0.5f, 1.2f }, { 0.1f, 0.2f, 0.8f, 1.0f });
-    Jade::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, m_SquareSize, m_Texture, m_TilingFactor, m_SquareColor);
     Jade::Renderer2D::EndScene();
 }
 

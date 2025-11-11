@@ -35,6 +35,9 @@ namespace Jade
     }
     void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
     {
+        // Draw the elements using the index buffer
         glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+        //// Unbind the texture after drawing
+        //glBindTexture(GL_TEXTURE_2D, 0);
     }
 }
