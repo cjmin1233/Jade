@@ -23,6 +23,8 @@ namespace Jade
 
     void OrthographicCameraController::OnUpdate(Timestep ts)
     {
+        JADE_PROFILE_FUNCTION();
+
         // Input Handling
         // WASD for xz movement
         if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::A))
@@ -80,6 +82,8 @@ namespace Jade
 
     void OrthographicCameraController::OnEvent(Event& e)
     {
+        JADE_PROFILE_FUNCTION();
+
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<MouseScrolledEvent>(JADE_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
         dispatcher.Dispatch<WindowResizeEvent>(JADE_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
@@ -87,6 +91,8 @@ namespace Jade
 
     bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
     {
+        JADE_PROFILE_FUNCTION();
+
         m_ZoomLevel -= e.GetYOffset() * 0.25f;
         m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 
@@ -97,6 +103,8 @@ namespace Jade
 
     bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
     {
+        JADE_PROFILE_FUNCTION();
+
         if(m_FitToHeight)
             m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
         else
@@ -108,6 +116,8 @@ namespace Jade
     }
     void OrthographicCameraController::UpdateCameraProjection()
     {
+        JADE_PROFILE_FUNCTION();
+
         if(m_FitToHeight)
             m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
         else

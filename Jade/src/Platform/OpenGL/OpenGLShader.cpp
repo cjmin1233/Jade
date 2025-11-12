@@ -23,7 +23,9 @@ namespace Jade
     OpenGLShader::OpenGLShader(const std::string& filepath)
         : m_RendererID(0)
         , m_Name("")
-    {     
+    {
+        JADE_PROFILE_FUNCTION();
+
         std::string source = ReadFile(filepath);
         auto shaderSources = PreProcess(source);
         CompileShader(shaderSources);
@@ -44,6 +46,8 @@ namespace Jade
         : m_RendererID(0)
         , m_Name(name)
     {
+        JADE_PROFILE_FUNCTION();
+
         std::unordered_map<GLenum, std::string> shaderSources;
         shaderSources[GL_VERTEX_SHADER] = vertexSrc;
         shaderSources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -53,17 +57,23 @@ namespace Jade
 
     OpenGLShader::~OpenGLShader()
     {
+        JADE_PROFILE_FUNCTION();
+
         glDeleteProgram(m_RendererID);
     }
 
     void OpenGLShader::Bind() const
-    {           
+    {
+        JADE_PROFILE_FUNCTION();
+
         // glUseProgram sets the current active shader program
         glUseProgram(m_RendererID);
     }
 
     void OpenGLShader::Unbind() const
     {
+        JADE_PROFILE_FUNCTION();
+
         glUseProgram(0);
     }
 
@@ -113,6 +123,8 @@ namespace Jade
 
     std::string OpenGLShader::ReadFile(const std::string& filepath)
     {
+        JADE_PROFILE_FUNCTION();
+
         std::string result;
         std::ifstream in(filepath, std::ios::in | std::ios::binary);
 
@@ -143,6 +155,8 @@ namespace Jade
 
     std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
     {
+        JADE_PROFILE_FUNCTION();
+
         std::unordered_map<GLenum, std::string> shaderSources;
 
         const char* typeToken = "#type";
@@ -182,6 +196,8 @@ namespace Jade
 
     void OpenGLShader::CompileShader(const std::unordered_map<GLenum, std::string>& shaderSources)
     {
+        JADE_PROFILE_FUNCTION();
+
         m_RendererID = glCreateProgram();
 
         JADE_CORE_ASSERT(shaderSources.size() <= 2,

@@ -9,17 +9,23 @@ namespace Jade
 
     void Renderer::Init()
     {
+        JADE_PROFILE_FUNCTION();
+
         RenderCommand::Init();
         Renderer2D::Init();
     }
 
     void Renderer::Shutdown()
     {
+        JADE_PROFILE_FUNCTION();
+
         Renderer2D::Shutdown();
     }
 
     void Renderer::OnWindowResize(uint32_t width, uint32_t height)
     {
+        JADE_PROFILE_FUNCTION();
+
         RenderCommand::SetViewport(0, 0, width, height);
     }
 
@@ -41,6 +47,8 @@ namespace Jade
         const Ref<VertexArray>& vertexArray,
         const glm::mat4& transform)
     {
+        JADE_PROFILE_FUNCTION();
+
         shader->Bind();
         shader->SetUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
         shader->SetUniformMat4("u_Transform", transform);

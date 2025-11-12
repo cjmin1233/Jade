@@ -15,6 +15,8 @@ namespace Jade
     }
     void OpenGLContext::Init()
     {
+        JADE_PROFILE_FUNCTION();
+
         glfwMakeContextCurrent(m_WindowHandle);
         int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
         JADE_CORE_ASSERT(status, "Failed to initialize Glad!");
@@ -38,6 +40,8 @@ namespace Jade
     }
     void OpenGLContext::SwapBuffers()
     {
+        JADE_PROFILE_FUNCTION();
+
         glfwSwapBuffers(m_WindowHandle);
     }
 }

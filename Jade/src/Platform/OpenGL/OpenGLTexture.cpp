@@ -14,6 +14,8 @@ namespace Jade
         , m_InternalFormat(GL_RGBA8)    // 4 channels
         , m_DataFormat(GL_RGBA)         // 4 channels
     {
+        JADE_PROFILE_FUNCTION();
+
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
         glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
@@ -31,12 +33,19 @@ namespace Jade
         , m_InternalFormat(0)
         , m_DataFormat(0)
     {
+        JADE_PROFILE_FUNCTION();
+
         int width, height, channels;
 
         stbi_set_flip_vertically_on_load(1);
-        // Load image data
-        stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-        JADE_CORE_ASSERT(data, "Failed to load image!");
+
+        stbi_uc* data = nullptr;
+        {
+            JADE_PROFILE_SCOPE("stbi_load");
+            // Load image data
+            data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+            JADE_CORE_ASSERT(data, "Failed to load image!");
+        }
         m_Width = width;
         m_Height = height;
 
@@ -86,11 +95,15 @@ namespace Jade
 
     OpenGLTexture2D::~OpenGLTexture2D()
     {
+        JADE_PROFILE_FUNCTION();
+
         glDeleteTextures(1, &m_RendererID);
     }
 
     void OpenGLTexture2D::SetData(void* data, uint32_t size)
     {
+        JADE_PROFILE_FUNCTION();
+
         // Calculate bytes per pixel based on data format
         uint32_t bpp = m_DataFormat == GL_RGBA ? 4 : 3;
 
@@ -100,6 +113,8 @@ namespace Jade
 
     void OpenGLTexture2D::Bind(uint32_t slot) const
     {
+        JADE_PROFILE_FUNCTION();
+
         glBindTextureUnit(slot, m_RendererID);
     }
 }

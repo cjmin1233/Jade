@@ -20,6 +20,8 @@ namespace Jade
         , m_Running(true)
         , m_Minimized(false)
     {
+        JADE_PROFILE_FUNCTION();
+
         JADE_CORE_ASSERT(!s_Instance, "Application already exists!");
         s_Instance = this;
 
@@ -32,6 +34,8 @@ namespace Jade
 
     Application::~Application()
     {
+        JADE_PROFILE_FUNCTION();
+
         for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
         {
             (*it)->OnDetach();
@@ -42,28 +46,41 @@ namespace Jade
 
     void Application::Run()             
     {
+        JADE_PROFILE_FUNCTION();
+
         while (m_Running)
         {
+            JADE_PROFILE_SCOPE("App RunLoop");
+
             float time = (float)glfwGetTime(); // Platform::GetTime()
             Timestep timestep = time - m_LastFrameTime;
             m_LastFrameTime = time;
 
             if (!m_Minimized)
             {
-                // Update layers
-                for (Layer* layer : m_LayerStack)
                 {
-                    layer->OnUpdate(timestep);
+                    JADE_PROFILE_SCOPE("LayerStack OnUpdate");
+
+                    // Update layers
+                    for (Layer* layer : m_LayerStack)
+                    {
+                        layer->OnUpdate(timestep);
+                    }
+                }
+
+                {
+                    JADE_PROFILE_SCOPE("LayerStack OnImGuiRender");
+
+                    // ImGui Rendering
+                    m_ImGuiLayer->Begin();
+                    for (Layer* layer : m_LayerStack)
+                    {
+                        layer->OnImGuiRender();
+                    }
+                    m_ImGuiLayer->End();
                 }
             }
 
-            // ImGui Rendering
-            m_ImGuiLayer->Begin();
-            for (Layer* layer : m_LayerStack)
-            {
-                layer->OnImGuiRender();
-            }
-            m_ImGuiLayer->End();
 
             m_Window->OnUpdate();
         }
@@ -71,6 +88,8 @@ namespace Jade
 
     void Application::OnEvent(Event& e)
     {
+        JADE_PROFILE_FUNCTION();
+
         // 특정 타입의 이벤트를 App 단에서 먼저 처리.
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(JADE_BIND_EVENT_FN(Application::OnWindowClose));
@@ -89,12 +108,16 @@ namespace Jade
 
     void Application::PushLayer(Layer* layer)
     {
+        JADE_PROFILE_FUNCTION();
+
         m_LayerStack.PushLayer(layer);
         layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer* layer)
     {
+        JADE_PROFILE_FUNCTION();
+
         m_LayerStack.PushOverlay(layer);
         layer->OnAttach();
     }
@@ -108,7 +131,9 @@ namespace Jade
     }
 
     bool Application::OnWindowResize(WindowResizeEvent& e)
-    {       
+    {
+        JADE_PROFILE_FUNCTION();
+
         if(e.GetWidth() == 0 || e.GetHeight() == 0)
         {
             m_Minimized = true;

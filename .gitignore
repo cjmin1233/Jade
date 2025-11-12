@@ -370,6 +370,7 @@ Intermediates/
 # Jade files
 *.log
 *.jade
+profiles/
 
 # Visual Studio files and folder
 .vs/

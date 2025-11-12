@@ -18,15 +18,49 @@ namespace Jade
 
         virtual const std::string& GetName() const override { return m_Name; }
 
-        virtual void SetUniformInt(const std::string& name, int value) override { UploadUniformInt(name, value); }
+#pragma region Uniform Setters
+        virtual void SetUniformInt(const std::string& name, int value) override
+        {
+            JADE_PROFILE_FUNCTION();
+            UploadUniformInt(name, value);
+        }
 
-        virtual void SetUniformFloat(const std::string& name, float value) override { UploadUniformFloat(name, value); }
-        virtual void SetUniformFloat2(const std::string& name, const glm::vec2& value) override { UploadUniformFloat2(name, value); }
-        virtual void SetUniformFloat3(const std::string& name, const glm::vec3& value) override { UploadUniformFloat3(name, value); }
-        virtual void SetUniformFloat4(const std::string& name, const glm::vec4& value) override { UploadUniformFloat4(name, value); }
+        virtual void SetUniformFloat(const std::string& name, float value) override 
+        {
+            JADE_PROFILE_FUNCTION();
+            UploadUniformFloat(name, value); 
+        }
 
-        virtual void SetUniformMat3(const std::string& name, const glm::mat3& value) override { UploadUniformMat3(name, value); }
-        virtual void SetUniformMat4(const std::string& name, const glm::mat4& value) override { UploadUniformMat4(name, value); }
+        virtual void SetUniformFloat2(const std::string& name, const glm::vec2& value) override
+        {
+            JADE_PROFILE_FUNCTION();
+            UploadUniformFloat2(name, value);
+        }
+
+        virtual void SetUniformFloat3(const std::string& name, const glm::vec3& value) override
+        {
+            JADE_PROFILE_FUNCTION();
+            UploadUniformFloat3(name, value);
+        }
+
+        virtual void SetUniformFloat4(const std::string& name, const glm::vec4& value) override
+        {
+            JADE_PROFILE_FUNCTION();
+            UploadUniformFloat4(name, value);
+        }
+
+        virtual void SetUniformMat3(const std::string& name, const glm::mat3& value) override
+        {
+            JADE_PROFILE_FUNCTION();
+            UploadUniformMat3(name, value);
+        }
+
+        virtual void SetUniformMat4(const std::string& name, const glm::mat4& value) override
+        {
+            JADE_PROFILE_FUNCTION();
+            UploadUniformMat4(name, value);
+        }
+#pragma endregion
 
     private:
 #pragma region Uploaders

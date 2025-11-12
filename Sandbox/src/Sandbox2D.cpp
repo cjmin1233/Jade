@@ -15,6 +15,8 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
+    JADE_PROFILE_FUNCTION();
+
     JADE_INFO("Sandbox2D Attached");
 
     m_Texture = Jade::Texture2D::Create("assets/textures/test.png");
@@ -22,6 +24,8 @@ void Sandbox2D::OnAttach()
 
 void Sandbox2D::OnDetach()
 {
+    JADE_PROFILE_FUNCTION();
+
     JADE_INFO("Sandbox2D Detached");
 }
 

@@ -15,6 +15,8 @@ namespace Jade
 
     void Camera::UpdateViewMatrix()
     {
+        JADE_PROFILE_FUNCTION();
+
         //// 쿼터니언을 3x3 회전 행렬로 변환
         //const float w = m_Rotation.w;
         //const float x = m_Rotation.x;

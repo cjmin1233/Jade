@@ -26,16 +26,22 @@ namespace Jade
         , m_Context(nullptr)
         , m_Data()
     {
+        JADE_PROFILE_FUNCTION();
+
         Init(props);
     }
 
     WindowsWindow::~WindowsWindow()
     {
+        JADE_PROFILE_FUNCTION();
+
         Shutdown();
     }
 
     void WindowsWindow::Init(const WindowProps& props)
     {
+        JADE_PROFILE_FUNCTION();
+
         m_Data.Title = props.Title;
         m_Data.Width = props.Width;
         m_Data.Height = props.Height;
@@ -46,6 +52,8 @@ namespace Jade
         // Initialize GLFW if needed
         if (s_GLFWWindowCount == 0)
         {
+            JADE_PROFILE_SCOPE("glfwInit");
+
             JADE_CORE_INFO("Initializing GLFW library");
 
             int success = glfwInit();
@@ -53,10 +61,14 @@ namespace Jade
             glfwSetErrorCallback(GLFWErrorCallback);
         }
 
-        // Create GLFW window
-        m_Window = glfwCreateWindow((int)props.Width, (int)props.Height,
-            m_Data.Title.c_str(), nullptr, nullptr);
-        ++s_GLFWWindowCount;
+        {
+            JADE_PROFILE_SCOPE("glfwCreateWindow");
+
+            // Create GLFW window
+            m_Window = glfwCreateWindow((int)props.Width, (int)props.Height,
+                m_Data.Title.c_str(), nullptr, nullptr);
+            ++s_GLFWWindowCount;
+        }
 
         // Create OpenGL context
         m_Context = CreateScope<OpenGLContext>(m_Window);
@@ -69,6 +81,8 @@ namespace Jade
         // Set GLFW callbacks here
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
             {
+                JADE_PROFILE_SCOPE("Window Resize Callback");
+
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
                 data.Width = width;
                 data.Height = height;
@@ -79,6 +93,8 @@ namespace Jade
 
         glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
             {
+                JADE_PROFILE_SCOPE("Window Close Callback");
+
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
                 WindowCloseEvent event;
                 data.EventCallback(event);
@@ -87,6 +103,8 @@ namespace Jade
         glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key,
             int scancode, int action, int mods)
             {
+                JADE_PROFILE_SCOPE("Key Callback");
+
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
                 switch (action)
@@ -114,6 +132,8 @@ namespace Jade
 
         glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
             {
+                JADE_PROFILE_SCOPE("Char Callback");
+
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
                 KeyTypedEvent event((Key::KeyCode)keycode);
@@ -123,6 +143,8 @@ namespace Jade
         glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window,
             int button, int action, int mods)
             {
+                JADE_PROFILE_SCOPE("Mouse Button Callback");
+
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
                 switch (action)
@@ -145,6 +167,8 @@ namespace Jade
         glfwSetScrollCallback(m_Window, [](GLFWwindow* window,
             double xOffset, double yOffset)
             {
+                JADE_PROFILE_SCOPE("Mouse Scroll Callback");
+
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
                 MouseScrolledEvent event((float)xOffset, (float)yOffset);
@@ -153,6 +177,8 @@ namespace Jade
 
         glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
             {
+                JADE_PROFILE_SCOPE("Mouse Move Callback");
+
                 WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
                 MouseMovedEvent event((float)xPos, (float)yPos);
@@ -163,12 +189,20 @@ namespace Jade
 
     void WindowsWindow::Shutdown()
     {
-        glfwDestroyWindow(m_Window);
+        JADE_PROFILE_FUNCTION();
+
+        {
+            JADE_PROFILE_SCOPE("glfwDestroyWindow");
+
+            glfwDestroyWindow(m_Window);
+        }
 
         --s_GLFWWindowCount;
 
         if (s_GLFWWindowCount == 0)
         {
+            JADE_PROFILE_SCOPE("glfwTerminate");
+
             JADE_CORE_INFO("Terminating GLFW library");
             glfwTerminate();
         }
@@ -176,12 +210,20 @@ namespace Jade
 
     void WindowsWindow::OnUpdate()
     {
-        glfwPollEvents();
+        JADE_PROFILE_FUNCTION();
+
+        {
+            JADE_PROFILE_SCOPE("glfwPollEvents");
+
+            glfwPollEvents();
+        }
         m_Context->SwapBuffers();
     }
 
     void WindowsWindow::SetVSync(bool enabled)
     {
+        JADE_PROFILE_FUNCTION();
+
         if (enabled)
             glfwSwapInterval(1);
         else

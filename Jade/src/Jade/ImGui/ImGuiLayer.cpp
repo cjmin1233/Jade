@@ -20,6 +20,8 @@ namespace Jade
 
     void ImGuiLayer::OnAttach()
     {
+        JADE_PROFILE_FUNCTION();
+
         JADE_INFO("ImGuiLayer Attached");
 
         IMGUI_CHECKVERSION();
@@ -55,6 +57,8 @@ namespace Jade
 
     void ImGuiLayer::OnDetach()
     {
+        JADE_PROFILE_FUNCTION();
+
         JADE_INFO("ImGuiLayer Detached");
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
@@ -63,12 +67,16 @@ namespace Jade
 
     void ImGuiLayer::OnImGuiRender()
     {
+        JADE_PROFILE_FUNCTION();
+
         static bool show = false;
         ImGui::ShowDemoWindow(&show);
     }
 
     void ImGuiLayer::Begin()
     {
+        JADE_PROFILE_FUNCTION();
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -76,17 +84,25 @@ namespace Jade
 
     void ImGuiLayer::End()
     {
+        JADE_PROFILE_FUNCTION();
+
         ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
         io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), 
             (float)app.GetWindow().GetHeight());
 
         // Rendering
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        {
+            JADE_PROFILE_SCOPE("ImGui Render");
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        }
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
+            JADE_PROFILE_SCOPE("ImGui Render Viewports");
+
             GLFWwindow* backup_current_context = glfwGetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();

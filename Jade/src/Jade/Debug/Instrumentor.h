@@ -3,6 +3,7 @@
 #include <chrono>
 #include <algorithm>
 #include <fstream>
+#include <filesystem>
 
 #include <thread>
 
@@ -37,13 +38,41 @@ namespace Jade
     public:
         void BeginSession(const std::string& name, const std::string& filepath = "results.json")
         {
-            m_OutputStream.open(filepath);
+            namespace fs = std::filesystem;
+
+            fs::path inputPath(filepath);
+            fs::path outPath;
+
+            std::string ext = inputPath.extension().string();
+            std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
+            if (ext == ".json")
+            {
+                std::error_code ec;
+                fs::create_directories("profiles", ec); // 실패해도 진행
+                outPath = fs::path("profiles") / inputPath.filename();
+            }
+            else
+            {
+                outPath = inputPath; // 그대로 사용
+            }
+
+            m_OutputStream.open(outPath.string(), std::ios::out);
+            if (!m_OutputStream.is_open())
+            {
+                JADE_CORE_ASSERT(false, "Instrumentor could not open results file: {0}", filepath);
+                return;
+            }
+
             WriteHeader();
             m_CurrentSession = new InstrumentationSession{ name };
         }
 
         void EndSession()
         {
+            if (!m_OutputStream.is_open())
+                return;
+
             WriteFooter();
             m_OutputStream.close();
             delete m_CurrentSession;
