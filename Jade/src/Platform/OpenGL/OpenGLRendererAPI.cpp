@@ -6,9 +6,39 @@
 
 namespace Jade
 {
+    // OpenGL debug message callback function
+    void OpenGLMessageCallback(
+        unsigned source,
+        unsigned type,
+        unsigned id,
+        unsigned severity,
+        int length,
+        const char* message,
+        const void* userParam)
+    {
+        switch (severity)
+        {
+        case GL_DEBUG_SEVERITY_HIGH:         JADE_CORE_CRITICAL(message); return;
+        case GL_DEBUG_SEVERITY_MEDIUM:       JADE_CORE_ERROR(message); return;
+        case GL_DEBUG_SEVERITY_LOW:          JADE_CORE_WARN(message); return;
+        case GL_DEBUG_SEVERITY_NOTIFICATION: JADE_CORE_TRACE(message); return;
+        }
+
+        JADE_CORE_ASSERT(false, "Unknown severity level!");
+    }
+
     void OpenGLRendererAPI::Init()
     {
         JADE_PROFILE_FUNCTION();
+
+#ifdef JADE_DEBUG
+        // Enable OpenGL debug output
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(OpenGLMessageCallback, nullptr);
+
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+#endif
 
         // Enable blending for transparency
         glEnable(GL_BLEND);

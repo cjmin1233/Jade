@@ -5,6 +5,7 @@
 #include "Jade/Events/KeyEvent.h"
 #include "Jade/Events/MouseEvent.h"
 #include "Platform/OpenGL/OpenGLContext.h"
+#include "Jade/Renderer/Renderer.h"
 
 namespace Jade
 {
@@ -63,6 +64,15 @@ namespace Jade
 
         {
             JADE_PROFILE_SCOPE("glfwCreateWindow");
+
+#ifdef JADE_DEBUG   
+            // Enable OpenGL debug context in debug builds
+            if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
+            {
+                JADE_PROFILE_SCOPE("glfwWindowHint");
+                glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+            }
+#endif
 
             // Create GLFW window
             m_Window = glfwCreateWindow((int)props.Width, (int)props.Height,
