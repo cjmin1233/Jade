@@ -162,10 +162,32 @@ namespace Jade
 #define JADE_PROFILE 1
 
 #if JADE_PROFILE
+    // Resolve which function signature macro will be used. Note that this only
+    // is resolved when the (pre)compiler starts, so the syntax highlighting
+    // could mark the wrong one in your editor!
+    #if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600)) || defined(__ghs__) || defined(__clang__)
+        #define JADE_FUNC_SIG __PRETTY_FUNCTION__
+    #elif defined(__DMC__) && (__DMC__ >= 0x810)
+        #define JADE_FUNC_SIG __PRETTY_FUNCTION__
+    #elif defined(__FUNCSIG__)
+        #define JADE_FUNC_SIG __FUNCSIG__
+    #elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMCPP__) && (__IBMCPP__ >= 500))
+        #define JADE_FUNC_SIG __FUNCTION__
+    #elif defined(__BORLANDC__) && (__BORLANDC__ >= 0x550)
+        #define JADE_FUNC_SIG __FUNC__
+    #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
+        #define JADE_FUNC_SIG __func__
+    #elif defined(__cplusplus) && (__cplusplus >= 201103)
+        #define JADE_FUNC_SIG __func__
+    #else
+        #define JADE_FUNC_SIG "JADE_FUNC_SIG unknown!"
+    #endif // Resolve function signature macro
+
+    // Instrumentation macros
     #define JADE_PROFILE_BEGIN_SESSION(name, filepath) ::Jade::Instrumentor::Get().BeginSession(name, filepath)
     #define JADE_PROFILE_END_SESSION() ::Jade::Instrumentor::Get().EndSession()
     #define JADE_PROFILE_SCOPE(name) ::Jade::InstrumentationTimer timer##__LINE__(name)
-    #define JADE_PROFILE_FUNCTION() JADE_PROFILE_SCOPE(__FUNCSIG__)
+    #define JADE_PROFILE_FUNCTION() JADE_PROFILE_SCOPE(JADE_FUNC_SIG)
 #else
     #define JADE_PROFILE_BEGIN_SESSION(name, filepath)
     #define JADE_PROFILE_END_SESSION()
