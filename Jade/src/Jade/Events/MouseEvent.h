@@ -54,22 +54,22 @@ namespace Jade
     class MouseButtonEvent : public Event
     {
     public:
-        inline MouseCode GetMouseButton() const { return m_Button; }
+        inline Mouse GetMouseButton() const { return m_Button; }
 
         EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton)
 
     protected:
-        MouseButtonEvent(const MouseCode button)
+        MouseButtonEvent(const Mouse button)
             : m_Button(button) {}
 
 
-        MouseCode m_Button;
+        Mouse m_Button;
     };
 
     class MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonPressedEvent(const MouseCode button)
+        MouseButtonPressedEvent(const Mouse button)
             : MouseButtonEvent(button) {}
 
         std::string ToString() const override
@@ -85,7 +85,7 @@ namespace Jade
     class MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonReleasedEvent(const MouseCode button)
+        MouseButtonReleasedEvent(const Mouse button)
             : MouseButtonEvent(button) {}
 
         std::string ToString() const override

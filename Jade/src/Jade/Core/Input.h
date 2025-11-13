@@ -10,12 +10,12 @@ namespace Jade
     class Input
     {
     public:
-        inline static bool IsKeyPressed(Key::KeyCode keyCode)
+        inline static bool IsKeyPressed(Key keyCode)
         {
             return s_Instance->IsKeyPressedImpl(keyCode);
         }
 
-        inline static bool IsMouseButtonPressed(MouseCode button)
+        inline static bool IsMouseButtonPressed(Mouse button)
         {
             return s_Instance->IsMouseButtonPressedImpl(button);
         }
@@ -27,9 +27,9 @@ namespace Jade
         inline static float GetMouseY() { return s_Instance->GetMouseYImpl(); }
 
     protected:
-        virtual bool IsKeyPressedImpl(Key::KeyCode keyCode) = 0;
+        virtual bool IsKeyPressedImpl(Key keyCode) = 0;
 
-        virtual bool IsMouseButtonPressedImpl(MouseCode button) = 0;
+        virtual bool IsMouseButtonPressedImpl(Mouse button) = 0;
         virtual std::pair<float, float> GetMousePositionImpl() = 0;
         virtual float GetMouseXImpl() = 0;
         virtual float GetMouseYImpl() = 0;

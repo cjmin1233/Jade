@@ -27,32 +27,32 @@ namespace Jade
 
         // Input Handling
         // WASD for xz movement
-        if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::A))
+        if (Jade::Input::IsKeyPressed(Jade::Key::A))
         {
             m_CameraPosition.x -= cos(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
             m_CameraPosition.y -= sin(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
         }
-        else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::D))
+        else if (Jade::Input::IsKeyPressed(Jade::Key::D))
         {
             m_CameraPosition.x += cos(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
             m_CameraPosition.y += sin(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
         }
-        if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::W))
+        if (Jade::Input::IsKeyPressed(Jade::Key::W))
         {
             m_CameraPosition.z -= m_CameraTranslationSpeed * ts;
         }
-        else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::S))
+        else if (Jade::Input::IsKeyPressed(Jade::Key::S))
         {
             m_CameraPosition.z += m_CameraTranslationSpeed * ts;
         }
 
         // Q/E for y movement
-        if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::Q))
+        if (Jade::Input::IsKeyPressed(Jade::Key::Q))
         {
             m_CameraPosition.x -= -sin(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
             m_CameraPosition.y -= cos(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
         }
-        else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::E))
+        else if (Jade::Input::IsKeyPressed(Jade::Key::E))
         {
             m_CameraPosition.x += -sin(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
             m_CameraPosition.y += cos(glm::radians(m_CameraRotation.z)) * m_CameraTranslationSpeed * ts;
@@ -61,9 +61,9 @@ namespace Jade
         if (m_Rotation)
         {
             // Z/X for z-axis rotation
-            if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::Z))
+            if (Jade::Input::IsKeyPressed(Jade::Key::Z))
                 m_CameraRotation.z += m_CameraRotationSpeed * ts;
-            else if (Jade::Input::IsKeyPressed(Jade::Key::KeyCode::X))
+            else if (Jade::Input::IsKeyPressed(Jade::Key::X))
                 m_CameraRotation.z -= m_CameraRotationSpeed * ts;
 
             // Wrap around rotation

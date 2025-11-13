@@ -9,7 +9,7 @@ namespace Jade
 {
     Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
 
-    bool WindowsInput::IsKeyPressedImpl(Key::KeyCode keyCode)
+    bool WindowsInput::IsKeyPressedImpl(Key keyCode)
     {
         // Windows-specific key press detection logic
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -18,7 +18,7 @@ namespace Jade
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
 
-    bool WindowsInput::IsMouseButtonPressedImpl(MouseCode button)
+    bool WindowsInput::IsMouseButtonPressedImpl(Mouse button)
     {
         // Windows-specific mouse button press detection logic
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
