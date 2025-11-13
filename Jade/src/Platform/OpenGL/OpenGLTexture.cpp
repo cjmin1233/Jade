@@ -24,6 +24,8 @@ namespace Jade
 
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        //glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        //glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
         : m_Path(path)
@@ -85,6 +87,8 @@ namespace Jade
         // If you want to clamp the texture coordinates instead of repeating -> GL_CLAMP_TO_EDGE
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        //glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        //glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         // m_RendererID 텍스처의 0번 레벨, (0,0) 위치에서 m_Width x m_Height 영역에 dataFormat 포맷의 data를 복사
         // GL_UNSIGNED_BYTE: data의 각 색상 성분이 부호 없는 바이트 형식임을 나타냄

@@ -87,6 +87,7 @@ namespace Jade
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
         
         s_Data->TextureShader->SetUniformMat4("u_Transform", transform);
+        s_Data->TextureShader->SetUniformFloat2("u_TilingFactor", { 1.0f, 1.0f });
         s_Data->TextureShader->SetUniformFloat4("u_TintColor", color);
 
         s_Data->QuadVertexArray->Bind();
@@ -107,6 +108,53 @@ namespace Jade
 
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * /* Rotation * */
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data->TextureShader->SetUniformMat4("u_Transform", transform);
+        s_Data->TextureShader->SetUniformFloat2("u_TilingFactor", tilingFactor);
+        s_Data->TextureShader->SetUniformFloat4("u_TintColor", tintColor);
+
+        s_Data->QuadVertexArray->Bind();
+        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec2& tilingFactor, const glm::vec4& color)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotation, size, tilingFactor, color);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec2& tilingFactor, const glm::vec4& color)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        s_Data->WhiteTexture->Bind(0);
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
+            * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        s_Data->TextureShader->SetUniformMat4("u_Transform", transform);
+        s_Data->TextureShader->SetUniformFloat2("u_TilingFactor", tilingFactor);
+        s_Data->TextureShader->SetUniformFloat4("u_TintColor", color);
+
+        s_Data->QuadVertexArray->Bind();
+
+        RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotation, size, texture, tilingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        texture->Bind(0);
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
+            * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         s_Data->TextureShader->SetUniformMat4("u_Transform", transform);
         s_Data->TextureShader->SetUniformFloat2("u_TilingFactor", tilingFactor);

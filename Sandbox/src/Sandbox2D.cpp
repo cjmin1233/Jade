@@ -50,9 +50,15 @@ void Sandbox2D::OnUpdate(Jade::Timestep ts)
         // Draw Calls
         JADE_PROFILE_SCOPE("Renderer Draw");
         Jade::Renderer2D::BeginScene(m_CameraController.GetCamera());
-        Jade::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, m_SquareSize, m_Texture, m_TilingFactor, m_SquareColor);
+        // Textured Quad
+        Jade::Renderer2D::DrawRotatedQuad({ 0.0f,0.0f,-0.1f }, 90.0f, m_SquareSize, m_Texture, m_TilingFactor, m_SquareColor);
+        //Jade::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, m_SquareSize, m_Texture, m_TilingFactor, m_SquareColor);
+
         Jade::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.0f }, { 0.8f, 0.8f }, { 0.8f, 0.2f, 0.3f, 1.0f });
         Jade::Renderer2D::DrawQuad({ 0.5f, 0.0f, 0.0f }, { 0.5f, 1.2f }, { 0.1f, 0.2f, 0.8f, 1.0f });
+        // Rotated Quad
+        Jade::Renderer2D::DrawRotatedQuad({ 2.0f, 0.0f, 0.0f }, 45.0f, { 1.0f, 1.0f });
+
         Jade::Renderer2D::EndScene();
     }
 }
