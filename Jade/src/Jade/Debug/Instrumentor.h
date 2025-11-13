@@ -13,7 +13,7 @@ namespace Jade
     {
         std::string Name;
         long long Start, End;
-        size_t ThreadID;
+        std::thread::id ThreadID;
     };
 
     struct InstrumentationSession
@@ -24,48 +24,76 @@ namespace Jade
     class Instrumentor
     {
     private:
+        std::mutex m_Mutex;
         InstrumentationSession* m_CurrentSession;
         std::ofstream m_OutputStream;
-        int m_ProfileCount;
 
         Instrumentor()
             : m_CurrentSession(nullptr)
             , m_OutputStream()
-            , m_ProfileCount(0)
+            , m_Mutex()
         {
         }
 
     public:
         void BeginSession(const std::string& name, const std::string& filepath = "results.json")
         {
+            std::lock_guard lock(m_Mutex);
+            if (m_CurrentSession)
+            {
+                // If there is already a current session, then close it before beginning new one.
+                // Subsequent profiling output meant for the original session will end up in the
+                // newly opened session instead. That's better than having badly formatted profiling output.
+                if (Log::GetCoreLogger())
+                {
+                    // Edge case: BeginSession() might be called before Log::Init()
+                    JADE_CORE_ERROR("Instrumentor::BeginSession('{0}') when session '{1}' is already active", name, m_CurrentSession->Name);
+                }
+
+                InternalEndSession();
+            }
+
+#pragma region preprocess filepath
             namespace fs = std::filesystem;
 
             fs::path inputPath(filepath);
             fs::path outPath;
 
+            // lowercase extension check
             std::string ext = inputPath.extension().string();
             std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
 
             if (ext == ".json")
             {
                 std::error_code ec;
-                fs::create_directories("profiles", ec); // 실패해도 진행
+                fs::create_directories("profiles", ec);
                 outPath = fs::path("profiles") / inputPath.filename();
             }
             else
             {
-                outPath = inputPath; // 그대로 사용
+                // Currently only JSON output is supported
+                if (Log::GetCoreLogger())
+                {
+                    // Edge case: BeginSession() might be called before Log::Init()
+                    JADE_CORE_ERROR("Instrumentor::BeginSession('{0}') has invalid file extension '{1}'! Only .json is supported.", name, ext);
+                }
             }
+#pragma endregion
 
-            m_OutputStream.open(outPath.string(), std::ios::out);
-            if (!m_OutputStream.is_open())
+            m_OutputStream.open(outPath, std::ios::out);
+            if (m_OutputStream.is_open())
             {
-                JADE_CORE_ASSERT(false, "Instrumentor could not open results file: {0}", filepath);
-                return;
+                m_CurrentSession = new InstrumentationSession{ name };
+                WriteHeader();
             }
-
-            WriteHeader();
-            m_CurrentSession = new InstrumentationSession{ name };
+            else
+            {
+                if (Log::GetCoreLogger())
+                {
+                    // Edge case: BeginSession() might be called before Log::Init()
+                    JADE_CORE_ERROR("Instrumentor could not open results file: {0}", outPath.string());
+                }
+            }
         }
 
         void EndSession()
@@ -73,38 +101,45 @@ namespace Jade
             if (!m_OutputStream.is_open())
                 return;
 
-            WriteFooter();
-            m_OutputStream.close();
-            delete m_CurrentSession;
-            m_CurrentSession = nullptr;
-            m_ProfileCount = 0;
+            std::lock_guard lock(m_Mutex);
+            InternalEndSession();
         }
 
         void WriteProfile(const ProfileResult& result)
         {
-            if (m_ProfileCount++ > 0)
-                m_OutputStream << ",";
+            std::stringstream json;
 
-            std::string name = result.Name;
-            std::replace(name.begin(), name.end(), '"', '\'');
-            
-            m_OutputStream << "{";
-            m_OutputStream << "\"cat\":\"function\",";
-            m_OutputStream << "\"dur\":" << (result.End - result.Start) << ',';
+            json << std::setprecision(3) << std::fixed;
+            json << "{";
+            json << "\"cat\":\"function\",";
+            json << "\"dur\":" << (result.End - result.Start) << ',';
+            json << "\"name\":\"" << result.Name << "\",";
+            json << "\"ph\":\"X\",";
+            json << "\"pid\":0,";
+            json << "\"tid\":" << result.ThreadID << ',';
+            json << "\"ts\":" << result.Start;
+            json << "},";
 
-            m_OutputStream << "\"name\":\"" << name << "\",";
-            m_OutputStream << "\"ph\":\"X\",";
-            m_OutputStream << "\"pid\":0,";
-            m_OutputStream << "\"tid\":" << result.ThreadID << ",";
-            m_OutputStream << "\"ts\":" << result.Start;
-            m_OutputStream << "}";
-
-            m_OutputStream.flush();
+            std::lock_guard lock(m_Mutex);
+            if (m_CurrentSession)
+            {
+                m_OutputStream << json.str();
+                m_OutputStream.flush();
+            }
         }
 
+        // Meyer’s Singleton
+        // Thread-safe in C++11 and later
+        static Instrumentor& Get()
+        {
+            static Instrumentor instance;
+            return instance;
+        }
+
+    private:
         void WriteHeader()
         {
-            m_OutputStream << "{\"otherData\": {},\"traceEvents\":[";
+            m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
             m_OutputStream.flush();
         }
 
@@ -114,10 +149,17 @@ namespace Jade
             m_OutputStream.flush();
         }
 
-        static Instrumentor& Get()
+        // Note: you must already own the lock on m_Mutex before
+        // calling InternalEndSession()
+        void InternalEndSession()
         {
-            static Instrumentor instance;
-            return instance;
+            if (m_CurrentSession)
+            {
+                WriteFooter();
+                m_OutputStream.close();
+                delete m_CurrentSession;
+                m_CurrentSession = nullptr;
+            }
         }
     };
 
@@ -146,8 +188,7 @@ namespace Jade
             long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
             long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
 
-            size_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
-            Instrumentor::Get().WriteProfile({ m_Name, start, end, threadID });
+            Instrumentor::Get().WriteProfile({ m_Name, start, end, std::this_thread::get_id() });
 
             m_Stopped = true;
         }
