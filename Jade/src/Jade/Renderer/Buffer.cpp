@@ -7,6 +7,24 @@
 
 namespace Jade
 {
+    Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+    {
+        switch (Renderer::GetAPI())
+        {
+        case RendererAPI::API::None:
+            JADE_CORE_ASSERT(false,
+                "RendererAPI::API::None is currently not supported!");
+            return nullptr;
+            break;
+        case RendererAPI::API::OpenGL:
+            return CreateRef<OpenGLVertexBuffer>(size);
+            break;
+        }
+
+        JADE_CORE_ASSERT(false, "Unknown RendererAPI!");
+        return nullptr;
+    }
+
     Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
     {
         switch (Renderer::GetAPI())

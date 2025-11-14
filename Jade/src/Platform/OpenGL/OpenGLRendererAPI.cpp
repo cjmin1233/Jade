@@ -71,12 +71,13 @@ namespace Jade
         // GL_COLOR_BUFFER_BIT and GL_DEPTH_BUFFER_BIT are bitwise ORed to clear both the color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
-    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
+    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
     {
         JADE_PROFILE_FUNCTION();
 
+        uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
         // Draw the elements using the index buffer
-        glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
         //// Unbind the texture after drawing
         //glBindTexture(GL_TEXTURE_2D, 0);
     }
