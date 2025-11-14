@@ -7,6 +7,8 @@
 #include "Jade/Events/ApplicationEvent.h"
 #include "Jade/ImGui/ImGuiLayer.h"
 
+int main(int argc, char** argv);
+
 class Layer;
 
 namespace Jade
@@ -17,8 +19,6 @@ namespace Jade
         Application();
         virtual ~Application();
 
-        void Run();
-
         void OnEvent(Event& e);
 
         void PushLayer(Layer* layer);
@@ -28,6 +28,8 @@ namespace Jade
         static inline Application& Get() { return *s_Instance; }
 
     private:
+        void Run();
+
         bool OnWindowClose(WindowCloseEvent& e);
         bool OnWindowResize(WindowResizeEvent& e);
 
@@ -41,6 +43,8 @@ namespace Jade
 
     private:
         static Application* s_Instance;
+
+        friend int ::main(int argc, char** argv);
     };
 
     // To be defined in CLIENT
