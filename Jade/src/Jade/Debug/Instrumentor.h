@@ -120,11 +120,13 @@ namespace Jade
             json << "\"ts\":" << result.Start;
             json << "},";
 
-            std::lock_guard lock(m_Mutex);
-            if (m_CurrentSession)
             {
-                m_OutputStream << json.str();
-                m_OutputStream.flush();
+                std::lock_guard<std::mutex> lock(m_Mutex);
+                if (m_CurrentSession)
+                {
+                    m_OutputStream << json.str();
+                    m_OutputStream.flush();
+                }
             }
         }
 

@@ -7,8 +7,6 @@
 
 namespace Jade
 {
-    Scope<Input> Input::s_Instance = CreateScope<WindowsInput>();
-
     bool WindowsInput::IsKeyPressedImpl(Key keyCode)
     {
         // Windows-specific key press detection logic
