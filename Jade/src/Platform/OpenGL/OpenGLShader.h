@@ -25,6 +25,12 @@ namespace Jade
             UploadUniformInt(name, value);
         }
 
+        virtual void SetUniformIntArray(const std::string& name, int* values, uint32_t count) override
+        {
+            JADE_PROFILE_FUNCTION();
+            UploadUniformIntArray(name, values, count);
+        }
+
         virtual void SetUniformFloat(const std::string& name, float value) override 
         {
             JADE_PROFILE_FUNCTION();
@@ -65,6 +71,8 @@ namespace Jade
     private:
 #pragma region Uploaders
         void UploadUniformInt(const std::string& name, int value);
+
+        void UploadUniformIntArray(const std::string& name, int* values, uint32_t count);
 
         void UploadUniformFloat(const std::string& name, float value);
         void UploadUniformFloat2(const std::string& name, const glm::vec2& values);

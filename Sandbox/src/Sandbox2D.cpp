@@ -51,14 +51,18 @@ void Sandbox2D::OnUpdate(Jade::Timestep ts)
         JADE_PROFILE_SCOPE("Renderer Draw");
         Jade::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-        for (int i = 0; i < 10; ++i)
-        {
-            for (int j = 0; j < 10; ++j)
-            {
-                Jade::Renderer2D::DrawQuad({ (float)i * 1.1f, (float)j * 1.1f, 0.0f }, m_SquareSize,
-                    m_SquareColor);
-            }
-        }
+        //for (int i = 0; i < 10; ++i)
+        //{
+        //    for (int j = 0; j < 10; ++j)
+        //    {
+        //        Jade::Renderer2D::DrawQuad({ (float)i * 1.1f, (float)j * 1.1f, -0.1f }, m_SquareSize,
+        //            m_SquareColor);
+        //    }
+        //}
+        static float rotation = 0.0f;
+        rotation += ts * 50.0f;
+        Jade::Renderer2D::DrawRotatedQuad({ 0.5f, 0.0f, 0.0f }, rotation, m_SquareSize,
+            m_Texture, m_TilingFactor, m_SquareColor);
 
         Jade::Renderer2D::EndScene();
     }
