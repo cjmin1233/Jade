@@ -118,8 +118,12 @@ namespace Jade
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetUniformIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
-        // Set first texture slot to white texture
-        s_Data.TextureSlots[0] = s_Data.WhiteTexture;
+        // Set all texture slots to the white texture initially
+        for (int i = 0; i < s_Data.MaxTextureSlots; ++i)
+        {
+            s_Data.TextureSlots[i] = s_Data.WhiteTexture;
+            s_Data.TextureSlots[i]->Bind(i);
+        }
     }
 
     void Renderer2D::Shutdown()
@@ -135,20 +139,13 @@ namespace Jade
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
-        // Reset batching data
-        s_Data.QuadIndexCount = 0;
-        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
-
-        // Reset texture slots
-        s_Data.TextureSlotIndex = 1;
+        // Start a new batch
+        StartBatch();
     }
 
     void Renderer2D::EndScene()
     {
         JADE_PROFILE_FUNCTION();
-
-        uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
-        s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
         Flush();
     }
@@ -160,22 +157,35 @@ namespace Jade
 
         // Bind textures
         for (uint32_t i = 0; i < s_Data.TextureSlotIndex; ++i)
+        {
             s_Data.TextureSlots[i]->Bind(i);
+        }
+
+        // Update vertex buffer data
+        uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
+        s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
         s_Data.Stats.DrawCalls++;
     }
 
-    // Flushes the current batch and resets for new draw calls
-    void Renderer2D::FlushAndReset()
+    // Starts a new batch for rendering
+    void Renderer2D::StartBatch()
     {
-        JADE_PROFILE_FUNCTION();
-
-        EndScene();
-
+        // Reset batching data
         s_Data.QuadIndexCount = 0;
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+
+        // Reset texture slots
         s_Data.TextureSlotIndex = 1;
+    }
+
+    // Advances to the next batch when the current one is full
+    void Renderer2D::NextBatch()
+    {
+        Flush();
+
+        StartBatch();
     }
 
 #pragma region DrawQuad
@@ -189,10 +199,6 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
-        // Check if we need to flush the batch
-        if(s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
-
         constexpr float textureIndex = 0.0f; // White Texture
         constexpr glm::vec2 tilingFactor = { 1.0f, 1.0f };
 
@@ -201,33 +207,16 @@ namespace Jade
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 #pragma region Add vertices to buffer
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[0];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+        for (int i = 0; i < 4; ++i)
+        {
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadVertexBufferPtr->Color = color;
+            s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[i];
+            s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[1];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[2];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[3];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+            s_Data.QuadVertexBufferPtr++;
+        }
 
         s_Data.QuadIndexCount += 6;
         s_Data.Stats.QuadCount++;
@@ -245,8 +234,8 @@ namespace Jade
         JADE_PROFILE_FUNCTION();
 
         // Check if we need to flush the batch
-        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices || s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+            NextBatch();
 
         float textureIndex = 0.0f;
         // Check if texture is already bound
@@ -261,7 +250,10 @@ namespace Jade
 
         // New texture
         if (textureIndex == 0.0f)
-        {
+        {        
+            // Ensure we don't exceed max texture slots
+            JADE_CORE_ASSERT(s_Data.TextureSlotIndex < Renderer2DData::MaxTextureSlots, "Texture slot index exceeds maximum!");
+
             textureIndex = (float)s_Data.TextureSlotIndex;
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
             s_Data.TextureSlotIndex++;
@@ -272,106 +264,72 @@ namespace Jade
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
             
 #pragma region Add vertices to buffer
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-        s_Data.QuadVertexBufferPtr->Color = tintColor;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[0];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+        for (int i = 0; i < 4; ++i)
+        {
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadVertexBufferPtr->Color = tintColor;
+            s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[i];
+            s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-        s_Data.QuadVertexBufferPtr->Color = tintColor;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[1];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-        s_Data.QuadVertexBufferPtr->Color = tintColor;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[2];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-        s_Data.QuadVertexBufferPtr->Color = tintColor;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[3];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+            s_Data.QuadVertexBufferPtr++;
+        }
 
         s_Data.QuadIndexCount += 6;
         s_Data.Stats.QuadCount++;
 #pragma endregion
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec4& color)
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color)
     {
-        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotation, size, color);
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotationAngle, size, color);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color)
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color)
     {
         JADE_PROFILE_FUNCTION();
 
         // Check if we need to flush the batch
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
+            NextBatch();
 
         constexpr float textureIndex = 0.0f; // White Texture
         constexpr glm::vec2 tilingFactor = { 1.0f, 1.0f };
 
         // Transform matrix
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
-            * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
+            * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
             * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 #pragma region Add vertices to buffer
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[0];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+        for (int i = 0; i < 4; ++i)
+        {
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadVertexBufferPtr->Color = color;
+            s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[i];
+            s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[1];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[2];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-        s_Data.QuadVertexBufferPtr->Color = color;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[3];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+            s_Data.QuadVertexBufferPtr++;
+        }
 
         s_Data.QuadIndexCount += 6;
         s_Data.Stats.QuadCount++;
 #pragma endregion
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
-        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotation, size, texture, tilingFactor, tintColor);
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotationAngle, size, texture, tilingFactor, tintColor);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
         JADE_PROFILE_FUNCTION();
 
         // Check if we need to flush the batch
-        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
-            FlushAndReset();
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices || s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+            NextBatch();
 
         float textureIndex = 0.0f;
         // Check if texture is already bound
@@ -387,6 +345,9 @@ namespace Jade
         // New texture
         if (textureIndex == 0.0f)
         {
+            // Ensure we don't exceed max texture slots
+            JADE_CORE_ASSERT(s_Data.TextureSlotIndex < Renderer2DData::MaxTextureSlots, "Texture slot index exceeds maximum!");
+
             textureIndex = (float)s_Data.TextureSlotIndex;
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
             s_Data.TextureSlotIndex++;
@@ -394,37 +355,20 @@ namespace Jade
 
         // Transform matrix
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
-            * glm::rotate(glm::mat4(1.0f), glm::radians(rotation), { 0.0f, 0.0f, 1.0f })
+            * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
             * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 #pragma region Add vertices to buffer
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[0];
-        s_Data.QuadVertexBufferPtr->Color = tintColor;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[0];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+        for (int i = 0; i < 4; ++i)
+        {
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[i];
+            s_Data.QuadVertexBufferPtr->Color = tintColor;
+            s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[i];
+            s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
 
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[1];
-        s_Data.QuadVertexBufferPtr->Color = tintColor;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[1];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[2];
-        s_Data.QuadVertexBufferPtr->Color = tintColor;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[2];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
-
-        s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPositions[3];
-        s_Data.QuadVertexBufferPtr->Color = tintColor;
-        s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[3];
-        s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
-        s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
-        s_Data.QuadVertexBufferPtr++;
+            s_Data.QuadVertexBufferPtr++;
+        }
 
         s_Data.QuadIndexCount += 6;
         s_Data.Stats.QuadCount++;

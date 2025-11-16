@@ -38,6 +38,20 @@ namespace Jade
         glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+                                                                     
+        // Query and log the maximum number of texture image units
+        {
+            int maxFragUnits = 0, maxVertexUnits = 0, maxCombinedUnits = 0;
+
+            glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &maxFragUnits);
+            glGetIntegerv(GL_MAX_VERTEX_UNIFORM_VECTORS, &maxVertexUnits);
+            glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxCombinedUnits);
+
+            JADE_CORE_INFO("OpenGL Texture Image Units: ");
+            JADE_CORE_INFO("  GL_MAX_TEXTURE_IMAGE_UNITS (fragment): {0}", maxFragUnits);
+            JADE_CORE_INFO("  GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS (vertex): {0}", maxVertexUnits);
+            JADE_CORE_INFO("  GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS (all stages): {0}", maxCombinedUnits);
+        }
 #endif
 
         // Enable blending for transparency
