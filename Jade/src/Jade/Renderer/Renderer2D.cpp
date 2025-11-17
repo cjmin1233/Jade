@@ -57,10 +57,53 @@ namespace Jade
             { 0.0f, 1.0f }
         };
 
+        // Culling data
+        bool CullingEnabled = true;
+        float CullingPadding = 0.0f;    // Extra padding for culling calculations
+        glm::vec2 ViewMin{ 0.0f };
+        glm::vec2 ViewMax{ 0.0f };
+
         Renderer2D::Statistics Stats;
     };
 
     static Renderer2DData s_Data;
+
+    // Helpers: AABB overlap and visibility test
+    static inline bool AABBOverlap(const glm::vec2& aMin, const glm::vec2& aMax, 
+        const glm::vec2& bMin, const glm::vec2& bMax)
+    {
+        if (aMax.x < bMin.x || aMin.x > bMax.x) return false;
+        if (aMax.y < bMin.y || aMin.y > bMax.y) return false;
+
+        return true;
+    }
+
+    // Checks if a quad is visible within the current view bounds
+    static inline bool IsVisible(const glm::vec3& center, float rotationDeg, const glm::vec2& size)
+    {
+        if(!s_Data.CullingEnabled)
+            return true;
+
+        const glm::vec2 halfSize = size * 0.5f;
+        glm::vec2 extents = halfSize;
+
+        // Calculate rotated extents
+        if (rotationDeg != 0.0f)
+        {
+            const float rad = glm::radians(rotationDeg);
+            const float cosTheta = glm::abs(glm::cos(rad));
+            const float sinTheta = glm::abs(glm::sin(rad));
+            extents.x = halfSize.x * cosTheta + halfSize.y * sinTheta;
+            extents.y = halfSize.x * sinTheta + halfSize.y * cosTheta;
+        }
+
+        // Calculate quad AABB
+        glm::vec2 quadMin = glm::vec2(center) - extents;
+        glm::vec2 quadMax = glm::vec2(center) + extents;
+
+        // Apply culling padding
+        return AABBOverlap(quadMin, quadMax, s_Data.ViewMin, s_Data.ViewMax);
+    }
 
     void Renderer2D::Init()
     {
@@ -139,6 +182,32 @@ namespace Jade
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 
+        // Calculate view bounds for culling
+        {
+            const glm::mat4& invViewProj = glm::inverse(camera.GetViewProjectionMatrix());
+
+            auto toWorld = [&](const glm::vec2& ndc)
+                {
+                    glm::vec4 p = invViewProj * glm::vec4(ndc, 0.0f, 1.0f);
+                    return glm::vec2(p) / p.w;
+                };
+
+            // Transform NDC corners to world space
+            glm::vec2 c0 = toWorld({ -1.0f, -1.0f });
+            glm::vec2 c1 = toWorld({ 1.0f,  -1.0f });
+            glm::vec2 c2 = toWorld({ 1.0f, 1.0f });
+            glm::vec2 c3 = toWorld({ -1.0f, 1.0f });
+
+            // Compute AABB of the view
+            glm::vec2 vmin = glm::min(glm::min(c0, c1), glm::min(c2, c3));
+            glm::vec2 vmax = glm::max(glm::max(c0, c1), glm::max(c2, c3));
+
+            // Apply culling padding
+            const glm::vec2 pad(s_Data.CullingPadding);
+            s_Data.ViewMin = vmin - pad;
+            s_Data.ViewMax = vmax + pad;
+        }
+
         // Start a new batch
         StartBatch();
     }
@@ -178,6 +247,10 @@ namespace Jade
 
         // Reset texture slots
         s_Data.TextureSlotIndex = 1;
+
+        // Reset stats
+        s_Data.Stats.DrawCalls = 0;
+        s_Data.Stats.QuadCount = 0;
     }
 
     // Advances to the next batch when the current one is full
@@ -198,6 +271,9 @@ namespace Jade
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
         JADE_PROFILE_FUNCTION();
+
+        if(!IsVisible(position, 0.0f, size))
+            return;
 
         constexpr float textureIndex = 0.0f; // White Texture
         constexpr glm::vec2 tilingFactor = { 1.0f, 1.0f };
@@ -232,6 +308,10 @@ namespace Jade
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
         JADE_PROFILE_FUNCTION();
+
+        // Visibility culling
+        if(!IsVisible(position, 0.0f, size))
+            return;
 
         // Check if we need to flush the batch
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices || s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
@@ -289,6 +369,10 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
+        // Visibility culling
+        if(!IsVisible(position, rotationAngle, size))
+            return;
+
         // Check if we need to flush the batch
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
             NextBatch();
@@ -326,6 +410,10 @@ namespace Jade
     void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
         JADE_PROFILE_FUNCTION();
+
+        // Visibility culling
+        if(!IsVisible(position, rotationAngle, size))
+            return;
 
         // Check if we need to flush the batch
         if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices || s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
@@ -384,5 +472,15 @@ namespace Jade
     Renderer2D::Statistics Renderer2D::GetStats()
     {
         return s_Data.Stats;
+    }
+
+    void Renderer2D::SetCulling(bool enabled)
+    {
+        s_Data.CullingEnabled = enabled;
+    }
+
+    void Renderer2D::SetCullingPadding(float padding)
+    {
+        s_Data.CullingPadding = padding;
     }
 }

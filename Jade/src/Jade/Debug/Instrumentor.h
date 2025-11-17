@@ -210,7 +210,7 @@ namespace Jade
     };
 }
 
-#define JADE_PROFILE 1
+#define JADE_PROFILE 0
 
 #if JADE_PROFILE
     // Resolve which function signature macro will be used. Note that this only

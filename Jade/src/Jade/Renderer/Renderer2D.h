@@ -45,6 +45,10 @@ namespace Jade
         static void ResetStats();
         static Statistics GetStats();
 
+        // Culling controls
+        static void SetCulling(bool enabled);
+        static void SetCullingPadding(float padding);
+
     private:
         static void StartBatch();
         static void NextBatch();

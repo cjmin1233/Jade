@@ -53,9 +53,9 @@ void Sandbox2D::OnUpdate(Jade::Timestep ts)
 
         static float rotation = 0.0f;
         rotation += ts * 50.0f;
-        for (int i = 0; i < 10; ++i)
+        for (int i = 0; i < 100; ++i)
         {
-            for (int j = 0; j < 10; ++j)
+            for (int j = 0; j < 100; ++j)
             {
                 Jade::Renderer2D::DrawRotatedQuad({ (float)i - 5.0f, (float)j - 5.0f, 0.0f }, rotation,
                     m_SquareSize, m_Texture, m_TilingFactor, m_SquareColor);
@@ -74,6 +74,14 @@ void Sandbox2D::OnImGuiRender()
     ImGui::DragFloat2("Square Size", glm::value_ptr(m_SquareSize), 0.1f, 0.1f, 10.0f);
     ImGui::DragFloat2("Tiling Factor", glm::value_ptr(m_TilingFactor), 0.1f, 0.1f, 10.0f);
     ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+    ImGui::End();
+
+    ImGui::Begin("Renderer2D Stats");
+    auto stats = Jade::Renderer2D::GetStats();
+    ImGui::Text("Draw Calls: %d", stats.DrawCalls);
+    ImGui::Text("Quad Count: %d", stats.QuadCount);
+    ImGui::Text("Vertex Count: %d", stats.GetTotalVertexCount());
+    ImGui::Text("Index Count: %d", stats.GetTotalIndexCount());
     ImGui::End();
 }
 
