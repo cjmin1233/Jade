@@ -23,12 +23,23 @@
 #endif // _WIN32
 
 #ifdef JADE_DEBUG
-#define JADE_ENABLE_ASSERTS
+    #define JADE_ENABLE_ASSERTS
+
+    #if defined(JADE_PLATFORM_WINDOWS)
+        #define JADE_DEBUGBREAK() __debugbreak()
+    #elif defined(JADE_PLATFORM_LINUX)
+        #include <signal.h>
+        #define JADE_DEBUGBREAK() raise(SIGTRAP)
+    #else
+        #error "Platform doesn't support debugbreak yet!"
+    #endif
+#else
+    #define JADE_DEBUGBREAK()
 #endif
 
 #ifdef JADE_ENABLE_ASSERTS
-    #define JADE_ASSERT(x, ...) { if(!(x)) { JADE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-    #define JADE_CORE_ASSERT(x, ...) { if(!(x)) { JADE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } } 
+    #define JADE_ASSERT(x, ...) { if(!(x)) { JADE_ERROR("Assertion Failed: {0}", __VA_ARGS__); JADE_DEBUGBREAK(); } }
+    #define JADE_CORE_ASSERT(x, ...) { if(!(x)) { JADE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); JADE_DEBUGBREAK(); } }
 #else
     #define JADE_ASSERT(x, ...)
     #define JADE_CORE_ASSERT(x, ...)
