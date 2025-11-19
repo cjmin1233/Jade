@@ -46,8 +46,8 @@ namespace Jade
     {
         std::string Name;
         ShaderDataType Type;
-        uint32_t Size;
-        size_t Offset;
+        uint32_t Size;          // Total size of the element
+        size_t Offset;          // Offset in the buffer
         bool Normalized;
 
         BufferElement() = default;
@@ -72,8 +72,8 @@ namespace Jade
             case ShaderDataType::Float3:  return 3;
             case ShaderDataType::Float4:  return 4;
 
-            case ShaderDataType::Mat3:    return 3 * 3;
-            case ShaderDataType::Mat4:    return 4 * 4;
+            case ShaderDataType::Mat3:    return 3; // 3* float3
+            case ShaderDataType::Mat4:    return 4; // 4* float4
 
             case ShaderDataType::Int:     return 1;
             case ShaderDataType::Int2:    return 2;
@@ -94,7 +94,7 @@ namespace Jade
     class BufferLayout
     {
     public:
-        BufferLayout() {}
+        BufferLayout() = default;
 
         BufferLayout(const std::initializer_list<BufferElement>& elements)
             : m_Elements(elements)
@@ -102,8 +102,11 @@ namespace Jade
             CalculateOffsetsAndStride();
         }
 
+        // returns the total size of the buffer layout
         inline uint32_t GetStride() const { return m_Stride; }
+        // returns the elements in the buffer layout
         inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
+        // returns the number of elements in the buffer layout
         inline size_t GetElementCount() const { return m_Elements.size(); }
 
         std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
@@ -112,21 +115,25 @@ namespace Jade
         std::vector<BufferElement>::const_iterator end() const { return m_Elements.end(); }
 
     private:
+        // Calculates offsets for each element and the total stride
         void CalculateOffsetsAndStride()
         {
             size_t offset = 0;
             m_Stride = 0;
             for (auto& element : m_Elements)
             {
+                // Set offset
                 element.Offset = offset;
                 offset += element.Size;
+
+                // Update total stride
                 m_Stride += element.Size;
             }
         }
 
     private:
         std::vector<BufferElement> m_Elements;
-        uint32_t m_Stride = 0;
+        uint32_t m_Stride = 0;      // Total size of the buffer layout
     };
 
     class VertexBuffer

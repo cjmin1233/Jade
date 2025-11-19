@@ -37,6 +37,7 @@ namespace Jade
 
     OpenGLVertexArray::OpenGLVertexArray()
         : m_RendererID(0)
+        , m_VertexAttribSlotIndex(0)
         , m_VertexBuffers()
         , m_IndexBuffer(nullptr)
     {
@@ -76,23 +77,58 @@ namespace Jade
         glBindVertexArray(m_RendererID);
         vertexBuffer->Bind();
 
-        uint32_t index = 0;
-        for(const auto& vb : m_VertexBuffers)
-        {
-            index += (uint32_t)(vb->GetLayout().GetElementCount());
-        }
         const auto& layout = vertexBuffer->GetLayout();
         for(const auto& element : layout)
         {
-            glEnableVertexAttribArray(index);
-            glVertexAttribPointer(index,
-                element.GetComponentCount(),
-                ShaderDataTypeToOpenGLBaseType(element.Type),
-                element.Normalized ? GL_TRUE : GL_FALSE,
-                layout.GetStride(),
-                (const void*)element.Offset
-            );
-            index++;
+            switch (element.Type)
+            {
+            case ShaderDataType::Float:
+            case ShaderDataType::Float2:
+            case ShaderDataType::Float3:
+            case ShaderDataType::Float4:
+            case ShaderDataType::Int:
+            case ShaderDataType::Int2:
+            case ShaderDataType::Int3:
+            case ShaderDataType::Int4:
+            case ShaderDataType::Bool:
+            {
+                glEnableVertexAttribArray(m_VertexAttribSlotIndex);
+                glVertexAttribPointer(
+                    m_VertexAttribSlotIndex,
+                    element.GetComponentCount(),
+                    ShaderDataTypeToOpenGLBaseType(element.Type),
+                    element.Normalized ? GL_TRUE : GL_FALSE,
+                    layout.GetStride(),
+                    (const void*)element.Offset);
+
+                ++m_VertexAttribSlotIndex;
+                break;
+            }
+            case ShaderDataType::Mat3:
+            case ShaderDataType::Mat4:
+            {
+                uint8_t count = element.GetComponentCount();
+                for (uint8_t i = 0; i < count; ++i)
+                {
+                    glEnableVertexAttribArray(m_VertexAttribSlotIndex);
+                    glVertexAttribPointer(
+                        m_VertexAttribSlotIndex,
+                        count,
+                        ShaderDataTypeToOpenGLBaseType(element.Type),
+                        element.Normalized ? GL_TRUE : GL_FALSE,
+                        layout.GetStride(),
+                        (const void*)(element.Offset + sizeof(float) * count * i));
+
+                    // Set attribute divisor for instanced rendering
+                    glVertexAttribDivisor(m_VertexAttribSlotIndex, 1);
+                    
+                    ++m_VertexAttribSlotIndex;
+                }
+                break;
+            }
+            default:
+                JADE_CORE_ASSERT(false, "Unknown ShaderDataType!");
+            }
         }
 
         m_VertexBuffers.push_back(vertexBuffer);
