@@ -1,5 +1,5 @@
 #pragma once
-#include "Jade/Core/Core.h"
+#include "Jade/Core/Base.h"
 
 #include "Jade/Core/LayerStack.h"
 #include "Jade/Core/Window.h"

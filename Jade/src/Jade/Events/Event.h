@@ -1,7 +1,7 @@
 #pragma once
 #include "jdpch.h"
 
-#include "Jade/Core/Core.h"
+#include "Jade/Core/Base.h"
 
 namespace Jade
 {

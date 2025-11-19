@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include "Jade/Core/Core.h"
+#include "Jade/Core/Base.h"
 #include "Jade/Core/Layer.h"
 
 namespace Jade

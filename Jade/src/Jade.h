@@ -1,6 +1,6 @@
 #pragma once
 // For use by Jade applications
-#include "Jade/Core/Core.h"
+#include "Jade/Core/Base.h"
 #include "Jade/Core/Application.h"
 #include "Jade/Core/Log.h"
 #include "Jade/Core/Layer.h"

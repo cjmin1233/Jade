@@ -1,5 +1,5 @@
 #pragma once
-#include "Jade/Core/Core.h"
+#include "Jade/Core/Base.h"
 
 #pragma warning(push, 0)
 #include <spdlog/spdlog.h>

@@ -15,7 +15,7 @@
 #include <unordered_set>
 
 // Jade api
-#include "Jade/Core/Core.h"
+#include "Jade/Core/Base.h"
 #include "Jade/Core/Log.h"
 #include "Jade/Debug/Instrumentor.h"
 

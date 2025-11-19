@@ -1,5 +1,5 @@
 #pragma once
-#include "Jade/Core/Core.h"
+#include "Jade/Core/Base.h"
 
 #ifdef JADE_PLATFORM_WINDOWS
 
