@@ -208,6 +208,51 @@ namespace Jade
         std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
         bool m_Stopped;
     };
+
+    namespace InstrumentorUtils
+    {
+        template <size_t N>
+        struct ChangeResult
+        {
+            char Data[N];
+        };
+
+        // Replaces all occurrences of 'remove' in 'expr' with '' (nothing)
+        template <size_t N, size_t K>
+        constexpr auto CleanupOutputString(const char(&expr)[N], const char(&remove)[K])
+        {
+            ChangeResult<N> result = {};
+
+            size_t srcIndex = 0;
+            size_t dstIndex = 0;
+
+            while (srcIndex < N)
+            {
+                size_t matchIndex = 0;
+                // find match
+                while (matchIndex < K - 1 && srcIndex + matchIndex < N - 1
+                    && expr[srcIndex + matchIndex] == remove[matchIndex])
+                {
+                    ++matchIndex;
+                }
+
+                if (matchIndex == K - 1)
+                {
+                    // matched, skip ahead
+                    srcIndex += matchIndex;
+                }
+
+                // copy character
+                result.Data[dstIndex] = 
+                    expr[srcIndex] == '"' ? '\'' : expr[srcIndex];  // convert " to '
+
+                ++dstIndex;
+                ++srcIndex;
+            }
+
+            return result;
+        }
+    }
 }
 
 #define JADE_PROFILE 0
@@ -220,7 +265,7 @@ namespace Jade
         #define JADE_FUNC_SIG __PRETTY_FUNCTION__
     #elif defined(__DMC__) && (__DMC__ >= 0x810)
         #define JADE_FUNC_SIG __PRETTY_FUNCTION__
-    #elif defined(__FUNCSIG__)
+    #elif defined(__FUNCSIG__) || defined(_MSC_VER)
         #define JADE_FUNC_SIG __FUNCSIG__
     #elif (defined(__INTEL_COMPILER) && (__INTEL_COMPILER >= 600)) || (defined(__IBMCPP__) && (__IBMCPP__ >= 500))
         #define JADE_FUNC_SIG __FUNCTION__
@@ -237,7 +282,8 @@ namespace Jade
     // Instrumentation macros
     #define JADE_PROFILE_BEGIN_SESSION(name, filepath) ::Jade::Instrumentor::Get().BeginSession(name, filepath)
     #define JADE_PROFILE_END_SESSION() ::Jade::Instrumentor::Get().EndSession()
-    #define JADE_PROFILE_SCOPE(name) ::Jade::InstrumentationTimer timer##__LINE__(name)
+    #define JADE_PROFILE_SCOPE(name) constexpr auto fixedName = ::Jade::InstrumentorUtils::CleanupOutputString(name, "__cdecl "); \
+                                ::Jade::InstrumentationTimer timer##__LINE__(fixedName.Data);
     #define JADE_PROFILE_FUNCTION() JADE_PROFILE_SCOPE(JADE_FUNC_SIG)
 #else
     #define JADE_PROFILE_BEGIN_SESSION(name, filepath)
