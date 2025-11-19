@@ -172,6 +172,8 @@ namespace Jade
     void Renderer2D::Shutdown()
     {
         JADE_PROFILE_FUNCTION();
+
+        delete[] s_Data.QuadVertexBufferBase;
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera)

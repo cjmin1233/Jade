@@ -38,7 +38,6 @@ namespace Jade
         // ImGui::StyleColorsClassic();
         ImGui::StyleColorsDark();
 
-
         // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
         ImGuiStyle& style = ImGui::GetStyle();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -69,8 +68,18 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
-        static bool show = false;
+        static bool show = true;
         ImGui::ShowDemoWindow(&show);
+    }
+
+    void ImGuiLayer::OnEvent(Event& event)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        ImGuiIO& io = ImGui::GetIO();
+
+        event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+        event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
     }
 
     void ImGuiLayer::Begin()
