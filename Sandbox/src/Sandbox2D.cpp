@@ -10,6 +10,7 @@ Sandbox2D::Sandbox2D()
     , m_SquareSize(1.0f, 1.0f)
     , m_TilingFactor(1.0f)
     , m_SquareColor(1.0f)
+    , m_FrameBuffer(nullptr)
 {
 }
 
@@ -20,6 +21,10 @@ void Sandbox2D::OnAttach()
     JADE_INFO("Sandbox2D Attached");
 
     m_Texture = Jade::Texture2D::Create("assets/textures/test.png");
+
+    Jade::FrameBufferSpecification fbSpec;
+    fbSpec.Width = 1280; fbSpec.Height = 720;
+    m_FrameBuffer = Jade::FrameBuffer::Create(fbSpec);
 }
 
 void Sandbox2D::OnDetach()
@@ -42,6 +47,9 @@ void Sandbox2D::OnUpdate(Jade::Timestep ts)
     {
         // Render
         JADE_PROFILE_SCOPE("Renderer Prep");
+
+        m_FrameBuffer->Bind();
+
         Jade::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
         Jade::RenderCommand::Clear();
     }
@@ -63,6 +71,8 @@ void Sandbox2D::OnUpdate(Jade::Timestep ts)
         }
 
         Jade::Renderer2D::EndScene();
+
+        m_FrameBuffer->Unbind();
     }
 }
 
@@ -186,8 +196,14 @@ void Sandbox2D::OnImGuiRender()
         ImGui::Text("Quad Count: %d", stats.QuadCount);
         ImGui::Text("Vertex Count: %d", stats.GetTotalVertexCount());
         ImGui::Text("Index Count: %d", stats.GetTotalIndexCount());
-        ImGui::End();
 
+        ImGui::Separator();
+        ImGui::Text("FrameBuffer Info:");
+        uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
+        glm::vec2 fbSize = glm::vec2(m_FrameBuffer->GetSpecification().Width, m_FrameBuffer->GetSpecification().Height);
+        ImGui::Image((void*)(uintptr_t)textureID, ImVec2(fbSize.x, fbSize.y));
+
+        ImGui::End();
 
         ImGui::End();
     }
@@ -205,6 +221,13 @@ void Sandbox2D::OnImGuiRender()
         ImGui::Text("Quad Count: %d", stats.QuadCount);
         ImGui::Text("Vertex Count: %d", stats.GetTotalVertexCount());
         ImGui::Text("Index Count: %d", stats.GetTotalIndexCount());
+        
+        ImGui::Separator();
+        ImGui::Text("FrameBuffer Info:");
+        uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
+        glm::vec2 fbSize = glm::vec2(m_FrameBuffer->GetSpecification().Width, m_FrameBuffer->GetSpecification().Height);
+        ImGui::Image((void*)(uintptr_t)textureID, ImVec2(fbSize.x, fbSize.y));
+
         ImGui::End();
     }
 
