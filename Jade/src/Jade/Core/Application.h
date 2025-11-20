@@ -25,6 +25,9 @@ namespace Jade
         void PushOverlay(Layer* overlay);
 
         inline Window& GetWindow() { return *m_Window; }
+
+        void Close();
+
         static inline Application& Get() { return *s_Instance; }
 
     private:
