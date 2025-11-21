@@ -1,6 +1,6 @@
 workspace "Jade"
     architecture "x86_64"
-    startproject "Sandbox"
+    startproject "Jade-Editor"
 
     configurations
     {
@@ -11,7 +11,7 @@ workspace "Jade"
 
     flags
     {
-         "MultiProcessorCompile",
+        "MultiProcessorCompile",
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -102,6 +102,50 @@ project "Jade"
 
 project "Sandbox"
     location "Sandbox"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++20"
+    staticruntime "on"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp",
+    }
+
+    includedirs
+    {
+        "Jade/vendor/spdlog/include",
+        "Jade/src",
+        "Jade/vendor",
+        "%{IncludeDir.glm}",
+    }
+
+    links
+    {
+        "Jade",
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+    filter "configurations:Debug"
+        defines "JADE_DEBUG"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "JADE_RELEASE"
+        optimize "on"
+
+    filter "configurations:Dist"
+        defines "JADE_DIST"
+        optimize "on"
+
+project "Jade-Editor"
+    location "Jade-Editor"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"

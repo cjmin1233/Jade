@@ -13,10 +13,17 @@ class Layer;
 
 namespace Jade
 {
+    struct ApplicationSpecification
+    {
+        std::string Name = "Jade Application";
+        uint32_t Width = 1280;
+        uint32_t Height = 720;
+    };
+
     class Application
     {
     public:
-        Application();
+        Application(const ApplicationSpecification& specification);
         virtual ~Application();
 
         void OnEvent(Event& e);

@@ -22,6 +22,4 @@ private:
     glm::vec2 m_SquareSize;
     glm::vec2 m_TilingFactor;
     glm::vec4 m_SquareColor;
-
-    Jade::Ref<Jade::FrameBuffer> m_FrameBuffer;
 };

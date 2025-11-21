@@ -12,8 +12,8 @@ namespace Jade
 {
     Application* Application::s_Instance = nullptr;
 
-    Application::Application()
-        : m_Window(Scope<Window>(Window::Create()))
+    Application::Application(const ApplicationSpecification& specification)
+        : m_Window(Scope<Window>(Window::Create(WindowProps(specification.Name, specification.Width, specification.Height))))
         , m_ImGuiLayer(new ImGuiLayer())
         , m_LayerStack()
         , m_LastFrameTime(0.0f)

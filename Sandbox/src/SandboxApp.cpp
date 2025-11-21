@@ -11,6 +11,7 @@ class SandboxApp : public Jade::Application
 {
 public:
     SandboxApp() 
+        : Jade::Application(Jade::ApplicationSpecification{ "Sandbox App", 1280, 720 })
     {
         // PushLayer(new ExampleLayer());
         PushLayer(new Sandbox2D());
