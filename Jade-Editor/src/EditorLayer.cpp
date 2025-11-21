@@ -14,6 +14,8 @@ namespace Jade
         , m_SquareColor(1.0f)
         , m_FrameBuffer(nullptr)
         , m_ViewportSize(0.0f, 0.0f)
+        , m_ViewportFocused(false)
+        , m_ViewportHovered(false)
     {
     }
 
@@ -45,7 +47,12 @@ namespace Jade
         {
             // Update Camera
             JADE_PROFILE_SCOPE("CameraController::OnUpdate");
-            m_CameraController.OnUpdate(ts);
+
+            // Only update the camera if the viewport is focused
+            if (m_ViewportFocused)
+            {
+                m_CameraController.OnUpdate(ts);
+            }
         }
 
         {
@@ -217,6 +224,14 @@ namespace Jade
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
         ImGui::Begin("Viewport");
         ImGui::PopStyleVar();
+
+        // Check if the viewport is focused / hovered
+        m_ViewportFocused = ImGui::IsWindowFocused();
+        m_ViewportHovered = ImGui::IsWindowHovered();
+
+        // Enable or disable event blocking based on hover state
+        // Viewport hovered -> don't block events
+        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportHovered);
 
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 

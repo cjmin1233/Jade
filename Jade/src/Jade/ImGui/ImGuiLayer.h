@@ -20,7 +20,10 @@ namespace Jade
         void Begin();
         void End();
 
+        inline void SetBlockEvents(bool block) { m_BlockEvents = block; }
+
     private:
         float m_Time;
+        bool m_BlockEvents;
     };
 }
