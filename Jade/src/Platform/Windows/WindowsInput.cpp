@@ -1,47 +1,41 @@
 #include "jdpch.h"
 
-#include "Platform/Windows/WindowsInput.h"
+#include "Jade/Core/Input.h"
 #include "Jade/Core/Application.h"
 
 #include <GLFW/glfw3.h>
 
 namespace Jade
 {
-    bool WindowsInput::IsKeyPressedImpl(Key keyCode)
+    bool Input::IsKeyPressed(Key keyCode)
     {
-        // Windows-specific key press detection logic
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-        int state = glfwGetKey(window, static_cast<int>(keyCode));
-
+        int state = glfwGetKey(window, static_cast<int32_t>(keyCode));
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
 
-    bool WindowsInput::IsMouseButtonPressedImpl(Mouse button)
+    bool Input::IsMouseButtonPressed(Mouse button)
     {
-        // Windows-specific mouse button press detection logic
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-        int state = glfwGetMouseButton(window, static_cast<int>(button));
+        int state = glfwGetMouseButton(window, static_cast<int32_t>(button));
         return state == GLFW_PRESS;
     }
 
-    std::pair<float, float> WindowsInput::GetMousePositionImpl()
+    std::pair<float, float> Input::GetMousePosition()
     {
-        // Windows-specific mouse position retrieval logic
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
-        double x, y;
-        glfwGetCursorPos(window, &x, &y);
-        return { (float)x, (float)y };
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        return { (float)xpos, (float)ypos };
     }
 
-    float WindowsInput::GetMouseXImpl()
+    float Input::GetMouseX()
     {
-        // Windows-specific mouse X position retrieval logic
-        return GetMousePositionImpl().first;
+        return GetMousePosition().first;
     }
 
-    float WindowsInput::GetMouseYImpl()
+    float Input::GetMouseY()
     {
-        // Windows-specific mouse Y position retrieval logic
-        return GetMousePositionImpl().second;
+        return GetMousePosition().second;
     }
 }
