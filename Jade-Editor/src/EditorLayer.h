@@ -18,6 +18,9 @@ namespace Jade
         virtual void OnEvent(Event& event) override;
 
     private:
+        void RenderViewport();
+
+    private:
         OrthographicCameraController m_CameraController;
 
         Ref<Texture2D> m_Texture;
@@ -26,5 +29,6 @@ namespace Jade
         glm::vec4 m_SquareColor;
 
         Ref<FrameBuffer> m_FrameBuffer;
+        glm::vec2 m_ViewportSize;
     };
 } // namespace Jade

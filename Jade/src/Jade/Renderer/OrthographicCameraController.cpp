@@ -89,6 +89,22 @@ namespace Jade
         dispatcher.Dispatch<WindowResizeEvent>(JADE_BIND_EVENT_FN(OrthographicCameraController::OnWindowResized));
     }
 
+    void OrthographicCameraController::OnResize(float width, float height)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        if (m_FitToHeight)
+        {
+            m_AspectRatio = width / height;
+        }
+        else
+        {
+            m_AspectRatio = height / width;
+        }
+
+        UpdateCameraProjection();
+    }
+
     bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
     {
         JADE_PROFILE_FUNCTION();
@@ -105,12 +121,7 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
-        if(m_FitToHeight)
-            m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-        else
-            m_AspectRatio = (float)e.GetHeight() / (float)e.GetWidth();
-
-        UpdateCameraProjection();
+        OnResize((float)e.GetWidth(), (float)e.GetHeight());
 
         return false;
     }
@@ -118,7 +129,7 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
-        if(m_FitToHeight)
+        if (m_FitToHeight)
             m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
         else
             m_Camera.SetProjection(-m_ZoomLevel, m_ZoomLevel, -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel);
