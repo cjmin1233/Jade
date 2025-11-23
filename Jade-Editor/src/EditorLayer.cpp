@@ -48,6 +48,16 @@ namespace Jade
             // Update Camera
             JADE_PROFILE_SCOPE("CameraController::OnUpdate");
 
+            // Resize framebuffer if the viewport size has changed
+            if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
+                // Only resize if both width and height are greater than zero
+                (m_ViewportSize.x > 0 && m_ViewportSize.y > 0)
+                && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+            {
+                m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+                m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+            }
+
             // Only update the camera if the viewport is focused
             if (m_ViewportFocused)
             {
@@ -233,20 +243,12 @@ namespace Jade
         // Viewport hovered -> don't block events
         Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportHovered);
 
+        // Get the size of the viewport panel
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+        m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        if (m_ViewportSize.x != viewportPanelSize.x || m_ViewportSize.y != viewportPanelSize.y)
-        {
-            m_ViewportSize.x = viewportPanelSize.x;
-            m_ViewportSize.y = viewportPanelSize.y;
-
-            m_FrameBuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-
-            m_CameraController.OnResize(viewportPanelSize.x, viewportPanelSize.y);
-        }
-
+        // Draw the framebuffer's color attachment as an image
         uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
-
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
 
         ImGui::End();
