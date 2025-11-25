@@ -31,6 +31,9 @@ namespace Jade
         Ref<FrameBuffer> m_FrameBuffer;
         glm::vec2 m_ViewportSize;
 
+        Ref<Scene> m_ActiveScene;
+        entt::entity m_SquareEntity;
+
         bool m_ViewportFocused, m_ViewportHovered;
     };
 } // namespace Jade

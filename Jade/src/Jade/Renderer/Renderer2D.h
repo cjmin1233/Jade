@@ -23,6 +23,12 @@ namespace Jade
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
         static void DrawQuad(const glm::vec3& position, const glm::vec2& size,
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
+
+        // Single Quad with transform matrix
+        static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+        static void DrawQuad(const glm::mat4& transform,
+            const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
+
         // Rotated Primitives
         static void DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
         static void DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
@@ -30,6 +36,11 @@ namespace Jade
         static void DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size,
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
         static void DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size,
+            const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
+
+        // Rotated Quad with transform matrix
+        static void DrawRotatedQuad(const glm::mat4& transform, const glm::vec4& color);
+        static void DrawRotatedQuad(const glm::mat4& transform,
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
 #pragma endregion
 

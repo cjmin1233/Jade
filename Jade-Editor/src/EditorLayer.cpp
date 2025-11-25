@@ -14,6 +14,8 @@ namespace Jade
         , m_SquareColor(1.0f)
         , m_FrameBuffer(nullptr)
         , m_ViewportSize(0.0f, 0.0f)
+        , m_ActiveScene(nullptr)
+        , m_SquareEntity(entt::null)
         , m_ViewportFocused(false)
         , m_ViewportHovered(false)
     {
@@ -31,6 +33,14 @@ namespace Jade
         fbSpec.Width = Application::Get().GetWindow().GetWidth(); 
         fbSpec.Height = Application::Get().GetWindow().GetHeight();
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
+
+        m_ActiveScene = CreateRef<Scene>();
+
+        auto squareEntity = m_ActiveScene->CreateEntity();
+        m_ActiveScene->GetRegistry().emplace<TransformComponent>(squareEntity, glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+        m_ActiveScene->GetRegistry().emplace<SpriteRendererComponent>(squareEntity, glm::vec4(0.2f, 0.3f, 0.8f, 1.0f));
+
+        m_SquareEntity = squareEntity;
     }
 
     void EditorLayer::OnDetach()
@@ -69,6 +79,8 @@ namespace Jade
             // Render
             JADE_PROFILE_SCOPE("Renderer Prep");
 
+            Renderer2D::ResetStats();
+
             m_FrameBuffer->Bind();
 
             RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
@@ -80,16 +92,8 @@ namespace Jade
             JADE_PROFILE_SCOPE("Renderer Draw");
             Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-            static float rotation = 0.0f;
-            rotation += ts * 50.0f;
-            for (int i = 0; i < 100; ++i)
-            {
-                for (int j = 0; j < 100; ++j)
-                {
-                    Renderer2D::DrawRotatedQuad({ (float)i - 5.0f, (float)j - 5.0f, 0.0f }, rotation,
-                        m_SquareSize, m_Texture, m_TilingFactor, m_SquareColor);
-                }
-            }
+            // Update scene
+            m_ActiveScene->OnUpdate(ts);
 
             Renderer2D::EndScene();
 
@@ -204,9 +208,8 @@ namespace Jade
 
         ImGui::Begin("Settings");
 
-        ImGui::DragFloat2("Square Size", glm::value_ptr(m_SquareSize), 0.1f, 0.1f, 10.0f);
-        ImGui::DragFloat2("Tiling Factor", glm::value_ptr(m_TilingFactor), 0.1f, 0.1f, 10.0f);
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+        glm::vec4& squareColor = m_ActiveScene->GetRegistry().get<SpriteRendererComponent>(m_SquareEntity).Color;
+        ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
 
         auto stats = Renderer2D::GetStats();
         ImGui::Text("Draw Calls: %d", stats.DrawCalls);

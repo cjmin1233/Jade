@@ -23,6 +23,7 @@ IncludeDir["Glad"] = "Jade/vendor/Glad/include"
 IncludeDir["ImGui"] = "Jade/vendor/imgui"
 IncludeDir["glm"] = "Jade/vendor/glm"
 IncludeDir["stb_image"] = "Jade/vendor/stb_image"
+IncludeDir["entt"] = "Jade/vendor/entt/include"
 
 group "Dependencies"
     include "Jade/vendor/GLFW"
@@ -68,6 +69,7 @@ project "Jade"
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",  
         "%{IncludeDir.stb_image}",
+        "%{IncludeDir.entt}",
     }
 
     links
@@ -122,6 +124,7 @@ project "Sandbox"
         "Jade/src",
         "Jade/vendor",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
     }
 
     links
@@ -166,6 +169,7 @@ project "Jade-Editor"
         "Jade/src",
         "Jade/vendor",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
     }
 
     links

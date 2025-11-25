@@ -78,6 +78,7 @@ namespace Jade
         return true;
     }
 
+    /*
     // Checks if a quad is visible within the current view bounds
     static inline bool IsVisible(const glm::vec3& center, float rotationDeg, const glm::vec2& size)
     {
@@ -102,6 +103,29 @@ namespace Jade
         glm::vec2 quadMax = glm::vec2(center) + extents;
 
         // Apply culling padding
+        return AABBOverlap(quadMin, quadMax, s_Data.ViewMin, s_Data.ViewMax);
+    }
+    */
+
+    // Checks if a quad defined by a transform matrix is visible within the current view bounds
+    static inline bool IsVisible(const glm::mat4& transform)
+    {
+        if (!s_Data.CullingEnabled)
+            return true;
+
+        // Calculate quad AABB by transforming all four corners
+        glm::vec4 p0 = transform * s_Data.QuadVertexPositions[0];
+        glm::vec2 quadMin(p0.x, p0.y);
+        glm::vec2 quadMax = quadMin;
+
+        for (int i = 1; i < 4; ++i)
+        {
+            glm::vec4 pw = transform * s_Data.QuadVertexPositions[i];
+            glm::vec2 pt(pw.x, pw.y);
+            quadMin = glm::min(quadMin, pt);
+            quadMax = glm::max(quadMax, pt);
+        }
+
         return AABBOverlap(quadMin, quadMax, s_Data.ViewMin, s_Data.ViewMax);
     }
 
@@ -272,20 +296,43 @@ namespace Jade
         DrawQuad({ position.x, position.y, 0.0f }, size, color);
     }
 
-    // Draws a colored quad at the specified position and size
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
     {
-        JADE_PROFILE_FUNCTION();
-
-        if(!IsVisible(position, 0.0f, size))
-            return;
-
-        constexpr float textureIndex = 0.0f; // White Texture
-        constexpr glm::vec2 tilingFactor = { 1.0f, 1.0f };
-
         // Transform matrix
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
             glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        DrawQuad(transform, color);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    {
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    {
+        // Transform matrix
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        DrawQuad(transform, texture, tilingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        // Visibility culling
+        if (!IsVisible(transform))
+            return;
+
+        // Check if we need to flush the batch
+        if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices || s_Data.TextureSlotIndex >= Renderer2DData::MaxTextureSlots)
+            NextBatch();
+
+        constexpr float textureIndex = 0.0f;  // White Texture
+        constexpr glm::vec2 tilingFactor = { 1.0f, 1.0f };
 
 #pragma region Add vertices to buffer
         for (int i = 0; i < 4; ++i)
@@ -304,18 +351,12 @@ namespace Jade
 #pragma endregion
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
-    {
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor, tintColor);
-    }
-
-    // Draws a textured quad at the specified position and size
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
         JADE_PROFILE_FUNCTION();
 
         // Visibility culling
-        if(!IsVisible(position, 0.0f, size))
+        if (!IsVisible(transform))
             return;
 
         // Check if we need to flush the batch
@@ -335,7 +376,7 @@ namespace Jade
 
         // New texture
         if (textureIndex == 0.0f)
-        {        
+        {
             // Ensure we don't exceed max texture slots
             JADE_CORE_ASSERT(s_Data.TextureSlotIndex < Renderer2DData::MaxTextureSlots, "Texture slot index exceeds maximum!");
 
@@ -344,10 +385,6 @@ namespace Jade
             s_Data.TextureSlotIndex++;
         }
 
-        // Transform matrix
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-            
 #pragma region Add vertices to buffer
         for (int i = 0; i < 4; ++i)
         {
@@ -372,10 +409,35 @@ namespace Jade
 
     void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color)
     {
+        // Transform matrix
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
+            * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        DrawRotatedQuad(transform, color);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    {
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotationAngle, size, texture, tilingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    {
+        // Transform matrix
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
+            * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
+            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        DrawRotatedQuad(transform, texture, tilingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::mat4& transform, const glm::vec4& color)
+    {
         JADE_PROFILE_FUNCTION();
 
         // Visibility culling
-        if(!IsVisible(position, rotationAngle, size))
+        if (!IsVisible(transform))
             return;
 
         // Check if we need to flush the batch
@@ -384,11 +446,6 @@ namespace Jade
 
         constexpr float textureIndex = 0.0f; // White Texture
         constexpr glm::vec2 tilingFactor = { 1.0f, 1.0f };
-
-        // Transform matrix
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
-            * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
-            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 #pragma region Add vertices to buffer
         for (int i = 0; i < 4; ++i)
@@ -407,17 +464,12 @@ namespace Jade
 #pragma endregion
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
-    {
-        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotationAngle, size, texture, tilingFactor, tintColor);
-    }
-
-    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawRotatedQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
         JADE_PROFILE_FUNCTION();
 
         // Visibility culling
-        if(!IsVisible(position, rotationAngle, size))
+        if (!IsVisible(transform))
             return;
 
         // Check if we need to flush the batch
@@ -445,11 +497,6 @@ namespace Jade
             s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
             s_Data.TextureSlotIndex++;
         }
-
-        // Transform matrix
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
-            * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
-            * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
 #pragma region Add vertices to buffer
         for (int i = 0; i < 4; ++i)

@@ -8,6 +8,8 @@
 #include "Jade/Core/Input.h"
 #include "Jade/Core/KeyCodes.h"
 #include "Jade/Core/Timestep.h"
+#include "Jade/Scene/Scene.h"
+#include "Jade/Scene/Components.h"
 
 #pragma region Renderer APIs
 #include "Jade/Renderer/Renderer.h"
