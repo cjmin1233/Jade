@@ -15,7 +15,7 @@ namespace Jade
         , m_FrameBuffer(nullptr)
         , m_ViewportSize(0.0f, 0.0f)
         , m_ActiveScene(nullptr)
-        , m_SquareEntity(entt::null)
+        , m_SquareEntity()
         , m_ViewportFocused(false)
         , m_ViewportHovered(false)
     {
@@ -36,9 +36,12 @@ namespace Jade
 
         m_ActiveScene = CreateRef<Scene>();
 
-        auto squareEntity = m_ActiveScene->CreateEntity();
-        m_ActiveScene->GetRegistry().emplace<TransformComponent>(squareEntity, glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
-        m_ActiveScene->GetRegistry().emplace<SpriteRendererComponent>(squareEntity, glm::vec4(0.2f, 0.3f, 0.8f, 1.0f));
+        auto squareEntity = m_ActiveScene->CreateEntity("Blue Square");
+        squareEntity.AddComponent<SpriteRendererComponent>(
+            glm::vec4(0.2f, 0.3f, 0.8f, 1.0f)
+        );
+        squareEntity.GetComponent<TransformComponent>().Transform =
+            glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
 
         m_SquareEntity = squareEntity;
     }
@@ -208,14 +211,22 @@ namespace Jade
 
         ImGui::Begin("Settings");
 
-        glm::vec4& squareColor = m_ActiveScene->GetRegistry().get<SpriteRendererComponent>(m_SquareEntity).Color;
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-
         auto stats = Renderer2D::GetStats();
         ImGui::Text("Draw Calls: %d", stats.DrawCalls);
         ImGui::Text("Quad Count: %d", stats.QuadCount);
         ImGui::Text("Vertex Count: %d", stats.GetTotalVertexCount());
         ImGui::Text("Index Count: %d", stats.GetTotalIndexCount());
+
+        if(m_SquareEntity)
+        {
+            ImGui::Separator();
+
+            TagComponent& tag = m_SquareEntity.GetComponent<TagComponent>();
+            ImGui::Text("Tag: %s", tag.Tag.c_str());
+
+            SpriteRendererComponent& sr = m_SquareEntity.GetComponent<SpriteRendererComponent>();
+            ImGui::ColorEdit4("Square Color", glm::value_ptr(sr.Color));
+        }
 
         ImGui::End();
 

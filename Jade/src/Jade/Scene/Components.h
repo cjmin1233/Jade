@@ -3,6 +3,17 @@
 
 namespace Jade
 {
+    struct TagComponent
+    {
+        // Entity tag/name
+        std::string Tag;
+
+        TagComponent() = default;
+        TagComponent(const TagComponent&) = default;
+        TagComponent(const std::string& tag)
+            : Tag(tag) {}
+    };
+
     struct TransformComponent
     {
         // 4x4 transformation matrix

@@ -32,7 +32,7 @@ namespace Jade
         glm::vec2 m_ViewportSize;
 
         Ref<Scene> m_ActiveScene;
-        entt::entity m_SquareEntity;
+        Entity m_SquareEntity;
 
         bool m_ViewportFocused, m_ViewportHovered;
     };
