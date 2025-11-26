@@ -255,7 +255,7 @@ namespace Jade
     }
 }
 
-#define JADE_PROFILE 0
+#define JADE_PROFILE 1
 
 #if JADE_PROFILE
     // Resolve which function signature macro will be used. Note that this only
@@ -282,9 +282,11 @@ namespace Jade
     // Instrumentation macros
     #define JADE_PROFILE_BEGIN_SESSION(name, filepath) ::Jade::Instrumentor::Get().BeginSession(name, filepath)
     #define JADE_PROFILE_END_SESSION() ::Jade::Instrumentor::Get().EndSession()
-    #define JADE_PROFILE_SCOPE(name) constexpr auto fixedName = ::Jade::InstrumentorUtils::CleanupOutputString(name, "__cdecl "); \
-                                ::Jade::InstrumentationTimer timer##__LINE__(fixedName.Data);
     #define JADE_PROFILE_FUNCTION() JADE_PROFILE_SCOPE(JADE_FUNC_SIG)
+    #define JADE_PROFILE_SCOPE(name) JADE_PROFILE_SCOPE_LINE(name, __LINE__)
+    #define JADE_PROFILE_SCOPE_LINE(name, line) JADE_PROFILE_SCOPE_LINE2(name, line)
+    #define JADE_PROFILE_SCOPE_LINE2(name, line) constexpr auto fixedName##line = ::Jade::InstrumentorUtils::CleanupOutputString(name, "__cdecl "); \
+                                ::Jade::InstrumentationTimer timer##line(fixedName##line.Data);
 #else
     #define JADE_PROFILE_BEGIN_SESSION(name, filepath)
     #define JADE_PROFILE_END_SESSION()
