@@ -10,12 +10,7 @@
 namespace Jade
 {
     Scene::Scene()
-    {
-        JADE_PROFILE_FUNCTION();
-
-    }
-
-    Scene::~Scene()
+        : m_Registry()
     {
     }
 
@@ -37,15 +32,39 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
-        // Grouping entities with both TransformComponent and SpriteRendererComponent
-        // and iterating over them for rendering
-        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-        for(entt::entity entity : group)
-        {
-            TransformComponent& transform = group.get<TransformComponent>(entity);
-            SpriteRendererComponent& sprite = group.get<SpriteRendererComponent>(entity);
+        CameraComponent* mainCamera = nullptr;
+        TransformComponent* cameraTransform = nullptr;
 
-            Renderer2D::DrawQuad(transform.Transform, sprite.Color);
+        auto view = m_Registry.view<TransformComponent, CameraComponent>();
+
+        // Find the primary camera in the scene
+        for (auto [entity, transform, camera] : view.each())
+        {
+            if (camera.Primary)
+            {
+                mainCamera = &camera;
+                cameraTransform = &transform;
+                break;
+            }
+        }
+
+        // If a primary camera is found, begin the scene rendering
+        if (mainCamera && cameraTransform)
+        {
+            Renderer2D::BeginScene(mainCamera->Cam, cameraTransform->GetTransform());
+
+            // Grouping entities with both TransformComponent and SpriteRendererComponent
+            // and iterating over them for rendering
+            auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+            for (entt::entity entity : group)
+            {
+                TransformComponent& transform = group.get<TransformComponent>(entity);
+                SpriteRendererComponent& sprite = group.get<SpriteRendererComponent>(entity);
+
+                Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+            }
+
+            Renderer2D::EndScene();
         }
     }
 }

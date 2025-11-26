@@ -2,6 +2,8 @@
 #include "Jade/Renderer/OrthographicCamera.h"
 #include "Jade/Renderer/Texture.h"
 
+#include "Jade/Renderer/Camera.h"
+
 namespace Jade
 {
     class Renderer2D
@@ -10,7 +12,8 @@ namespace Jade
         static void Init();
         static void Shutdown();
 
-        static void BeginScene(const OrthographicCamera& camera);
+        static void BeginScene(const Camera& camera, const glm::mat4& transform);
+        static void BeginScene(const OrthographicCamera& camera);   // TODO: Remove this overload later
         static void EndScene();
         static void Flush();
 

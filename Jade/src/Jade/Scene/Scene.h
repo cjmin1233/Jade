@@ -1,7 +1,7 @@
 #pragma once
-#include <entt.hpp>
-
 #include "Jade/Core/Timestep.h"
+
+#include <entt.hpp>
 
 namespace Jade
 {
@@ -11,7 +11,7 @@ namespace Jade
     {
     public:
         Scene();
-        ~Scene();
+        ~Scene() = default;
 
         Entity CreateEntity(const std::string& name = std::string());
 

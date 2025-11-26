@@ -1,5 +1,11 @@
 #pragma once
+#include "Jade/Renderer/Camera.h"
+
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
 
 namespace Jade
 {
@@ -16,17 +22,25 @@ namespace Jade
 
     struct TransformComponent
     {
-        // 4x4 transformation matrix
-        glm::mat4 Transform = glm::mat4(1.0f);
+        // Position, rotation and scale
+        glm::vec3 Translation = glm::vec3(0.0f);
+        glm::vec3 Rotation = glm::vec3(0.0f);
+        glm::vec3 Scale = glm::vec3(1.0f);
 
         TransformComponent() = default;
         TransformComponent(const TransformComponent&) = default;
-        TransformComponent(const glm::mat4& transform)
-            : Transform(transform) {}
+        TransformComponent(const glm::vec3& translation)
+            : Translation(translation) {}
 
-        // Implicit conversion to glm::mat4
-        operator glm::mat4& () { return Transform; }
-        operator const glm::mat4& () const { return Transform; }
+        // Get the transformation matrix (S * R * T)
+        glm::mat4 GetTransform() const
+        {
+            glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
+
+            return glm::translate(glm::mat4(1.0f), Translation)
+                * rotation
+                * glm::scale(glm::mat4(1.0f), Scale);
+        }
     };
 
     struct SpriteRendererComponent
@@ -38,5 +52,20 @@ namespace Jade
         SpriteRendererComponent(const SpriteRendererComponent&) = default;
         SpriteRendererComponent(const glm::vec4& color)
             : Color(color) {}
+    };
+
+    struct CameraComponent
+    {
+        // Camera object
+        Camera Cam;
+        // Is this the primary camera?
+        bool Primary = true;
+        // Should the aspect ratio be fixed?
+        bool FixedAspectRatio = false;
+
+        CameraComponent() = default;
+        CameraComponent(const CameraComponent&) = default;
+        CameraComponent(const glm::mat4& projection)
+            : Cam(projection) {}
     };
 }
