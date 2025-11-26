@@ -29,19 +29,13 @@ namespace Jade
 
     class Instrumentor
     {
-    private:
-        std::mutex m_Mutex;
-        InstrumentationSession* m_CurrentSession;
-        std::ofstream m_OutputStream;
-
-        Instrumentor()
-            : m_CurrentSession(nullptr)
-            , m_OutputStream()
-            , m_Mutex()
-        {
-        }
-
     public:
+        // non-copyable
+        Instrumentor(const Instrumentor&) = delete;
+        Instrumentor(Instrumentor&&) = delete;
+        Instrumentor& operator=(const Instrumentor&) = delete;
+        Instrumentor& operator=(Instrumentor&&) = delete;
+
         void BeginSession(const std::string& name, const std::string& filepath = "results.json")
         {
             std::lock_guard lock(m_Mutex);
@@ -145,6 +139,18 @@ namespace Jade
         }
 
     private:
+        Instrumentor()
+            : m_CurrentSession(nullptr)
+            , m_OutputStream()
+            , m_Mutex()
+        {
+        }
+
+        ~Instrumentor()
+        {
+            EndSession();
+        }
+
         void WriteHeader()
         {
             m_OutputStream << "{\"otherData\": {},\"traceEvents\":[{}";
@@ -169,6 +175,10 @@ namespace Jade
                 m_CurrentSession = nullptr;
             }
         }
+
+        std::mutex m_Mutex;
+        InstrumentationSession* m_CurrentSession;
+        std::ofstream m_OutputStream;
     };
 
     class InstrumentationTimer
