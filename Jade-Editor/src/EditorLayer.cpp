@@ -52,6 +52,58 @@ namespace Jade
         m_SecondCameraEntity = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
         auto& cameraComp = m_SecondCameraEntity.AddComponent<CameraComponent>();
         cameraComp.Primary = false;
+
+        class CameraController : public ScriptableEntity
+        {
+        public:
+            void OnCreate() {}
+            void OnDestroy() {}
+
+            void OnUpdate(Timestep ts)
+            {
+                TransformComponent& transform = GetComponent<TransformComponent>();
+
+                float speed = 5.0f;
+
+                // Camera movement
+                if (Input::IsKeyPressed(Key::A))
+                {
+                    transform.Translation.x -= speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::D))
+                {
+                    transform.Translation.x += speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::E))
+                {
+                    transform.Translation.y += speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::Q))
+                {
+                    transform.Translation.y -= speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::W))
+                {
+                    transform.Translation.z += speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::S))
+                {
+                    transform.Translation.z -= speed * ts;
+                }
+
+                // Camera rotation
+                if (Input::IsKeyPressed(Key::Z))
+                {
+                    transform.Rotation.z += 90.0f * ts;
+                }
+                if (Input::IsKeyPressed(Key::C))
+                {
+                    transform.Rotation.z -= 90.0f * ts;
+                }
+            }
+        };
+
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach()
