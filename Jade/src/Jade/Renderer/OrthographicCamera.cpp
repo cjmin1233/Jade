@@ -17,6 +17,7 @@ namespace Jade
         JADE_PROFILE_FUNCTION();
 
         m_ProjectionMatrix = glm::ortho(left, right, bottom, top, 0.0f, 10.0f);
-        m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+
+        UpdateViewProjectionMatrix();
     }
 }

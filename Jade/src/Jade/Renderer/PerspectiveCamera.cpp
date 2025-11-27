@@ -13,6 +13,7 @@ namespace Jade
     void PerspectiveCamera::SetPerspective(float fov, float aspectRatio, float nearClip, float farClip)
     {
         m_ProjectionMatrix = glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
-        m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+
+        UpdateViewProjectionMatrix();
     }
 }

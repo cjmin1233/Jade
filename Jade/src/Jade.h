@@ -10,6 +10,8 @@
 #include "Jade/Core/Timestep.h"
 #include "Jade/Scene/Scene.h"
 #include "Jade/Scene/Components.h"
+#include "Jade/Scene/Entity.h"
+#include "Jade/Scene/ScriptableEntity.h"
 
 #pragma region Renderer APIs
 #include "Jade/Renderer/Renderer.h"

@@ -15,7 +15,9 @@ namespace Jade
         , m_FrameBuffer(nullptr)
         , m_ViewportSize(0.0f, 0.0f)
         , m_ActiveScene(nullptr)
-        , m_SquareEntity(entt::null)
+        , m_SquareEntity()
+        , m_CameraEntity()
+        , m_SecondCameraEntity()
         , m_ViewportFocused(false)
         , m_ViewportHovered(false)
     {
@@ -36,11 +38,72 @@ namespace Jade
 
         m_ActiveScene = CreateRef<Scene>();
 
-        auto squareEntity = m_ActiveScene->CreateEntity();
-        m_ActiveScene->GetRegistry().emplace<TransformComponent>(squareEntity, glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
-        m_ActiveScene->GetRegistry().emplace<SpriteRendererComponent>(squareEntity, glm::vec4(0.2f, 0.3f, 0.8f, 1.0f));
+        m_SquareEntity = m_ActiveScene->CreateEntity("Blue Square");
+        m_SquareEntity.AddComponent<SpriteRendererComponent>(
+            glm::vec4(0.2f, 0.3f, 0.8f, 1.0f)
+        );
+        m_SquareEntity.GetComponent<TransformComponent>().Translation = glm::vec3(-1.0f, 0.0f, 0.0f);
 
-        m_SquareEntity = squareEntity;
+        // Camera Entity
+        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+        m_CameraEntity.AddComponent<CameraComponent>();
+
+        // Second Camera Entity
+        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
+        auto& cameraComp = m_SecondCameraEntity.AddComponent<CameraComponent>();
+        cameraComp.Primary = false;
+
+        class CameraController : public ScriptableEntity
+        {
+        public:
+            void OnCreate() {}
+            void OnDestroy() {}
+
+            void OnUpdate(Timestep ts)
+            {
+                TransformComponent& transform = GetComponent<TransformComponent>();
+
+                float speed = 5.0f;
+
+                // Camera movement
+                if (Input::IsKeyPressed(Key::A))
+                {
+                    transform.Translation.x -= speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::D))
+                {
+                    transform.Translation.x += speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::E))
+                {
+                    transform.Translation.y += speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::Q))
+                {
+                    transform.Translation.y -= speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::W))
+                {
+                    transform.Translation.z += speed * ts;
+                }
+                if (Input::IsKeyPressed(Key::S))
+                {
+                    transform.Translation.z -= speed * ts;
+                }
+
+                // Camera rotation
+                if (Input::IsKeyPressed(Key::Z))
+                {
+                    transform.Rotation.z += 90.0f * ts;
+                }
+                if (Input::IsKeyPressed(Key::C))
+                {
+                    transform.Rotation.z -= 90.0f * ts;
+                }
+            }
+        };
+
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach()
@@ -58,14 +121,19 @@ namespace Jade
             // Update Camera
             JADE_PROFILE_SCOPE("CameraController::OnUpdate");
 
-            // Resize framebuffer if the viewport size has changed
             if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
                 // Only resize if both width and height are greater than zero
                 (m_ViewportSize.x > 0 && m_ViewportSize.y > 0)
                 && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
             {
+                // Resize framebuffer
                 m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+
+                // Resize camera
                 m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+                // Notify scene of viewport resize
+                m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }
 
             // Only update the camera if the viewport is focused
@@ -87,18 +155,10 @@ namespace Jade
             RenderCommand::Clear();
         }
 
-        {
-            // Draw Calls
-            JADE_PROFILE_SCOPE("Renderer Draw");
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
+        // Update scene
+        m_ActiveScene->OnUpdate(ts);
 
-            // Update scene
-            m_ActiveScene->OnUpdate(ts);
-
-            Renderer2D::EndScene();
-
-            m_FrameBuffer->Unbind();
-        }
+        m_FrameBuffer->Unbind();
     }
 
     void EditorLayer::OnImGuiRender()
@@ -208,14 +268,44 @@ namespace Jade
 
         ImGui::Begin("Settings");
 
-        glm::vec4& squareColor = m_ActiveScene->GetRegistry().get<SpriteRendererComponent>(m_SquareEntity).Color;
-        ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-
         auto stats = Renderer2D::GetStats();
         ImGui::Text("Draw Calls: %d", stats.DrawCalls);
         ImGui::Text("Quad Count: %d", stats.QuadCount);
         ImGui::Text("Vertex Count: %d", stats.GetTotalVertexCount());
         ImGui::Text("Index Count: %d", stats.GetTotalIndexCount());
+
+        if (m_SquareEntity)
+        {
+            ImGui::Separator();
+
+            TagComponent& tag = m_SquareEntity.GetComponent<TagComponent>();
+            ImGui::Text("Tag: %s", tag.Tag.c_str());
+
+            SpriteRendererComponent& sr = m_SquareEntity.GetComponent<SpriteRendererComponent>();
+            ImGui::ColorEdit4("Square Color", glm::value_ptr(sr.Color));
+        }
+
+        ImGui::Separator();
+        ImGui::DragFloat3("Camera Transform",
+            glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Translation), 0.1f);
+
+        if (ImGui::Checkbox("Use main camera", &m_PrimaryCamera))
+        {
+            m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
+            m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+        }
+
+        {
+            // Camera settings
+            auto& cameraComp = m_CameraEntity.GetComponent<CameraComponent>();
+
+            // Drag to change orthographic size
+            float orthoSize = cameraComp.Cam.GetOrthographicSize();
+            if (ImGui::DragFloat("Camera Ortho Size", &orthoSize))
+            {
+                cameraComp.Cam.SetOrthographicSize(orthoSize);
+            }
+        }
 
         ImGui::End();
 
