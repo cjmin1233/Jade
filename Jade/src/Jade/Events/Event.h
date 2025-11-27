@@ -1,7 +1,8 @@
 #pragma once
-#include "jdpch.h"
-
 #include "Jade/Core/Base.h"
+#include "Jade/Debug/Instrumentor.h"
+
+#include <functional>
 
 namespace Jade
 {

@@ -1,6 +1,4 @@
 #pragma once
-#include "jdpch.h"
-
 #include "Jade/Core/Base.h"
 #include "Jade/Events/Event.h"
 

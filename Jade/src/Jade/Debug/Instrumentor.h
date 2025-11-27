@@ -1,10 +1,14 @@
 #pragma once
+#include "Jade/Core/Log.h"
+
 #include <string>
 #include <chrono>
 #include <algorithm>
 #include <fstream>
 #include <filesystem>
 #include <iomanip>
+#include <sstream>
+#include <mutex>
 
 #include <thread>
 
