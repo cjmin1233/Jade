@@ -366,6 +366,7 @@ FodyWeavers.xsd
 **/bin/
 bin-int/
 Intermediates/
+!vendor/premake/bin/
 
 # Jade files
 *.log

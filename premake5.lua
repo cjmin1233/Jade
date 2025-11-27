@@ -1,3 +1,5 @@
+include "./vendor/premake/premake_customization/solution_items.lua"
+
 workspace "Jade"
     architecture "x86_64"
     startproject "Jade-Editor"
@@ -9,6 +11,11 @@ workspace "Jade"
         "Dist"
     }
 
+    solution_items
+    {
+        ".editorconfig",
+    }
+
     flags
     {
         "MultiProcessorCompile",
@@ -18,176 +25,22 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
-IncludeDir["GLFW"] = "Jade/vendor/GLFW/include"
-IncludeDir["Glad"] = "Jade/vendor/Glad/include"
-IncludeDir["ImGui"] = "Jade/vendor/imgui"
-IncludeDir["glm"] = "Jade/vendor/glm"
-IncludeDir["stb_image"] = "Jade/vendor/stb_image"
-IncludeDir["entt"] = "Jade/vendor/entt/include"
+IncludeDir["GLFW"] = "%{wks.location}/Jade/vendor/GLFW/include"
+IncludeDir["Glad"] = "%{wks.location}/Jade/vendor/Glad/include"
+IncludeDir["ImGui"] = "%{wks.location}/Jade/vendor/imgui"
+IncludeDir["glm"] = "%{wks.location}/Jade/vendor/glm"
+IncludeDir["stb_image"] = "%{wks.location}/Jade/vendor/stb_image"
+IncludeDir["entt"] = "%{wks.location}/Jade/vendor/entt/include"
 
 group "Dependencies"
+    include "vendor/premake"
     include "Jade/vendor/GLFW"
     include "Jade/vendor/Glad"
     include "Jade/vendor/imgui"
 group ""
 
-project "Jade"
-    kind "StaticLib"
-    location "Jade"
-    language "C++"
-    cppdialect "C++20"
-    staticruntime "on"
+include "Jade"
 
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+include "Sandbox"
 
-    pchheader "jdpch.h"
-    pchsource "%{prj.name}/src/jdpch.cpp"
-
-    files
-    {
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp",
-        "%{prj.name}/vendor/stb_image/**.h",
-        "%{prj.name}/vendor/stb_image/**.cpp",
-        "%{prj.name}/vendor/glm/glm/**.hpp",
-        "%{prj.name}/vendor/glm/glm/**.inl",
-    }
-
-    defines
-    {
-        "_CRT_SECURE_NO_WARNINGS",
-        "GLFW_INCLUDE_NONE",
-    }
-
-    includedirs
-    {
-        "%{prj.name}/vendor/spdlog/include",
-        "%{prj.name}/src",
-        "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}",
-        "%{IncludeDir.ImGui}",
-        "%{IncludeDir.glm}",  
-        "%{IncludeDir.stb_image}",
-        "%{IncludeDir.entt}",
-    }
-
-    links
-    {
-        "GLFW",
-        "Glad",
-        "ImGui",
-        "opengl32.lib",
-    }
-
-    filter "system:windows"
-        systemversion "latest"
-
-        defines
-        {
-        }
-
-    filter "configurations:Debug"
-        defines "JADE_DEBUG"
-        runtime "Debug"
-        symbols "on"
-
-    filter "configurations:Release"
-        defines "JADE_RELEASE"
-        runtime "Release"
-        optimize "on"
-
-    filter "configurations:Dist"
-        defines "JADE_DIST"
-        runtime "Release"
-        optimize "on"
-
-project "Sandbox"
-    location "Sandbox"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++20"
-    staticruntime "on"
-
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-    files
-    {
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp",
-    }
-
-    includedirs
-    {
-        "Jade/vendor/spdlog/include",
-        "Jade/src",
-        "Jade/vendor",
-        "%{IncludeDir.glm}",
-        "%{IncludeDir.entt}",
-    }
-
-    links
-    {
-        "Jade",
-    }
-
-    filter "system:windows"
-        systemversion "latest"
-
-    filter "configurations:Debug"
-        defines "JADE_DEBUG"
-        symbols "on"
-
-    filter "configurations:Release"
-        defines "JADE_RELEASE"
-        optimize "on"
-
-    filter "configurations:Dist"
-        defines "JADE_DIST"
-        optimize "on"
-
-project "Jade-Editor"
-    location "Jade-Editor"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++20"
-    staticruntime "on"
-
-    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-
-    files
-    {
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp",
-    }
-
-    includedirs
-    {
-        "Jade/vendor/spdlog/include",
-        "Jade/src",
-        "Jade/vendor",
-        "%{IncludeDir.glm}",
-        "%{IncludeDir.entt}",
-    }
-
-    links
-    {
-        "Jade",
-    }
-
-    filter "system:windows"
-        systemversion "latest"
-
-    filter "configurations:Debug"
-        defines "JADE_DEBUG"
-        symbols "on"
-
-    filter "configurations:Release"
-        defines "JADE_RELEASE"
-        optimize "on"
-
-    filter "configurations:Dist"
-        defines "JADE_DIST"
-        optimize "on"
+include "Jade-Editor"
