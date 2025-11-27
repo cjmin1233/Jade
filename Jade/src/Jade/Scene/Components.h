@@ -75,8 +75,8 @@ namespace Jade
     {
         ScriptableEntity* Instance = nullptr;
 
-        ScriptableEntity* (*InstantiateScript)();
-        void (*DestroyScript)(NativeScriptComponent*);
+        ScriptableEntity* (*InstantiateScript)() = nullptr;
+        void (*DestroyScript)(NativeScriptComponent*) = nullptr;
 
         // Binds a script of type T to this component
         template<typename T>
@@ -88,9 +88,77 @@ namespace Jade
                 };
             DestroyScript = [](NativeScriptComponent* nsc)
                 {
+                    if (!nsc || !nsc->Instance)
+                    {
+                        return;
+                    }
+
+                    // Call the script's OnDestroy method before deleting
+                    nsc->Instance->OnDestroy();
+
                     delete nsc->Instance;
                     nsc->Instance = nullptr;
                 };
+        }
+
+        NativeScriptComponent() = default;
+#pragma region Disable Copying, Enable Moving
+        NativeScriptComponent(const NativeScriptComponent&) = delete;
+        NativeScriptComponent& operator=(const NativeScriptComponent&) = delete;
+
+        NativeScriptComponent(NativeScriptComponent&& other) noexcept
+            : Instance(other.Instance)
+            , InstantiateScript(other.InstantiateScript)
+            , DestroyScript(other.DestroyScript)
+        {
+            other.Instance = nullptr;
+            other.InstantiateScript = nullptr;
+            other.DestroyScript = nullptr;
+        }
+
+        NativeScriptComponent& operator=(NativeScriptComponent&& other) noexcept
+        {
+            if (this != &other)
+            {
+                if (Instance)
+                {
+                    if (DestroyScript)
+                    {
+                        DestroyScript(this);
+                    }
+                    else
+                    {
+                        delete Instance;
+                    }
+                }
+
+                Instance = other.Instance;
+                InstantiateScript = other.InstantiateScript;
+                DestroyScript = other.DestroyScript;
+
+                other.Instance = nullptr;
+                other.InstantiateScript = nullptr;
+                other.DestroyScript = nullptr;
+            }
+            return *this;
+        }
+#pragma endregion
+
+        ~NativeScriptComponent()
+        {
+            // Ensure proper cleanup
+            if (Instance)
+            {
+                if (DestroyScript)
+                {
+                    DestroyScript(this);
+                }
+                else
+                {
+                    delete Instance;
+                    Instance = nullptr;
+                }
+            }
         }
     };
 }

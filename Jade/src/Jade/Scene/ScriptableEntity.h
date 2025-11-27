@@ -23,5 +23,6 @@ namespace Jade
         Entity m_Entity;
 
         friend class Scene;
+        friend struct NativeScriptComponent;
     };
 }

@@ -4,6 +4,7 @@
 #include "Jade/Scene/Components.h"
 #include "Jade/Renderer/Renderer2D.h"
 #include "Jade/Scene/Entity.h"
+#include "Jade/Scene/ScriptableEntity.h"
 
 #include <glm/glm.hpp>
 
@@ -36,11 +37,17 @@ namespace Jade
 
         {
             // Update Scripts
-            m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+            m_Registry.view<NativeScriptComponent>().each([=](entt::entity entity, NativeScriptComponent& nsc)
                 {
                     // If there is no instance, instantiate the script
                     if (!nsc.Instance)
                     {
+                        if (nsc.InstantiateScript == nullptr)
+                        {
+                            // No script to instantiate
+                            return;
+                        }
+
                         nsc.Instance = nsc.InstantiateScript();
                         nsc.Instance->m_Entity = Entity{ entity, this };
 
