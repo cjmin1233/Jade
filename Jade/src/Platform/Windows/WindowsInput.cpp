@@ -7,21 +7,21 @@
 
 namespace Jade
 {
-    bool Input::IsKeyPressed(Key keyCode)
+    bool Input::IsKeyPressed(const Key keyCode)
     {
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         int state = glfwGetKey(window, static_cast<int32_t>(keyCode));
         return state == GLFW_PRESS || state == GLFW_REPEAT;
     }
 
-    bool Input::IsMouseButtonPressed(Mouse button)
+    bool Input::IsMouseButtonPressed(const Mouse button)
     {
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         int state = glfwGetMouseButton(window, static_cast<int32_t>(button));
         return state == GLFW_PRESS;
     }
 
-    std::pair<float, float> Input::GetMousePosition()
+    glm::vec2 Input::GetMousePosition()
     {
         GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         double xpos, ypos;
@@ -31,11 +31,11 @@ namespace Jade
 
     float Input::GetMouseX()
     {
-        return GetMousePosition().first;
+        return GetMousePosition().x;
     }
 
     float Input::GetMouseY()
     {
-        return GetMousePosition().second;
+        return GetMousePosition().y;
     }
 }
