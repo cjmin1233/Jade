@@ -1,16 +1,16 @@
 [submodule "Jade/vendor/spdlog"]
-	path = Jade/vendor/spdlog
-	url = https://github.com/gabime/spdlog
-	branch = v1.x
+    path = Jade/vendor/spdlog
+    url = ../../gabime/spdlog.git
+    branch = v1.x
 [submodule "Jade/vendor/GLFW"]
-	path = Jade/vendor/GLFW
-	url = https://github.com/cjmin1233/glfw
-	branch = master
+    path = Jade/vendor/GLFW
+    url = ../../cjmin1233/glfw.git
+    branch = master
 [submodule "Jade/vendor/imgui"]
-	path = Jade/vendor/imgui
-	url = https://github.com/cjmin1233/imgui
-	branch = docking
+    path = Jade/vendor/imgui
+    url = ../../cjmin1233/imgui.git
+    branch = docking
 [submodule "Jade/vendor/glm"]
-	path = Jade/vendor/glm
-	url = https://github.com/g-truc/glm
-	branch = master
+    path = Jade/vendor/glm
+    url = ../../g-truc/glm.git
+    branch = master
