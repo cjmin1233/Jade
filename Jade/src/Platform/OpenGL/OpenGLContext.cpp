@@ -28,13 +28,8 @@ namespace Jade
         JADE_CORE_INFO("  Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 #endif
 
-        int versionMajor, versionMinor;
-
-        glGetIntegerv(GL_MAJOR_VERSION, &versionMajor);
-        glGetIntegerv(GL_MINOR_VERSION, &versionMinor);
-
-        JADE_CORE_ASSERT(versionMajor > 4 ||
-            (versionMajor == 4 && versionMinor >= 6),
+        JADE_CORE_ASSERT(GLVersion.major > 4 ||
+            (GLVersion.major == 4 && GLVersion.minor >= 6),
             "Jade requires at least OpenGL version 4.6!");
     }
     void OpenGLContext::SwapBuffers()

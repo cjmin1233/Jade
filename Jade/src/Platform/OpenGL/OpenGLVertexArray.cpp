@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 
 namespace Jade
-{          
+{
     /// <summary>
     /// Converts ShaderDataType to OpenGL base type.
     /// </summary>
@@ -78,7 +78,7 @@ namespace Jade
         vertexBuffer->Bind();
 
         const auto& layout = vertexBuffer->GetLayout();
-        for(const auto& element : layout)
+        for (const auto& element : layout)
         {
             switch (element.Type)
             {
@@ -121,7 +121,7 @@ namespace Jade
 
                     // Set attribute divisor for instanced rendering
                     glVertexAttribDivisor(m_VertexAttribSlotIndex, 1);
-                    
+
                     ++m_VertexAttribSlotIndex;
                 }
                 break;
