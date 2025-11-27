@@ -1,26 +1,7 @@
 #pragma once
 #include <memory>
 
-// Platform detection using predefined macros
-#ifdef _WIN32
-    // Windows x64/x86
-    #ifdef _WIN64
-        // Windows x64
-        #define JADE_PLATFORM_WINDOWS
-    #else
-        // Windows x86
-        #error "x86 Builds are not supported!"
-    #endif // _WIN64
-
-#elif defined(__ANDROID__)
-    #define JADE_PLATFORM_ANDROID
-    #error "Android platform is not supported yet!"
-#elif defined(__linux__)
-    #define JADE_PLATFORM_LINUX
-    #error "Linux platform is not supported yet!"
-#else
-    #error "Only Windows platform is supported!"
-#endif // _WIN32
+#include "Jade/Core/PlatformDetection.h"
 
 #ifdef JADE_DEBUG
     #define JADE_ENABLE_ASSERTS
