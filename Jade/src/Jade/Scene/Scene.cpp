@@ -11,6 +11,8 @@ namespace Jade
 {
     Scene::Scene()
         : m_Registry()
+        , m_ViewportWidth(1600)
+        , m_ViewportHeight(900)
     {
     }
 
@@ -65,6 +67,23 @@ namespace Jade
             }
 
             Renderer2D::EndScene();
+        }
+    }
+
+    void Scene::OnViewportResize(uint32_t width, uint32_t height)
+    {
+        m_ViewportWidth = width;
+        m_ViewportHeight = height;
+
+        // Resize all non-fixed aspect ratio cameras
+        auto view = m_Registry.view<CameraComponent>();
+        for (auto entity : view)
+        {
+            CameraComponent& cameraComponent = view.get<CameraComponent>(entity);
+            if (!cameraComponent.FixedAspectRatio)
+            {
+                cameraComponent.Cam.SetViewportSize(width, height);
+            }
         }
     }
 }

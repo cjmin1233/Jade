@@ -1,5 +1,5 @@
 #pragma once
-#include "Jade/Renderer/Camera.h"
+#include "Jade/Scene/SceneCamera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -56,8 +56,8 @@ namespace Jade
 
     struct CameraComponent
     {
-        // Camera object
-        Camera Cam;
+        // The scene camera
+        SceneCamera Cam;
         // Is this the primary camera?
         bool Primary = true;
         // Should the aspect ratio be fixed?
@@ -65,7 +65,5 @@ namespace Jade
 
         CameraComponent() = default;
         CameraComponent(const CameraComponent&) = default;
-        CameraComponent(const glm::mat4& projection)
-            : Cam(projection) {}
     };
 }

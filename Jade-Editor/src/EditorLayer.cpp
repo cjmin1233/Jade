@@ -46,12 +46,11 @@ namespace Jade
 
         // Camera Entity
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-        m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+        m_CameraEntity.AddComponent<CameraComponent>();
 
         // Second Camera Entity
         m_SecondCameraEntity = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
-        auto& cameraComp = m_SecondCameraEntity.AddComponent<CameraComponent>
-            (glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+        auto& cameraComp = m_SecondCameraEntity.AddComponent<CameraComponent>();
         cameraComp.Primary = false;
     }
 
@@ -70,14 +69,19 @@ namespace Jade
             // Update Camera
             JADE_PROFILE_SCOPE("CameraController::OnUpdate");
 
-            // Resize framebuffer if the viewport size has changed
             if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
                 // Only resize if both width and height are greater than zero
                 (m_ViewportSize.x > 0 && m_ViewportSize.y > 0)
                 && (spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
             {
+                // Resize framebuffer
                 m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+
+                // Resize camera
                 m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+
+                // Notify scene of viewport resize
+                m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }
 
             // Only update the camera if the viewport is focused
@@ -237,6 +241,18 @@ namespace Jade
         {
             m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
             m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
+        }
+
+        {
+            // Camera settings
+            auto& cameraComp = m_CameraEntity.GetComponent<CameraComponent>();
+
+            // Drag to change orthographic size
+            float orthoSize = cameraComp.Cam.GetOrthographicSize();
+            if (ImGui::DragFloat("Camera Ortho Size", &orthoSize))
+            {
+                cameraComp.Cam.SetOrthographicSize(orthoSize);
+            }
         }
 
         ImGui::End();
