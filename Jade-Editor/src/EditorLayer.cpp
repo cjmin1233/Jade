@@ -3,7 +3,7 @@
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace Jade 
+namespace Jade
 {
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
@@ -32,7 +32,7 @@ namespace Jade
         m_Texture = Texture2D::Create("assets/textures/test.png");
 
         FrameBufferSpecification fbSpec;
-        fbSpec.Width = Application::Get().GetWindow().GetWidth(); 
+        fbSpec.Width = Application::Get().GetWindow().GetWidth();
         fbSpec.Height = Application::Get().GetWindow().GetHeight();
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
@@ -56,10 +56,16 @@ namespace Jade
         class CameraController : public ScriptableEntity
         {
         public:
-            void OnCreate() {}
-            void OnDestroy() {}
+            virtual void OnCreate() override
+            {
+                TransformComponent& transform = GetComponent<TransformComponent>();
 
-            void OnUpdate(Timestep ts)
+                transform.Translation = glm::vec3(rand() % 10 - 5.0f, 0.0f, 0.0f);
+            }
+
+            virtual void OnDestroy() override {}
+
+            virtual void OnUpdate(Timestep ts) override
             {
                 TransformComponent& transform = GetComponent<TransformComponent>();
 
@@ -104,6 +110,8 @@ namespace Jade
         };
 
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach()
@@ -114,7 +122,7 @@ namespace Jade
     }
 
     void EditorLayer::OnUpdate(Timestep ts)
-    {       
+    {
         JADE_PROFILE_FUNCTION();
 
         {

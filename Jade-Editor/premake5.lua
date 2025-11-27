@@ -15,9 +15,9 @@ project "Jade-Editor"
 
     includedirs
     {
-        "%{wks.locatoin}/Jade/vendor/spdlog/include",
-        "%{wks.locatoin}/Jade/src",
-        "%{wks.locatoin}/Jade/vendor",
+        "%{wks.location}/Jade/vendor/spdlog/include",
+        "%{wks.location}/Jade/src",
+        "%{wks.location}/Jade/vendor",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
     }
