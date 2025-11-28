@@ -2,6 +2,8 @@
 #include <Jade.h>
 #include <Jade/Core/Layer.h>
 
+#include "Panels/SceneHierarchyPanel.h"
+
 #include <glm/glm.hpp>
 
 namespace Jade 
@@ -39,5 +41,7 @@ namespace Jade
         bool m_PrimaryCamera = true;
 
         bool m_ViewportFocused, m_ViewportHovered;
+
+        SceneHierarchyPanel m_SceneHierarchyPanel;
     };
 } // namespace Jade

@@ -20,6 +20,7 @@ namespace Jade
         , m_SecondCameraEntity()
         , m_ViewportFocused(false)
         , m_ViewportHovered(false)
+        , m_SceneHierarchyPanel()
     {
     }
 
@@ -112,6 +113,8 @@ namespace Jade
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
     }
 
     void EditorLayer::OnDetach()
@@ -273,6 +276,8 @@ namespace Jade
 
             ImGui::EndMenuBar();
         }
+
+        m_SceneHierarchyPanel.OnImGuiRender();
 
         ImGui::Begin("Settings");
 
