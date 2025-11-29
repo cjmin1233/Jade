@@ -1,4 +1,4 @@
-#include "jdpch.h"
+ï»¿#include "jdpch.h"
 
 #include "Jade/Renderer/Shader.h"
 #include "Jade/Renderer/Renderer.h"
@@ -43,11 +43,11 @@ namespace Jade
 
 #pragma region ShaderLibrary
     /// <summary>
-    /// ÁöÁ¤ÇÑ ÀÌ¸§À¸·Î ¼ÎÀÌ´õ¸¦ ¼ÎÀÌ´õ ¶óÀÌºê·¯¸®¿¡ Ãß°¡ÇÕ´Ï´Ù. 
-    /// µ¿ÀÏÇÑ ÀÌ¸§ÀÇ ¼ÎÀÌ´õ°¡ ÀÌ¹Ì Á¸ÀçÇÏ¸é ¾î¼³¼ÇÀ» ¹ß»ý½ÃÅµ´Ï´Ù.
+    /// ì§€ì •í•œ ì´ë¦„ìœ¼ë¡œ ì…°ì´ë”ë¥¼ ì…°ì´ë” ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ì¶”ê°€í•©ë‹ˆë‹¤.
+    /// ë™ì¼í•œ ì´ë¦„ì˜ ì…°ì´ë”ê°€ ì´ë¯¸ ì¡´ìž¬í•˜ë©´ ì–´ì„¤ì…˜ì„ ë°œìƒì‹œí‚µë‹ˆë‹¤.
     /// </summary>
-    /// <param name="name">¶óÀÌºê·¯¸®¿¡ Ãß°¡ÇÒ ¼ÎÀÌ´õÀÇ ÀÌ¸§.</param>
-    /// <param name="shader">¶óÀÌºê·¯¸®¿¡ Ãß°¡ÇÒ ¼ÎÀÌ´õÀÇ ÂüÁ¶.</param>
+    /// <param name="name">ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ì¶”ê°€í•  ì…°ì´ë”ì˜ ì´ë¦„.</param>
+    /// <param name="shader">ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ì¶”ê°€í•  ì…°ì´ë”ì˜ ì°¸ì¡°.</param>
     void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
     {
         JADE_CORE_ASSERT(!Exists(name),
@@ -56,9 +56,9 @@ namespace Jade
     }
 
     /// <summary>
-    /// ¼ÎÀÌ´õ¸¦ ¼ÎÀÌ´õ ¶óÀÌºê·¯¸®¿¡ Ãß°¡ÇÕ´Ï´Ù. 
+    /// ì…°ì´ë”ë¥¼ ì…°ì´ë” ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ì¶”ê°€í•©ë‹ˆë‹¤.
     /// </summary>
-    /// <param name="shader">¶óÀÌºê·¯¸®¿¡ Ãß°¡ÇÒ ¼ÎÀÌ´õÀÇ ÂüÁ¶.</param>
+    /// <param name="shader">ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ì¶”ê°€í•  ì…°ì´ë”ì˜ ì°¸ì¡°.</param>
     void ShaderLibrary::Add(const Ref<Shader>& shader)
     {
         const std::string& name = shader->GetName();
@@ -66,10 +66,10 @@ namespace Jade
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ÆÄÀÏ °æ·Î¿¡¼­ ¼ÎÀÌ´õ¸¦ »ý¼ºÇÏ¿© ¶óÀÌºê·¯¸®¿¡ Ãß°¡ÇÏ°í ÇØ´ç ¼ÎÀÌ´õ¿¡ ´ëÇÑ ÂüÁ¶¸¦ ¹ÝÈ¯ÇÕ´Ï´Ù.
+    /// ì§€ì •í•œ íŒŒì¼ ê²½ë¡œì—ì„œ ì…°ì´ë”ë¥¼ ìƒì„±í•˜ì—¬ ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ì¶”ê°€í•˜ê³  í•´ë‹¹ ì…°ì´ë”ì— ëŒ€í•œ ì°¸ì¡°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
     /// </summary>
-    /// <param name="name">¶óÀÌºê·¯¸®¿¡ µî·ÏÇÒ ¼ÎÀÌ´õÀÇ ÀÌ¸§ÀÔ´Ï´Ù.</param>
-    /// <param name="filepath">·ÎµåÇÒ ¼ÎÀÌ´õ ÆÄÀÏÀÇ °æ·Î.</param>
+    /// <param name="name">ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ë“±ë¡í•  ì…°ì´ë”ì˜ ì´ë¦„ìž…ë‹ˆë‹¤.</param>
+    /// <param name="filepath">ë¡œë“œí•  ì…°ì´ë” íŒŒì¼ì˜ ê²½ë¡œ.</param>
     Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
     {
         Ref<Shader> shader = Shader::Create(filepath);
@@ -78,9 +78,9 @@ namespace Jade
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ÆÄÀÏ °æ·Î¿¡¼­ ¼ÎÀÌ´õ¸¦ »ý¼ºÇÏ¿© ¶óÀÌºê·¯¸®¿¡ Ãß°¡ÇÏ°í ÇØ´ç ¼ÎÀÌ´õ¿¡ ´ëÇÑ ÂüÁ¶¸¦ ¹ÝÈ¯ÇÕ´Ï´Ù.
+    /// ì§€ì •í•œ íŒŒì¼ ê²½ë¡œì—ì„œ ì…°ì´ë”ë¥¼ ìƒì„±í•˜ì—¬ ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ì¶”ê°€í•˜ê³  í•´ë‹¹ ì…°ì´ë”ì— ëŒ€í•œ ì°¸ì¡°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
     /// </summary>
-    /// <param name="filepath">·ÎµåÇÒ ¼ÎÀÌ´õ ÆÄÀÏÀÇ °æ·Î.</param>
+    /// <param name="filepath">ë¡œë“œí•  ì…°ì´ë” íŒŒì¼ì˜ ê²½ë¡œ.</param>
     Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
     {
         Ref<Shader> shader = Shader::Create(filepath);
@@ -89,10 +89,10 @@ namespace Jade
     }
 
     /// <summary>
-    /// ¶óÀÌºê·¯¸®¿¡¼­ ÁöÁ¤µÈ ÀÌ¸§ÀÇ ¼ÎÀÌ´õ¸¦ °¡Á®¿É´Ï´Ù. 
-    /// ÀÌ¸§ÀÌ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é ¾î¼³¼ÇÀ» ¹ß»ý½ÃÅµ´Ï´Ù.
+    /// ë¼ì´ë¸ŒëŸ¬ë¦¬ì—ì„œ ì§€ì •ëœ ì´ë¦„ì˜ ì…°ì´ë”ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+    /// ì´ë¦„ì´ ì¡´ìž¬í•˜ì§€ ì•Šìœ¼ë©´ ì–´ì„¤ì…˜ì„ ë°œìƒì‹œí‚µë‹ˆë‹¤.
     /// </summary>
-    /// <param name="name">°Ë»öÇÒ ¼ÎÀÌ´õÀÇ ÀÌ¸§.</param>
+    /// <param name="name">ê²€ìƒ‰í•  ì…°ì´ë”ì˜ ì´ë¦„.</param>
     Ref<Shader> ShaderLibrary::Get(const std::string& name)
     {
         JADE_CORE_ASSERT(Exists(name),
@@ -101,10 +101,10 @@ namespace Jade
     }
 
     /// <summary>
-    /// ÁöÁ¤µÈ ÀÌ¸§ÀÇ ¼ÎÀÌ´õ°¡ ¶óÀÌºê·¯¸®¿¡ Á¸ÀçÇÏ´ÂÁö È®ÀÎÇÕ´Ï´Ù.
+    /// ì§€ì •ëœ ì´ë¦„ì˜ ì…°ì´ë”ê°€ ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ì¡´ìž¬í•˜ëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
     /// </summary>
-    /// <param name="name">°Ë»öÇÒ ¼ÎÀÌ´õÀÇ ÀÌ¸§ÀÔ´Ï´Ù.</param>
-    /// <returns>ÇØ´ç ÀÌ¸§ÀÇ ¼ÎÀÌ´õ°¡ Á¸ÀçÇÏ¸é true, Á¸ÀçÇÏÁö ¾ÊÀ¸¸é falseÀÔ´Ï´Ù.</returns>
+    /// <param name="name">ê²€ìƒ‰í•  ì…°ì´ë”ì˜ ì´ë¦„ìž…ë‹ˆë‹¤.</param>
+    /// <returns>í•´ë‹¹ ì´ë¦„ì˜ ì…°ì´ë”ê°€ ì¡´ìž¬í•˜ë©´ true, ì¡´ìž¬í•˜ì§€ ì•Šìœ¼ë©´ falseìž…ë‹ˆë‹¤.</returns>
     bool ShaderLibrary::Exists(const std::string& name) const
     {
         return m_Shaders.find(name) != m_Shaders.end();

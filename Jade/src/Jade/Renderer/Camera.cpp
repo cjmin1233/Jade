@@ -1,10 +1,10 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Renderer/Camera.h"
 
 namespace Jade
 {
-    Camera::Camera() 
+    Camera::Camera()
         : m_ProjectionMatrix(1.0f)
         , m_ViewProjectionMatrix(1.0f)
         , m_Position()

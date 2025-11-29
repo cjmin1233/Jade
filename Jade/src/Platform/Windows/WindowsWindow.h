@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/Window.h"
 #include "Jade/Renderer/GraphicsContext.h"
 
@@ -25,9 +25,9 @@ namespace Jade
         void SetVSync(bool enabled) override;
         bool IsVSync() const override;
 
-        inline virtual void* GetNativeWindow() const override 
-        { 
-            return static_cast<void*>(m_Window); 
+        inline virtual void* GetNativeWindow() const override
+        {
+            return static_cast<void*>(m_Window);
         }
 
     private:

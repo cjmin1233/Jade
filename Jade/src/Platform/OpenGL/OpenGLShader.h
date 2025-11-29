@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Renderer/Shader.h"
 
 #include <glm/glm.hpp>
@@ -31,10 +31,10 @@ namespace Jade
             UploadUniformIntArray(name, values, count);
         }
 
-        virtual void SetUniformFloat(const std::string& name, float value) override 
+        virtual void SetUniformFloat(const std::string& name, float value) override
         {
             JADE_PROFILE_FUNCTION();
-            UploadUniformFloat(name, value); 
+            UploadUniformFloat(name, value);
         }
 
         virtual void SetUniformFloat2(const std::string& name, const glm::vec2& value) override

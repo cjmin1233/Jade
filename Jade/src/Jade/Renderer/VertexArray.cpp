@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Renderer/Renderer.h"
 #include "Jade/Renderer/VertexArray.h"

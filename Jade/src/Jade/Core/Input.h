@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/KeyCodes.h"
 #include "Jade/Core/MouseCodes.h"
 

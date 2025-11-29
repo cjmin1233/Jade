@@ -16,28 +16,28 @@ ExampleLayer::ExampleLayer()
     // Vertex Array
     m_TriangleVA = Jade::VertexArray::Create();
 
-    // À§Ä¡ µ¥ÀÌÅÍ (3 vertices, 3 floats each)
+    // ìœ„ì¹˜ ë°ì´í„° (3 vertices, 3 floats each)
     float positions[3 * 3] = {
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
          0.0f,  0.5f, 0.0f,
     };
 
-    // »ö»ó µ¥ÀÌÅÍ (3 vertices, 4 floats each)
+    // ìƒ‰ìƒ ë°ì´í„° (3 vertices, 4 floats each)
     float colors[3 * 4] = {
         0.8f, 0.2f, 0.8f, 1.0f,
         0.2f, 0.3f, 0.8f, 1.0f,
         0.8f, 0.8f, 0.2f, 1.0f,
     };
 
-    // À§Ä¡ VBO
+    // ìœ„ì¹˜ VBO
     Jade::Ref<Jade::VertexBuffer> positionBuffer = Jade::VertexBuffer::Create(positions, sizeof(positions));
     positionBuffer->SetLayout({
         {Jade::ShaderDataType::Float3, "a_Position"}
         });
     m_TriangleVA->AddVertexBuffer(positionBuffer);
 
-    // »ö»ó VBO
+    // ìƒ‰ìƒ VBO
     Jade::Ref<Jade::VertexBuffer> colorBuffer = Jade::VertexBuffer::Create(colors, sizeof(colors));
     colorBuffer->SetLayout({
         {Jade::ShaderDataType::Float4, "a_Color"}

@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Core/Log.h"
 #include <spdlog/sinks/stdout_color_sinks.h>

@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 
@@ -38,7 +38,7 @@ namespace Jade
         glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-                                                                     
+
         // Query and log the maximum number of texture image units
         {
             int maxFragUnits = 0, maxVertexUnits = 0, maxCombinedUnits = 0;

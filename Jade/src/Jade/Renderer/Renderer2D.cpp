@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Renderer/Renderer2D.h"
 #include "Jade/Renderer/VertexArray.h"
@@ -40,7 +40,7 @@ namespace Jade
         uint32_t TextureSlotIndex = 1; // 0 = white texture
 
         // Predefined quad vertex positions
-        const glm::vec4 QuadVertexPositions[4] = 
+        const glm::vec4 QuadVertexPositions[4] =
         {
             { -0.5f, -0.5f, 0.0f, 1.0f },
             {  0.5f, -0.5f, 0.0f, 1.0f },
@@ -69,7 +69,7 @@ namespace Jade
     static Renderer2DData s_Data;
 
     // Helpers: AABB overlap and visibility test
-    static inline bool AABBOverlap(const glm::vec2& aMin, const glm::vec2& aMax, 
+    static inline bool AABBOverlap(const glm::vec2& aMin, const glm::vec2& aMax,
         const glm::vec2& bMin, const glm::vec2& bMax)
     {
         if (aMax.x < bMin.x || aMin.x > bMax.x) return false;
@@ -151,7 +151,7 @@ namespace Jade
 
         // Create quad index buffer
         uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
-        
+
         uint32_t offset = 0;
         for (uint32_t i = 0; i < s_Data.MaxQuads; ++i)
         {
@@ -450,7 +450,7 @@ namespace Jade
     void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color)
     {
         // Transform matrix
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
             * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
             * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
@@ -465,7 +465,7 @@ namespace Jade
     void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
         // Transform matrix
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) 
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
             * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
             * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 

@@ -140,18 +140,18 @@ namespace Jade
                 // Resize framebuffer
                 m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 
-                // Resize camera
-                m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+                //// Resize camera
+                //m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 
                 // Notify scene of viewport resize
                 m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }
 
-            // Only update the camera if the viewport is focused
-            if (m_ViewportFocused)
-            {
-                m_CameraController.OnUpdate(ts);
-            }
+            //// Only update the camera if the viewport is focused
+            //if (m_ViewportFocused)
+            //{
+            //    m_CameraController.OnUpdate(ts);
+            //}
         }
 
         {
@@ -329,7 +329,7 @@ namespace Jade
 
     void EditorLayer::OnEvent(Event& event)
     {
-        m_CameraController.OnEvent(event);
+        //m_CameraController.OnEvent(event);
     }
 
     void EditorLayer::RenderViewport()
@@ -346,8 +346,8 @@ namespace Jade
         m_ViewportHovered = ImGui::IsWindowHovered();
 
         // Enable or disable event blocking based on hover state
-        // Viewport hovered -> don't block events
-        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportHovered);
+        // If the viewport is focused and hovered, don't block events
+        Application::Get().GetImGuiLayer()->SetBlockEvents(!m_ViewportFocused || !m_ViewportHovered);
 
         // Get the size of the viewport panel
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();

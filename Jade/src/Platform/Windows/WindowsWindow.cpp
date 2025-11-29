@@ -1,4 +1,4 @@
-#include "jdpch.h"      
+﻿#include "jdpch.h"
 
 #include "Platform/Windows/WindowsWindow.h"
 #include "Jade/Events/ApplicationEvent.h"
@@ -60,7 +60,7 @@ namespace Jade
         {
             JADE_PROFILE_SCOPE("glfwCreateWindow");
 
-#ifdef JADE_DEBUG   
+#ifdef JADE_DEBUG
             // Enable OpenGL debug context in debug builds
             if (Renderer::GetAPI() == RendererAPI::API::OpenGL)
             {

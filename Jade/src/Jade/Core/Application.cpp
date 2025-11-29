@@ -1,4 +1,4 @@
-#include "jdpch.h"
+Ôªø#include "jdpch.h"
 
 #include "Jade/Core/Application.h"
 #include "Jade/Core/Log.h"
@@ -44,7 +44,7 @@ namespace Jade
         Renderer::Shutdown();
     }
 
-    void Application::Run()             
+    void Application::Run()
     {
         JADE_PROFILE_FUNCTION();
 
@@ -90,7 +90,7 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
-        // ∆Ø¡§ ≈∏¿‘¿« ¿Ã∫•∆Æ∏¶ App ¥‹ø°º≠ ∏’¿˙ √≥∏Æ.
+        // ÌäπÏ†ï ÌÉÄÏûÖÏùò Ïù¥Î≤§Ìä∏Î•º App Îã®ÏóêÏÑú Î®ºÏ†Ä Ï≤òÎ¶¨.
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(JADE_BIND_EVENT_FN(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(JADE_BIND_EVENT_FN(Application::OnWindowResize));

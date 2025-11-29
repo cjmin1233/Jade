@@ -37,7 +37,7 @@ namespace Jade
         size_t count = lastDot == std::string::npos ?
             filepath.size() - lastSlash :
             lastDot - lastSlash;
-        
+
         m_Name = filepath.substr(lastSlash, count);
     }
 
@@ -139,7 +139,7 @@ namespace Jade
             in.seekg(0, std::ios::end);
             // Get size of file
             size_t size = in.tellg();
-            
+
             if (size != -1)
             {
                 result.resize(size);
@@ -210,7 +210,7 @@ namespace Jade
             "Jade only supports 2 shaders for now (vertex and fragment)!");
         size_t glShaderIDIndex = 0;
         std::array<GLenum, 2> glShaderIDs;
-        
+
         for (const auto& [type, source] : shaderSources)
         {
             // Create an empty shader handle

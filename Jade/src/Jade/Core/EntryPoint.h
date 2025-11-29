@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/Base.h"
 
 #ifdef JADE_PLATFORM_WINDOWS

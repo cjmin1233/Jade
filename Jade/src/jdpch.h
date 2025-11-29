@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/PlatformDetection.h"
 
 #ifdef JADE_PLATFORM_WINDOWS

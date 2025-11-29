@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Renderer/RenderCommand.h"
 #include "Jade/Renderer/OrthographicCamera.h"
 #include "Jade/Renderer/PerspectiveCamera.h"
@@ -18,7 +18,7 @@ namespace Jade
         static void BeginScene(PerspectiveCamera& camera);
         static void EndScene();
 
-        static void Submit(const Ref<Shader>& shader, 
+        static void Submit(const Ref<Shader>& shader,
             const Ref<VertexArray>& vertexArray,
             const glm::mat4& transform = glm::mat4(1.0f));
 

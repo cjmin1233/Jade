@@ -6,7 +6,7 @@
 
 #include "EditorLayer.h"
 
-namespace Jade 
+namespace Jade
 {
     class EditorApp : public Application
     {

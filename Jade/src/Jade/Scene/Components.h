@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Scene/SceneCamera.h"
 #include "Jade/Scene/ScriptableEntity.h"
 

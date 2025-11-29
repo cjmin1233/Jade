@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Scene/Entity.h"
 
 namespace Jade

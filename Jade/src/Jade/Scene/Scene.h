@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/Timestep.h"
 
 #include <entt.hpp>

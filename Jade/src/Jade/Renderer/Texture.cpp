@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Renderer/Texture.h"
 #include "Jade/Renderer/Renderer.h"

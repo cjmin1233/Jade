@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Scene/Scene.h"
 
 #include <entt.hpp>
@@ -31,7 +31,7 @@ namespace Jade
 
             return &m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
         }
-        
+
         // Gets a component from the entity
         template<typename T>
         T& GetComponent()
@@ -44,7 +44,7 @@ namespace Jade
         const T& GetComponent() const
         {
             JADE_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
-            
+
             return m_Scene->m_Registry.get<T>(m_EntityHandle);
         }
 

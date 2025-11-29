@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Platform/OpenGL/OpenGLFrameBuffer.h"
 
@@ -47,10 +47,10 @@ namespace Jade
         // Create color attachment texture
         glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment);
         glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
-        
+
         // Allocate storage for the texture
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 
-            m_Specification.Width, m_Specification.Height, 
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
+            m_Specification.Width, m_Specification.Height,
             0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
         // Set texture parameters
@@ -101,7 +101,7 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
-        if(width == 0 || height == 0 || 
+        if(width == 0 || height == 0 ||
             width > s_MaxFrameBufferSize || height > s_MaxFrameBufferSize)
         {
             JADE_CORE_WARN("Attempted to resize FrameBuffer to {0}, {1}", width, height);

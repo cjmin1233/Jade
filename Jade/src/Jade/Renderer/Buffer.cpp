@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Core/Log.h"
 #include "Jade/Renderer/Buffer.h"

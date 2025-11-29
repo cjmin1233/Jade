@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Renderer/Buffer.h"
 
 namespace Jade

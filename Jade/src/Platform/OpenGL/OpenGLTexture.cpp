@@ -1,4 +1,4 @@
-#include "jdpch.h"
+ï»¿#include "jdpch.h"
 
 #include "Platform/OpenGL/OpenGLTexture.h"
 
@@ -70,7 +70,7 @@ namespace Jade
         // glCreateTextures: generates texture object names
         // glTextureStorage2D: allocates immutable storage for the texture
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-        // m_RendererID ÅØ½ºÃ³¿¡ 1 ·¹º§, internalFormat Æ÷¸Ë, m_Width x m_Height Å©±â·Î ÀúÀå¼Ò ÇÒ´ç
+        // m_RendererID í…ìŠ¤ì²˜ì— 1 ë ˆë²¨, internalFormat í¬ë§·, m_Width x m_Height í¬ê¸°ë¡œ ì €ì¥ì†Œ í• ë‹¹
         glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
         // Set texture parameters
@@ -90,8 +90,8 @@ namespace Jade
         //glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         //glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        // m_RendererID ÅØ½ºÃ³ÀÇ 0¹ø ·¹º§, (0,0) À§Ä¡¿¡¼­ m_Width x m_Height ¿µ¿ª¿¡ dataFormat Æ÷¸ËÀÇ data¸¦ º¹»ç
-        // GL_UNSIGNED_BYTE: dataÀÇ °¢ »ö»ó ¼ººĞÀÌ ºÎÈ£ ¾ø´Â ¹ÙÀÌÆ® Çü½ÄÀÓÀ» ³ªÅ¸³¿
+        // m_RendererID í…ìŠ¤ì²˜ì˜ 0ë²ˆ ë ˆë²¨, (0,0) ìœ„ì¹˜ì—ì„œ m_Width x m_Height ì˜ì—­ì— dataFormat í¬ë§·ì˜ dataë¥¼ ë³µì‚¬
+        // GL_UNSIGNED_BYTE: dataì˜ ê° ìƒ‰ìƒ ì„±ë¶„ì´ ë¶€í˜¸ ì—†ëŠ” ë°”ì´íŠ¸ í˜•ì‹ì„ì„ ë‚˜íƒ€ëƒ„
         glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
 
         stbi_image_free(data);

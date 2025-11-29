@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Scene/Scene.h"
 #include "Jade/Scene/Components.h"

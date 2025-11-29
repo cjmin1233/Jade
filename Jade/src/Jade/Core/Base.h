@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <memory>
 
 #include "Jade/Core/PlatformDetection.h"
@@ -25,7 +25,7 @@
     #define JADE_ASSERT(x, ...)
     #define JADE_CORE_ASSERT(x, ...)
 #endif
-                               
+
 #define FMT_UNICODE 0   // Disable unicode support in fmt library
 
 #define BIT(x) (1 << x)

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/Base.h"
 
 namespace Jade
@@ -8,7 +8,7 @@ namespace Jade
         uint32_t Width = 0;
         uint32_t Height = 0;
         uint32_t Samples = 1;           // Multisampling
-        
+
         bool SwapChainTarget = false;   // Is this framebuffer targeting the swap chain?
     };
 

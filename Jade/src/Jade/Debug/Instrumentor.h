@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Jade/Core/Log.h"
 
 #include <string>
@@ -134,7 +134,7 @@ namespace Jade
             }
         }
 
-        // Meyer¡¯s Singleton
+        // Meyerâ€™s Singleton
         // Thread-safe in C++11 and later
         static Instrumentor& Get()
         {
@@ -208,7 +208,7 @@ namespace Jade
             auto endTimepoint = std::chrono::steady_clock::now();
             auto highResStart = FloatingPointMicroseconds{ m_StartTimepoint.time_since_epoch() };
 
-            auto elapsedTime = 
+            auto elapsedTime =
                 std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch()
                 - std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch();
 
@@ -257,7 +257,7 @@ namespace Jade
                 }
 
                 // copy character
-                result.Data[dstIndex] = 
+                result.Data[dstIndex] =
                     expr[srcIndex] == '"' ? '\'' : expr[srcIndex];  // convert " to '
 
                 ++dstIndex;

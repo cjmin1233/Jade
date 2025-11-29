@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Core/Input.h"
 #include "Jade/Core/Application.h"

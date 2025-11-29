@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Renderer/Camera.h"
 
 namespace Jade
@@ -14,10 +14,10 @@ namespace Jade
         void SetViewportSize(uint32_t width, uint32_t height);
 
         float GetOrthographicSize() const { return m_OrthographicSize; }
-        void SetOrthographicSize(float size) 
-        { 
-            m_OrthographicSize = size; 
-            RecalculateProjection(); 
+        void SetOrthographicSize(float size)
+        {
+            m_OrthographicSize = size;
+            RecalculateProjection();
         }
 
     private:

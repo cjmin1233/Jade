@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/Layer.h"
 #include "Jade/Events/MouseEvent.h"
 #include "Jade/Events/KeyEvent.h"

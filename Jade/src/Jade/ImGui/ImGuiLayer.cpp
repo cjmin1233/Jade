@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/ImGui/ImGuiLayer.h"
 #include "Jade/Core/Application.h"
@@ -101,7 +101,7 @@ namespace Jade
 
         ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
-        io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), 
+        io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(),
             (float)app.GetWindow().GetHeight());
 
         // Rendering

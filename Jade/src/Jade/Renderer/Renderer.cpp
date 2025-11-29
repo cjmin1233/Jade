@@ -1,4 +1,4 @@
-#include "jdpch.h"
+﻿#include "jdpch.h"
 
 #include "Jade/Renderer/Renderer.h"
 #include "Jade/Renderer/Renderer2D.h"
@@ -43,7 +43,7 @@ namespace Jade
     {
     }
 
-    void Renderer::Submit(const Ref<Shader>& shader, 
+    void Renderer::Submit(const Ref<Shader>& shader,
         const Ref<VertexArray>& vertexArray,
         const glm::mat4& transform)
     {

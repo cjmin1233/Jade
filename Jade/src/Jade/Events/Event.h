@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/Base.h"
 #include "Jade/Debug/Instrumentor.h"
 
@@ -46,7 +46,7 @@ namespace Jade
         {
             return GetCategoryFlags() & category;
         }
-        
+
         bool Handled = false;
     };
 

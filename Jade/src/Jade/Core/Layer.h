@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Core/Base.h"
 #include "Jade/Events/Event.h"
 #include "Jade/Core/Timestep.h"

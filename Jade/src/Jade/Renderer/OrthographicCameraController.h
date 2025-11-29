@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Jade/Renderer/OrthographicCamera.h"
 
 #include "Jade/Core/Timestep.h"
