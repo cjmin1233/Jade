@@ -4,6 +4,7 @@
 #include "Jade/Scene/Components.h"
 
 #include <imgui/imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Jade
 {
@@ -27,6 +28,19 @@ namespace Jade
             DrawEntityNode(Entity{ entity, m_Context.get()});
         }
 
+        if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
+        {
+            m_SelectionContext = {};
+        }
+
+        ImGui::End();
+
+
+        ImGui::Begin("Inspector");
+        if (m_SelectionContext)
+        {
+            DrawComponents(m_SelectionContext);
+        }
         ImGui::End();
 
         ImGui::ShowDemoWindow();
@@ -65,6 +79,47 @@ namespace Jade
             }
 
             ImGui::TreePop();
+        }
+    }
+
+    void SceneHierarchyPanel::DrawComponents(Entity entity)
+    {
+        static bool checked = true;
+        if (ImGui::Checkbox("##Checkbox", &checked))
+        {
+            // TODO: active/inactive entity
+        }
+
+        if (entity.HasComponent<TagComponent>())
+        {
+            ImGui::SameLine();
+            TagComponent& tag = entity.GetComponent<TagComponent>();
+            ImGui::Text("Name:");
+            char buffer[256];
+            memset(buffer, 0, sizeof(buffer));
+            strcpy_s(buffer, sizeof(buffer), tag.Tag.c_str());
+
+            ImGui::SameLine();
+            if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+            {
+                tag.Tag = std::string(buffer);
+            }
+
+            ImGui::Separator();
+        }
+
+        if (entity.HasComponent<TransformComponent>())
+        {
+            auto& transform = entity.GetComponent<TransformComponent>();
+
+            if (ImGui::CollapsingHeader("Transform"))
+            {
+                ImGui::DragFloat3("Translation", glm::value_ptr(transform.Translation), 0.1f);
+                ImGui::DragFloat3("Rotation", glm::value_ptr(transform.Rotation), 0.1f);
+                ImGui::DragFloat3("Scale", glm::value_ptr(transform.Scale), 0.1f);
+            }
+
+            ImGui::Separator();
         }
     }
 }
