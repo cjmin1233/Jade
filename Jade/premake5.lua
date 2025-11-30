@@ -10,6 +10,8 @@ project "Jade"
     pchheader "jdpch.h"
     pchsource "src/jdpch.cpp"
 
+    externalwarnings "off"
+
     files
     {
         "src/**.h",
