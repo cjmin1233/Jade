@@ -112,7 +112,7 @@ namespace Jade
         {
             auto& transform = entity.GetComponent<TransformComponent>();
 
-            if (ImGui::CollapsingHeader("Transform"))
+            if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 ImGui::DragFloat3("Translation", glm::value_ptr(transform.Translation), 0.1f);
                 ImGui::DragFloat3("Rotation", glm::value_ptr(transform.Rotation), 0.1f);
@@ -124,7 +124,7 @@ namespace Jade
 
         if (entity.HasComponent<CameraComponent>())
         {
-            if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+            if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
             {
                 SceneCamera& camera = entity.GetComponent<CameraComponent>().Cam;
 
@@ -206,8 +206,19 @@ namespace Jade
                 break;
                 }
 
-                ImGui::TreePop();
+                ImGui::Separator();
             }
+        }
+
+        if (entity.HasComponent<SpriteRendererComponent>())
+        {
+            auto& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
+
+            if (ImGui::CollapsingHeader("Sprite Renderer", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::ColorEdit4("Color", glm::value_ptr(spriteRenderer.Color));
+            }
+            ImGui::Separator();
         }
     }
 }

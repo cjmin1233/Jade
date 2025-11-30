@@ -179,6 +179,7 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
+#pragma region DockSpace
         // TL;DR; this demo is more complicated than what most users you would normally use.
         // If we remove all options we are showcasing, this demo would become a simple call to ImGui::DockSpaceOverViewport() !!
         // In this specific demo, we are not using DockSpaceOverViewport() because:
@@ -280,9 +281,12 @@ namespace Jade
             ImGui::EndMenuBar();
         }
 
+        ImGui::End();
+#pragma endregion
+
         m_SceneHierarchyPanel.OnImGuiRender();
 
-        ImGui::Begin("Settings");
+        ImGui::Begin("Stats");
 
         auto stats = Renderer2D::GetStats();
         ImGui::Text("Draw Calls: %d", stats.DrawCalls);
@@ -290,20 +294,7 @@ namespace Jade
         ImGui::Text("Vertex Count: %d", stats.GetTotalVertexCount());
         ImGui::Text("Index Count: %d", stats.GetTotalIndexCount());
 
-        if (m_SquareEntity)
-        {
-            ImGui::Separator();
-
-            TagComponent& tag = m_SquareEntity.GetComponent<TagComponent>();
-            ImGui::Text("Tag: %s", tag.Tag.c_str());
-
-            SpriteRendererComponent& sr = m_SquareEntity.GetComponent<SpriteRendererComponent>();
-            ImGui::ColorEdit4("Square Color", glm::value_ptr(sr.Color));
-        }
-
         ImGui::Separator();
-        ImGui::DragFloat3("Camera Transform",
-            glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().Translation), 0.1f);
 
         if (ImGui::Checkbox("Use main camera", &m_PrimaryCamera))
         {
@@ -311,23 +302,10 @@ namespace Jade
             m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
         }
 
-        {
-            // Camera settings
-            auto& cameraComp = m_CameraEntity.GetComponent<CameraComponent>();
-
-            // Drag to change orthographic size
-            float orthoSize = cameraComp.Cam.GetOrthographicSize();
-            if (ImGui::DragFloat("Camera Ortho Size", &orthoSize))
-            {
-                cameraComp.Cam.SetOrthographicSize(orthoSize);
-            }
-        }
-
         ImGui::End();
 
         RenderViewport();
 
-        ImGui::End();
     }
 
     void EditorLayer::OnEvent(Event& event)
