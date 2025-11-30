@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Scene/Scene.h"
 
 #include <entt.hpp>

@@ -45,23 +45,26 @@ namespace Jade
         );
         m_SquareEntity.GetComponent<TransformComponent>().Translation = glm::vec3(-1.0f, 0.0f, 0.0f);
 
+        auto red_square = m_ActiveScene->CreateEntity("Red Square");
+        red_square.AddComponent<SpriteRendererComponent>(glm::vec4(0.8f, 0.3f, 0.2f, 1.0f));
+        red_square.GetComponent<TransformComponent>().Translation = glm::vec3(1.0f, 0.0f, 0.0f);
+
         // Camera Entity
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
         m_CameraEntity.AddComponent<CameraComponent>();
+        m_CameraEntity.GetComponent<TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 5.0f);
 
         // Second Camera Entity
-        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
+        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Second Camera Entity");
         auto& cameraComp = m_SecondCameraEntity.AddComponent<CameraComponent>();
         cameraComp.Primary = false;
+        m_SecondCameraEntity.GetComponent<TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 5.0f);
 
         class CameraController : public ScriptableEntity
         {
         public:
             virtual void OnCreate() override
             {
-                TransformComponent& transform = GetComponent<TransformComponent>();
-
-                transform.Translation = glm::vec3(rand() % 10 - 5.0f, 0.0f, 0.0f);
             }
 
             virtual void OnDestroy() override {}
@@ -91,11 +94,11 @@ namespace Jade
                 }
                 if (Input::IsKeyPressed(Key::W))
                 {
-                    transform.Translation.z += speed * ts;
+                    transform.Translation.z -= speed * ts;
                 }
                 if (Input::IsKeyPressed(Key::S))
                 {
-                    transform.Translation.z -= speed * ts;
+                    transform.Translation.z += speed * ts;
                 }
 
                 // Camera rotation

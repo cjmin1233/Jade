@@ -1,4 +1,4 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
 #include "Jade/Renderer/Renderer2D.h"
 #include "Jade/Renderer/VertexArray.h"
@@ -58,7 +58,7 @@ namespace Jade
         };
 
         // Culling data
-        bool CullingEnabled = true;
+        bool CullingEnabled = false;    // For testing Perspective camera, culling is off by default
         float CullingPadding = 0.0f;    // Extra padding for culling calculations
         glm::vec2 ViewMin{ 0.0f };
         glm::vec2 ViewMax{ 0.0f };

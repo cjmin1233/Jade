@@ -1,7 +1,6 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Renderer/RenderCommand.h"
 #include "Jade/Renderer/OrthographicCamera.h"
-#include "Jade/Renderer/PerspectiveCamera.h"
 #include "Jade/Renderer/Shader.h"
 
 namespace Jade
@@ -15,7 +14,7 @@ namespace Jade
         static void OnWindowResize(uint32_t width, uint32_t height);
 
         static void BeginScene(OrthographicCamera& camera);
-        static void BeginScene(PerspectiveCamera& camera);
+
         static void EndScene();
 
         static void Submit(const Ref<Shader>& shader,

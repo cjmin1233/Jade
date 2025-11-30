@@ -1,4 +1,4 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
 #include "Jade/Renderer/Renderer.h"
 #include "Jade/Renderer/Renderer2D.h"
@@ -30,11 +30,6 @@ namespace Jade
     }
 
     void Renderer::BeginScene(OrthographicCamera& camera)
-    {
-        s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
-    }
-
-    void Renderer::BeginScene(PerspectiveCamera& camera)
     {
         s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }

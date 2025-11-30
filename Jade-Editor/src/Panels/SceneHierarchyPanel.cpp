@@ -25,7 +25,7 @@ namespace Jade
 
         for (auto entity : m_Context->m_Registry.view<entt::entity>())
         {
-            DrawEntityNode(Entity{ entity, m_Context.get()});
+            DrawEntityNode(Entity{ entity, m_Context.get() });
         }
 
         if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
@@ -120,6 +120,94 @@ namespace Jade
             }
 
             ImGui::Separator();
+        }
+
+        if (entity.HasComponent<CameraComponent>())
+        {
+            if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+            {
+                SceneCamera& camera = entity.GetComponent<CameraComponent>().Cam;
+
+                const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
+                const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
+
+                // Projection type combo box
+                if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
+
+                        // Selectable item for each projection type
+                        if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+                        {
+                            camera.SetProjectionType((SceneCamera::ProjectionType)i);
+                        }
+
+                        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        if (isSelected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                // Display projection-specific settings
+                switch (camera.GetProjectionType())
+                {
+                case SceneCamera::ProjectionType::Perspective:
+                {
+                    float fov = camera.GetPerspectiveFOV();
+
+                    if (ImGui::DragFloat("FOV", &fov))
+                    {
+                        camera.SetPerspectiveFOV(fov);
+                    }
+
+                    float nearClip = camera.GetPerspectiveNearClip();
+
+                    if (ImGui::DragFloat("Near Clip", &nearClip))
+                    {
+                        camera.SetPerspectiveNearClip(nearClip);
+                    }
+
+                    float farClip = camera.GetPerspectiveFarClip();
+
+                    if (ImGui::DragFloat("Far Clip", &farClip))
+                    {
+                        camera.SetPerspectiveFarClip(farClip);
+                    }
+                }
+                break;
+                case SceneCamera::ProjectionType::Orthographic:
+                {
+                    float orthographicSize = camera.GetOrthographicSize();
+
+                    if (ImGui::DragFloat("Size", &orthographicSize))
+                    {
+                        camera.SetOrthographicSize(orthographicSize);
+                    }
+
+                    float nearClip = camera.GetOrthographicNearClip();
+
+                    if (ImGui::DragFloat("Near Clip", &nearClip))
+                    {
+                        camera.SetOrthographicNearClip(nearClip);
+                    }
+
+                    float farClip = camera.GetOrthographicFarClip();
+
+                    if (ImGui::DragFloat("Far Clip", &farClip))
+                    {
+                        camera.SetOrthographicFarClip(farClip);
+                    }
+                }
+                break;
+                }
+
+                ImGui::TreePop();
+            }
         }
     }
 }
