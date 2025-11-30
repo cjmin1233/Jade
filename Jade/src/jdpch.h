@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Core/PlatformDetection.h"
 
 #ifdef JADE_PLATFORM_WINDOWS
@@ -26,6 +26,7 @@
 // Jade api
 #include "Jade/Core/Base.h"
 #include "Jade/Core/Log.h"
+#include "Jade/Core/Assert.h"
 #include "Jade/Debug/Instrumentor.h"
 
 #ifdef JADE_PLATFORM_WINDOWS

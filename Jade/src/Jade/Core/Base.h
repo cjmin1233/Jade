@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <memory>
 
 #include "Jade/Core/PlatformDetection.h"
@@ -18,13 +18,8 @@
     #define JADE_DEBUGBREAK()
 #endif
 
-#ifdef JADE_ENABLE_ASSERTS
-    #define JADE_ASSERT(x, ...) { if(!(x)) { JADE_ERROR("Assertion Failed: {0}", __VA_ARGS__); JADE_DEBUGBREAK(); } }
-    #define JADE_CORE_ASSERT(x, ...) { if(!(x)) { JADE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); JADE_DEBUGBREAK(); } }
-#else
-    #define JADE_ASSERT(x, ...)
-    #define JADE_CORE_ASSERT(x, ...)
-#endif
+#define JADE_EXPAND_MACRO(x) x
+#define JADE_STRINGIFY_MACRO(x) #x
 
 #define FMT_UNICODE 0   // Disable unicode support in fmt library
 
