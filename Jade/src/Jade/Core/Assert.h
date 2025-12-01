@@ -3,31 +3,14 @@
 #include "Jade/Core/Base.h"
 #include "Jade/Core/Log.h"
 
+#include <filesystem>
+
 #ifdef JADE_ENABLE_ASSERTS
-namespace Jade::Assert
-{
-    constexpr const char* CurrentFileName(const char* path)
-    {
-        const char* file = path;
-
-        while (*path)
-        {
-            if (*path == '/' || *path == '\\')
-            {
-                file = path + 1;
-            }
-
-            ++path;
-        }
-
-        return file;
-    }
-}
 
 // Helper macros for assertions
 #define JADE_INTERNAL_ASSERT_IMPL(type, check, msg, ...) { if(!(check)) { JADE##type##ERROR(msg, __VA_ARGS__); JADE_DEBUGBREAK();}}
 #define JADE_INTERNAL_ASSERT_WITH_MSG(type, check, ...) JADE_INTERNAL_ASSERT_IMPL(type, check, "Assertion failed: {0}", __VA_ARGS__)
-#define JADE_INTERNAL_ASSERT_NO_MSG(type, check) JADE_INTERNAL_ASSERT_IMPL(type, check, "Assertion '{0}' failed at {1}:{2}", JADE_STRINGIFY_MACRO(check), Jade::Assert::CurrentFileName(__FILE__), __LINE__)
+#define JADE_INTERNAL_ASSERT_NO_MSG(type, check) JADE_INTERNAL_ASSERT_IMPL(type, check, "Assertion '{0}' failed at {1}:{2}", JADE_STRINGIFY_MACRO(check), std::filesystem::path(__FILE__).filename().string(), __LINE__)
 
 // Helper macro to select the correct assert macro overload
 #define JADE_INTERNAL_ASSERT_GET_MACRO_NAME(arg1, arg2, name, ...) name
