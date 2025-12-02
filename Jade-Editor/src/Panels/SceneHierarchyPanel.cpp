@@ -7,7 +7,6 @@
 
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
-//#include <imgui/imgui_internal.h>
 
 namespace Jade
 {
@@ -29,15 +28,7 @@ namespace Jade
 #pragma region Scene Hierarchy
         ImGui::Begin("Scene Hierarchy");
 
-        if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight))
-        {
-            if (ImGui::MenuItem("Create Empty Entity"))
-            {
-                m_Context->CreateEntity("Empty Entity");
-            }
-
-            ImGui::EndPopup();
-        }
+        DrawScenePopupMenu();
 
         for (auto entity : m_Context->m_Registry.view<entt::entity>())
         {
@@ -87,6 +78,27 @@ namespace Jade
             m_SelectionContext = entity;
         }
 
+        // If the node is opened, we would draw its children here
+        if (opened)
+        {
+            // For demonstration, we will just create a dummy child node
+            // TODO: Replace this with actual child entity iteration
+            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth;
+            bool childOpened = ImGui::TreeNodeEx((void*)9817239, flags, (tag + "'s child").c_str());
+
+            if (childOpened)
+            {
+                ImGui::TreePop();
+            }
+
+            ImGui::TreePop();
+        }
+
+        DrawEntityPopupMenu(entity);
+    }
+
+    void SceneHierarchyPanel::DrawEntityPopupMenu(Entity entity)
+    {
         // Mark for deletion
         bool entityDeleted = false;
         // Context menu for the entity
@@ -105,22 +117,6 @@ namespace Jade
             ImGui::EndPopup();
         }
 
-        // If the node is opened, we would draw its children here
-        if (opened)
-        {
-            // For demonstration, we will just create a dummy child node
-            // TODO: Replace this with actual child entity iteration
-            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth;
-            bool childOpened = ImGui::TreeNodeEx((void*)9817239, flags, (tag + "'s child").c_str());
-
-            if (childOpened)
-            {
-                ImGui::TreePop();
-            }
-
-            ImGui::TreePop();
-        }
-
         // If the entity is marked for deletion, delete it
         if (entityDeleted)
         {
@@ -134,52 +130,63 @@ namespace Jade
         }
     }
 
-    template<typename T, typename UIFunction>
+    // Helper function to draw a component UI
+    template<typename T, typename UIDrawFunction>
     static void DrawComponent(const std::string& name, Entity entity,
-        UIFunction uiFunction)
+        UIDrawFunction uiDrawFunction)
     {
+        // Set up tree node flags
         const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
             | ImGuiTreeNodeFlags_Framed
             | ImGuiTreeNodeFlags_SpanAvailWidth
             | ImGuiTreeNodeFlags_AllowOverlap
             | ImGuiTreeNodeFlags_FramePadding;
 
-        if (entity.HasComponent<T>())
+        // If the entity has no such component, return nullptr
+        if (auto* component = entity.TryGetComponent<T>())
         {
-            auto& component = entity.GetComponent<T>();
+            // Get available content region
             ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+            // Calculate for settings button size
+            float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
 
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
 
-            float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
-
-            bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
-
+            bool treeOpened = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
             ImGui::PopStyleVar();
-            ImGui::SameLine(contentRegionAvailable.x - lineHeight);
 
+            // Position settings button on the same line, at the far right
+            ImGui::SameLine(contentRegionAvailable.x - 0.5f * lineHeight);
+
+            // Component settings button
             if (ImGui::Button("...", ImVec2{ lineHeight, lineHeight }))
             {
                 ImGui::OpenPopup("ComponentSettings");
             }
 
             bool removeComponent = false;
+            // Component settings popup
             if (ImGui::BeginPopup("ComponentSettings"))
             {
+                // Marker for component removal
                 if (ImGui::MenuItem("Remove component"))
                 {
                     removeComponent = true;
                 }
 
+                // TODO: Other component-specific settings
+
                 ImGui::EndPopup();
             }
 
-            if (open)
+            // Draw component UI
+            if (treeOpened)
             {
-                uiFunction(component);
+                uiDrawFunction(*component);
                 ImGui::TreePop();
             }
 
+            // Remove component if marked
             if (removeComponent)
             {
                 entity.RemoveComponent<T>();
@@ -341,6 +348,21 @@ namespace Jade
                 m_SelectionContext.TryAddComponent<SpriteRendererComponent>();
                 ImGui::CloseCurrentPopup();
             }
+
+            ImGui::EndPopup();
+        }
+    }
+
+    void SceneHierarchyPanel::DrawScenePopupMenu()
+    {
+        if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight))
+        {
+            if (ImGui::MenuItem("Create Empty Entity"))
+            {
+                m_Context->CreateEntity("Empty Entity");
+            }
+
+            // TODO: Other scene-level actions
 
             ImGui::EndPopup();
         }

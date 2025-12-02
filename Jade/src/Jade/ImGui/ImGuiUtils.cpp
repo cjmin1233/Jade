@@ -84,5 +84,7 @@ namespace Jade
         ImGui::Columns(1);  // Restore to single column
 
         ImGui::PopID();
+
+        ImGui::Spacing();
     }
 }
