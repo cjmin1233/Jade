@@ -58,28 +58,6 @@ namespace Jade
         if (m_SelectionContext)
         {
             DrawComponents(m_SelectionContext);
-
-            if (ImGui::Button("Add Component"))
-            {
-                ImGui::OpenPopup("AddComponent");
-            }
-
-            if (ImGui::BeginPopup("AddComponent"))
-            {
-                if (ImGui::MenuItem("Camera"))
-                {
-                    m_SelectionContext.TryAddComponent<CameraComponent>();
-                    ImGui::CloseCurrentPopup();
-                }
-
-                if (ImGui::MenuItem("Sprite Renderer"))
-                {
-                    m_SelectionContext.TryAddComponent<SpriteRendererComponent>();
-                    ImGui::CloseCurrentPopup();
-                }
-
-                ImGui::EndPopup();
-            }
         }
         ImGui::End();
 #pragma endregion
@@ -98,6 +76,7 @@ namespace Jade
         // Always allow opening on arrow click
         ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)
             | ImGuiTreeNodeFlags_OpenOnArrow;
+        flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 
         // If the entity has no children, make it a leaf node
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, tag.c_str());
@@ -131,7 +110,7 @@ namespace Jade
         {
             // For demonstration, we will just create a dummy child node
             // TODO: Replace this with actual child entity iteration
-            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf;
+            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_SpanAvailWidth;
             bool childOpened = ImGui::TreeNodeEx((void*)9817239, flags, (tag + "'s child").c_str());
 
             if (childOpened)
@@ -152,6 +131,61 @@ namespace Jade
             }
 
             m_Context->DestroyEntity(entity);
+        }
+    }
+
+    template<typename T, typename UIFunction>
+    static void DrawComponent(const std::string& name, Entity entity,
+        UIFunction uiFunction)
+    {
+        const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen
+            | ImGuiTreeNodeFlags_Framed
+            | ImGuiTreeNodeFlags_SpanAvailWidth
+            | ImGuiTreeNodeFlags_AllowOverlap
+            | ImGuiTreeNodeFlags_FramePadding;
+
+        if (entity.HasComponent<T>())
+        {
+            auto& component = entity.GetComponent<T>();
+            ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
+
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+
+            float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
+
+            bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
+
+            ImGui::PopStyleVar();
+            ImGui::SameLine(contentRegionAvailable.x - lineHeight);
+
+            if (ImGui::Button("...", ImVec2{ lineHeight, lineHeight }))
+            {
+                ImGui::OpenPopup("ComponentSettings");
+            }
+
+            bool removeComponent = false;
+            if (ImGui::BeginPopup("ComponentSettings"))
+            {
+                if (ImGui::MenuItem("Remove component"))
+                {
+                    removeComponent = true;
+                }
+
+                ImGui::EndPopup();
+            }
+
+            if (open)
+            {
+                uiFunction(component);
+                ImGui::TreePop();
+            }
+
+            if (removeComponent)
+            {
+                entity.RemoveComponent<T>();
+            }
+            
+            ImGui::Separator();
         }
     }
 
@@ -183,25 +217,16 @@ namespace Jade
             ImGui::Separator();
         }
 
-        if (entity.HasComponent<TransformComponent>())
-        {
-            if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+        DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
             {
-                auto& transform = entity.GetComponent<TransformComponent>();
+                ImGuiUtils::DrawVec3Control("Translation", component.Translation);
+                ImGuiUtils::DrawVec3Control("Rotation", component.Rotation);
+                ImGuiUtils::DrawVec3Control("Scale", component.Scale, 1.0f);
+            });
 
-                ImGuiUtils::DrawVec3Control("Translation", transform.Translation);
-                ImGuiUtils::DrawVec3Control("Rotation", transform.Rotation);
-                ImGuiUtils::DrawVec3Control("Scale", transform.Scale, 1.0f);
-            }
-
-            ImGui::Separator();
-        }
-
-        if (entity.HasComponent<CameraComponent>())
-        {
-            if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+        DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
             {
-                SceneCamera& camera = entity.GetComponent<CameraComponent>().Cam;
+                SceneCamera& camera = component.Cam;
 
                 const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
                 const char* currentProjectionTypeString = projectionTypeStrings[(int)camera.GetProjectionType()];
@@ -280,20 +305,44 @@ namespace Jade
                 }
                 break;
                 }
+            });
 
-                ImGui::Separator();
-            }
+        DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+            {
+                ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+            });
+
+        // Add Component Button
+        ImGui::Spacing();
+
+        ImGuiStyle& style = ImGui::GetStyle();
+        const char* label = "Add Component";
+        float buttonWidth = ImGui::CalcTextSize(label).x + style.FramePadding.x * 2.0f;
+        float regionWidth = ImGui::GetContentRegionAvail().x;
+        float cursorX = ImGui::GetCursorPosX();
+        float offsetX = (regionWidth > buttonWidth) ? (regionWidth - buttonWidth) * 0.5f : 0.0f;
+        ImGui::SetCursorPosX(cursorX + offsetX);
+
+        if (ImGui::Button(label))
+        {
+            ImGui::OpenPopup("AddComponent");
         }
 
-        if (entity.HasComponent<SpriteRendererComponent>())
+        if (ImGui::BeginPopup("AddComponent"))
         {
-            auto& spriteRenderer = entity.GetComponent<SpriteRendererComponent>();
-
-            if (ImGui::CollapsingHeader("Sprite Renderer", ImGuiTreeNodeFlags_DefaultOpen))
+            if (ImGui::MenuItem("Camera"))
             {
-                ImGui::ColorEdit4("Color", glm::value_ptr(spriteRenderer.Color));
+                m_SelectionContext.TryAddComponent<CameraComponent>();
+                ImGui::CloseCurrentPopup();
             }
-            ImGui::Separator();
+
+            if (ImGui::MenuItem("Sprite Renderer"))
+            {
+                m_SelectionContext.TryAddComponent<SpriteRendererComponent>();
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
         }
     }
 }
