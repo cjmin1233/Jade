@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Core/Layer.h"
 #include "Jade/Events/MouseEvent.h"
 #include "Jade/Events/KeyEvent.h"
@@ -21,6 +21,8 @@ namespace Jade
         void End();
 
         inline void SetBlockEvents(bool block) { m_BlockEvents = block; }
+
+        void SetDarkThemeColors();
 
     private:
         float m_Time;
