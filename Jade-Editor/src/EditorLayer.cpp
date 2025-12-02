@@ -242,11 +242,19 @@ namespace Jade
         // REMINDER: THIS IS A DEMO FOR ADVANCED USAGE OF DockSpace()!
         // MOST REGULAR APPLICATIONS WILL SIMPLY WANT TO CALL DockSpaceOverViewport(). READ COMMENTS ABOVE.
         ImGuiIO& io = ImGui::GetIO();
+
+        ImGuiStyle& style = ImGui::GetStyle();
+        float minWinSizeX = style.WindowMinSize.x;
+
+        style.WindowMinSize.x = 200.0f;
+
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
         {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
+
+        style.WindowMinSize.x = minWinSizeX;
 
         // Show demo options and help
         if (ImGui::BeginMenuBar())
