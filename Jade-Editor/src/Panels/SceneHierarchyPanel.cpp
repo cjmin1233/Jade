@@ -1,10 +1,13 @@
 #include "jdpch.h"
 
 #include "SceneHierarchyPanel.h"
-#include "Jade/Scene/Components.h"
+
+#include <Jade/Scene/Components.h>
+#include <Jade/ImGui/ImGuiUtils.h>
 
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+//#include <imgui/imgui_internal.h>
 
 namespace Jade
 {
@@ -110,13 +113,13 @@ namespace Jade
 
         if (entity.HasComponent<TransformComponent>())
         {
-            auto& transform = entity.GetComponent<TransformComponent>();
-
             if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
             {
-                ImGui::DragFloat3("Translation", glm::value_ptr(transform.Translation), 0.1f);
-                ImGui::DragFloat3("Rotation", glm::value_ptr(transform.Rotation), 0.1f);
-                ImGui::DragFloat3("Scale", glm::value_ptr(transform.Scale), 0.1f);
+                auto& transform = entity.GetComponent<TransformComponent>();
+
+                ImGuiUtils::DrawVec3Control("Translation", transform.Translation);
+                ImGuiUtils::DrawVec3Control("Rotation", transform.Rotation);
+                ImGuiUtils::DrawVec3Control("Scale", transform.Scale, 1.0f);
             }
 
             ImGui::Separator();
