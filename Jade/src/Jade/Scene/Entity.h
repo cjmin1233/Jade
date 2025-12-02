@@ -19,7 +19,10 @@ namespace Jade
         {
             JADE_CORE_ASSERT(!HasComponent<T>(), "Entity already has component!");
 
-            return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+            T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+            m_Scene->OnComponentAdded<T>(*this, component);
+
+            return component;
         }
 
         // Tries to add a component, returns nullptr if already exists
@@ -29,7 +32,10 @@ namespace Jade
             if (HasComponent<T>())
                 return nullptr;
 
-            return &m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+            T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+            m_Scene->OnComponentAdded<T>(*this, component);
+
+            return &component;
         }
 
         // Gets a component from the entity
@@ -73,7 +79,9 @@ namespace Jade
             if (T* existing = TryGetComponent<T>())
                 return *existing;
 
-            return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+            T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+            m_Scene->OnComponentAdded<T>(*this, component);
+            return component;
         }
         // Removes a component from the entity
         template<typename T>

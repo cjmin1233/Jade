@@ -24,33 +24,73 @@ namespace Jade
 
     void SceneHierarchyPanel::OnImGuiRender()
     {
+        JADE_PROFILE_FUNCTION();
+
+#pragma region Scene Hierarchy
         ImGui::Begin("Scene Hierarchy");
+
+        if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight))
+        {
+            if (ImGui::MenuItem("Create Empty Entity"))
+            {
+                m_Context->CreateEntity("Empty Entity");
+            }
+
+            ImGui::EndPopup();
+        }
 
         for (auto entity : m_Context->m_Registry.view<entt::entity>())
         {
             DrawEntityNode(Entity{ entity, m_Context.get() });
         }
 
-        if (ImGui::IsMouseClicked(0) && ImGui::IsWindowHovered())
+        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
         {
             m_SelectionContext = {};
         }
 
+
         ImGui::End();
+#pragma endregion
 
-
+#pragma region Inspector
         ImGui::Begin("Inspector");
         if (m_SelectionContext)
         {
             DrawComponents(m_SelectionContext);
+
+            if (ImGui::Button("Add Component"))
+            {
+                ImGui::OpenPopup("AddComponent");
+            }
+
+            if (ImGui::BeginPopup("AddComponent"))
+            {
+                if (ImGui::MenuItem("Camera"))
+                {
+                    m_SelectionContext.TryAddComponent<CameraComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+
+                if (ImGui::MenuItem("Sprite Renderer"))
+                {
+                    m_SelectionContext.TryAddComponent<SpriteRendererComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::EndPopup();
+            }
         }
         ImGui::End();
+#pragma endregion
 
         ImGui::ShowDemoWindow();
     }
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
     {
+        JADE_PROFILE_FUNCTION();
+
         auto& tag = entity.GetComponent<TagComponent>().Tag;
 
         // Set up tree node flags
@@ -68,6 +108,24 @@ namespace Jade
             m_SelectionContext = entity;
         }
 
+        // Mark for deletion
+        bool entityDeleted = false;
+        // Context menu for the entity
+        if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
+        {
+            if (ImGui::MenuItem("Add Child Entity"))
+            {
+                // TODO: Implement adding a child entity
+            }
+
+            if (ImGui::MenuItem("Delete Entity"))
+            {
+                entityDeleted = true;
+            }
+
+            ImGui::EndPopup();
+        }
+
         // If the node is opened, we would draw its children here
         if (opened)
         {
@@ -83,10 +141,24 @@ namespace Jade
 
             ImGui::TreePop();
         }
+
+        // If the entity is marked for deletion, delete it
+        if (entityDeleted)
+        {
+            // If the deleted entity is the selected one, clear the selection
+            if (m_SelectionContext == entity)
+            {
+                m_SelectionContext = {};
+            }
+
+            m_Context->DestroyEntity(entity);
+        }
     }
 
     void SceneHierarchyPanel::DrawComponents(Entity entity)
     {
+        JADE_PROFILE_FUNCTION();
+
         static bool checked = true;
         if (ImGui::Checkbox("##Checkbox", &checked))
         {

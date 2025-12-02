@@ -1,10 +1,10 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
 #include "Jade/Scene/Scene.h"
-#include "Jade/Scene/Components.h"
 #include "Jade/Renderer/Renderer2D.h"
-#include "Jade/Scene/Entity.h"
 #include "Jade/Scene/ScriptableEntity.h"
+#include "Jade/Scene/Entity.h"
+#include "Jade/Scene/Components.h"
 
 #include <glm/glm.hpp>
 
@@ -29,6 +29,13 @@ namespace Jade
         TagComponent& tag = entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
 
         return entity;
+    }
+
+    void Scene::DestroyEntity(Entity entity)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        m_Registry.destroy(entity);
     }
 
     void Scene::OnUpdate(Timestep ts)
@@ -110,5 +117,45 @@ namespace Jade
                 cameraComponent.Cam.SetViewportSize(width, height);
             }
         }
+    }
+
+    template<typename T>
+    void Scene::OnComponentAdded(Entity entity, T& component)
+    {
+        // Generic template - do nothing
+    }
+
+    template<>
+    void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+    {
+        if (!component.FixedAspectRatio)
+        {
+            // Set the camera's viewport size to match the scene's viewport
+            component.Cam.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+        }
+    }
+
+    template<>
+    void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+    {
+        // Nothing to do for TagComponent for now
+    }
+
+    template<>
+    void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+    {
+        // Nothing to do for SpriteRendererComponent for now
+    }
+
+    template<>
+    void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
+    {
+        // Nothing to do for TransformComponent for now
+    }
+
+    template<>
+    void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+    {
+        // Nothing to do for NativeScriptComponent for now
     }
 }
