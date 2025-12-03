@@ -1,5 +1,7 @@
 #include "EditorLayer.h"
 
+#include <Jade/Scene/SceneSerializer.h>
+
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -39,6 +41,9 @@ namespace Jade
 
         m_ActiveScene = CreateRef<Scene>();
 
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+#if 0
         m_SquareEntity = m_ActiveScene->CreateEntity("Blue Square");
         m_SquareEntity.AddComponent<SpriteRendererComponent>(
             glm::vec4(0.2f, 0.3f, 0.8f, 1.0f)
@@ -116,8 +121,7 @@ namespace Jade
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 
         m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
-        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+#endif
     }
 
     void EditorLayer::OnDetach()
@@ -261,10 +265,25 @@ namespace Jade
         {
             if (ImGui::BeginMenu("File"))
             {
+                if (ImGui::MenuItem("Serialize"))
+                {
+                    SceneSerializer serializer(m_ActiveScene);
+
+                    serializer.Serialize("assets/scenes/scene1.jade");
+                }
+
+                if (ImGui::MenuItem("Deserialize"))
+                {
+                    SceneSerializer serializer(m_ActiveScene);
+
+                    serializer.Deserialize("assets/scenes/scene1.jade");
+                }
+
                 if (ImGui::MenuItem("Exit"))
                 {
                     Application::Get().Close();
                 }
+
                 ImGui::EndMenu();
             }
 

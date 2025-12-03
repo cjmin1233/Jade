@@ -11,11 +11,6 @@ workspace "Jade"
         "Dist"
     }
 
-    solution_items
-    {
-        ".editorconfig",
-    }
-
     flags
     {
         "MultiProcessorCompile",
