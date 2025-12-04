@@ -37,6 +37,22 @@ namespace Jade
         return entity;
     }
 
+    Entity Scene::CreateEntity(const std::string& name, uint32_t id)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        // Create an entity with a specific ID
+        entt::entity entityHandle = m_Registry.create(static_cast<entt::entity>(id));
+        Entity entity{ entityHandle, this };
+
+        // Every entity gets a TransformComponent by default
+        entity.AddComponent<TransformComponent>();
+
+        TagComponent& tag = entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
+
+        return entity;
+    }
+
     void Scene::DestroyEntity(Entity entity)
     {
         JADE_PROFILE_FUNCTION();

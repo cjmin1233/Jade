@@ -169,15 +169,19 @@ namespace Jade
         // Entities serialization
         out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
 
-        m_Scene->m_Registry.view<entt::entity>().each([&](entt::entity entityID)
-            {
-                Entity entity{ entityID, m_Scene.get() };
+        // Serialize in reverse order to maintain hierarchy (parents before children)
+        auto view = m_Scene->m_Registry.view<entt::entity>();
+        for(auto reverse_itr = view.rbegin(); reverse_itr != view.rend(); ++reverse_itr)
+        {
+            entt::entity entityID = *reverse_itr;
 
-                if (!entity)
-                    return;
+            Entity entity{ entityID, m_Scene.get() };
 
-                SerializeEntity(out, entity);
-            });
+            if (!entity)
+                continue;
+
+            SerializeEntity(out, entity);
+        }
 
         out << YAML::EndSeq;
 
@@ -224,10 +228,14 @@ namespace Jade
                 {
                     name = tagComponent["Tag"].as<std::string>();
                 }
+                else
+                {
+                    name = "Entity";
+                }
 
                 JADE_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-                Entity deserializedEntity = m_Scene->CreateEntity(name);
+                Entity deserializedEntity = m_Scene->CreateEntity(name, uuid);
 
 #pragma region TransformComponent Deserialization
                 // TransformComponent deserialization

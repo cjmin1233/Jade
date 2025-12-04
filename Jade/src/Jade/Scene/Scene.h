@@ -15,6 +15,7 @@ namespace Jade
         ~Scene() = default;
 
         Entity CreateEntity(const std::string& name = std::string());
+        Entity CreateEntity(const std::string& name, uint32_t id);
         void DestroyEntity(Entity entity);
 
         void OnUpdate(Timestep ts);

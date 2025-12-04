@@ -12,7 +12,9 @@ namespace Jade
 {
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& scene)
         : m_Context(scene)
-        , m_SelectionContext()
+        , m_CurrentSelectedEntity()
+        , m_LastSelectedEntity()
+        , m_DeletedEntities()
     {
     }
 
@@ -30,14 +32,22 @@ namespace Jade
 
         DrawScenePopupMenu();
 
-        for (auto entity : m_Context->m_Registry.view<entt::entity>())
+        // Draw all entities in reverse order to have the first created on top
+        auto hierarchyView = m_Context->m_Registry.view<TransformComponent>();
+        for(auto reverse_itr = hierarchyView.rbegin(); reverse_itr != hierarchyView.rend(); ++reverse_itr)
         {
-            DrawEntityNode(Entity{ entity, m_Context.get() });
+            DrawEntityNode(Entity{ *reverse_itr, m_Context.get() });
         }
 
+        if (hierarchyView.size() == 0)
+        {
+            ImGui::Text("No entities in the scene.");
+        }
+
+        // Clear selection if clicked on empty space
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
         {
-            m_SelectionContext = {};
+            m_LastSelectedEntity = {};
         }
 
 
@@ -46,14 +56,18 @@ namespace Jade
 
 #pragma region Inspector
         ImGui::Begin("Inspector");
-        if (m_SelectionContext)
+        if (m_CurrentSelectedEntity)
         {
-            DrawComponents(m_SelectionContext);
+            DrawComponents(m_CurrentSelectedEntity);
         }
         ImGui::End();
 #pragma endregion
 
         ImGui::ShowDemoWindow();
+
+        // Post render
+        ProcessDeletedEntities();
+        m_CurrentSelectedEntity = m_LastSelectedEntity;
     }
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
@@ -65,7 +79,7 @@ namespace Jade
         // Set up tree node flags
         // If the entity is selected, add the selected flag
         // Always allow opening on arrow click
-        ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0)
+        ImGuiTreeNodeFlags flags = ((m_CurrentSelectedEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0)
             | ImGuiTreeNodeFlags_OpenOnArrow;
         flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -75,7 +89,7 @@ namespace Jade
         // Handle selection
         if (ImGui::IsItemClicked())
         {
-            m_SelectionContext = entity;
+            m_LastSelectedEntity = entity;
         }
 
         // If the node is opened, we would draw its children here
@@ -99,8 +113,6 @@ namespace Jade
 
     void SceneHierarchyPanel::DrawEntityPopupMenu(Entity entity)
     {
-        // Mark for deletion
-        bool entityDeleted = false;
         // Context menu for the entity
         if (ImGui::BeginPopupContextItem(0, ImGuiPopupFlags_MouseButtonRight))
         {
@@ -111,22 +123,11 @@ namespace Jade
 
             if (ImGui::MenuItem("Delete Entity"))
             {
-                entityDeleted = true;
+                // Mark entity for deletion
+                m_DeletedEntities.push_back(entity);
             }
 
             ImGui::EndPopup();
-        }
-
-        // If the entity is marked for deletion, delete it
-        if (entityDeleted)
-        {
-            // If the deleted entity is the selected one, clear the selection
-            if (m_SelectionContext == entity)
-            {
-                m_SelectionContext = {};
-            }
-
-            m_Context->DestroyEntity(entity);
         }
     }
 
@@ -339,13 +340,13 @@ namespace Jade
         {
             if (ImGui::MenuItem("Camera"))
             {
-                m_SelectionContext.TryAddComponent<CameraComponent>();
+                m_CurrentSelectedEntity.TryAddComponent<CameraComponent>();
                 ImGui::CloseCurrentPopup();
             }
 
             if (ImGui::MenuItem("Sprite Renderer"))
             {
-                m_SelectionContext.TryAddComponent<SpriteRendererComponent>();
+                m_CurrentSelectedEntity.TryAddComponent<SpriteRendererComponent>();
                 ImGui::CloseCurrentPopup();
             }
 
@@ -366,5 +367,15 @@ namespace Jade
 
             ImGui::EndPopup();
         }
+    }
+
+    void SceneHierarchyPanel::ProcessDeletedEntities()
+    {
+        for (size_t i = 0; i < m_DeletedEntities.size(); ++i)
+        {
+            m_Context->DestroyEntity(m_DeletedEntities[i]);
+        }
+
+        m_DeletedEntities.clear();
     }
 }

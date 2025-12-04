@@ -22,8 +22,13 @@ namespace Jade
 
         void DrawScenePopupMenu();
 
+        void ProcessDeletedEntities();
+
     private:
         Ref<Scene> m_Context;
-        Entity m_SelectionContext;
+        Entity m_CurrentSelectedEntity;
+        Entity m_LastSelectedEntity;
+
+        std::vector<Entity> m_DeletedEntities;
     };
 }
