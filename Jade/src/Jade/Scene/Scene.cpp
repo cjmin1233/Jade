@@ -20,6 +20,7 @@ namespace Jade
         , m_ViewportWidth(1600)
         , m_ViewportHeight(900)
         , m_Name(name)
+        , m_FilePath()
     {
     }
 

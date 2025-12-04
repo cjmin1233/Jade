@@ -22,6 +22,13 @@ namespace Jade
     private:
         void RenderViewport();
 
+        bool OnKeyPressed(KeyPressedEvent& e);
+
+        void NewScene();
+        void OpenScene();
+        void SaveScene();
+        void SaveSceneAs();
+
     private:
         OrthographicCameraController m_CameraController;
 

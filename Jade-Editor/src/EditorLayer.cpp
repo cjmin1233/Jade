@@ -1,6 +1,8 @@
 #include "EditorLayer.h"
 
 #include <Jade/Scene/SceneSerializer.h>
+#include <Jade/Utils/PlatformUtils.h>
+#include <Jade/Utils/Utils.h>
 
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -39,7 +41,7 @@ namespace Jade
         fbSpec.Height = Application::Get().GetWindow().GetHeight();
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
-        m_ActiveScene = CreateRef<Scene>("Test");
+        m_ActiveScene = CreateRef<Scene>();
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
@@ -265,19 +267,39 @@ namespace Jade
         {
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Serialize"))
+                if (ImGui::MenuItem("New Scene", "Ctrl+N"))
                 {
-                    SceneSerializer serializer(m_ActiveScene);
-
-                    serializer.Serialize("assets/scenes/");
+                    NewScene();
                 }
 
-                if (ImGui::MenuItem("Deserialize"))
+                if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
                 {
-                    SceneSerializer serializer(m_ActiveScene);
-
-                    serializer.Deserialize("assets/scenes/" + m_ActiveScene->GetName() + ".jade");
+                    OpenScene();
                 }
+
+                if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+                {
+                    SaveScene();
+                }
+
+                if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
+                {
+                    SaveSceneAs();
+                }
+
+                //if (ImGui::MenuItem("Serialize"))
+                //{
+                //    SceneSerializer serializer(m_ActiveScene);
+
+                //    serializer.Serialize("assets/scenes/");
+                //}
+
+                //if (ImGui::MenuItem("Deserialize"))
+                //{
+                //    SceneSerializer serializer(m_ActiveScene);
+
+                //    serializer.Deserialize("assets/scenes/" + m_ActiveScene->GetName() + ".jade");
+                //}
 
                 if (ImGui::MenuItem("Exit"))
                 {
@@ -338,6 +360,9 @@ namespace Jade
     void EditorLayer::OnEvent(Event& event)
     {
         //m_CameraController.OnEvent(event);
+
+        EventDispatcher dispatcher(event);
+        dispatcher.Dispatch<KeyPressedEvent>(JADE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
     }
 
     void EditorLayer::RenderViewport()
@@ -366,5 +391,110 @@ namespace Jade
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
 
         ImGui::End();
+    }
+
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
+    {
+        // Short-circuit repeated key presses
+        if (e.IsRepeat())
+            return false;
+
+        bool control = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+        bool shift = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
+
+        switch (e.GetKeyCode())
+        {
+        case Key::N:
+        {
+            if (control)
+            {
+                NewScene();
+            }
+        }
+        break;
+        case Key::O:
+        {
+            if (control)
+            {
+                OpenScene();
+            }
+        }
+        break;
+        case Key::S:
+        {
+            if (control)
+            {
+                if (shift)
+                {
+                    SaveSceneAs();
+                }
+                else
+                {
+                    SaveScene();
+                }
+            }
+        }
+        break;
+        }
+    }
+
+    // Create a new empty scene
+    void EditorLayer::NewScene()
+    {
+        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+
+        m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+    }
+
+    // Open a scene from a file with a user-specified path
+    void EditorLayer::OpenScene()
+    {
+        std::string filepath = FileDialogs::OpenFile("Jade Scene (*.jade)\0*.jade\0");
+
+        const std::string sceneName = Utils::GetFileName(filepath);
+
+        if (!filepath.empty())
+        {
+            m_ActiveScene = CreateRef<Scene>(sceneName);    // Set scene name based on file name
+            m_ActiveScene->SetFilePath(filepath);   // Set scene file path
+            m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+            m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+            SceneSerializer serializer(m_ActiveScene);
+
+            serializer.Deserialize(filepath);
+        }
+    }
+
+    void EditorLayer::SaveScene()
+    {
+        if (m_ActiveScene)
+        {
+            std::string filepath = m_ActiveScene->GetFilePath();
+
+            if (!filepath.empty())
+            {
+                SceneSerializer serializer(m_ActiveScene);
+                serializer.Serialize(filepath);
+            }
+        }
+    }
+
+    // Save the active scene to a file with a user-specified path
+    void EditorLayer::SaveSceneAs()
+    {
+        std::string filepath = FileDialogs::SaveFile("Jade Scene (*.jade)\0*.jade\0");
+
+        const std::string sceneName = Utils::GetFileName(filepath);
+
+        if (!filepath.empty())
+        {
+            m_ActiveScene->SetName(sceneName); // Set scene name based on file name
+            m_ActiveScene->SetFilePath(filepath);   // Set scene file path
+            SceneSerializer serializer(m_ActiveScene);
+
+            serializer.Serialize(filepath);
+        }
     }
 } // namespace Jade

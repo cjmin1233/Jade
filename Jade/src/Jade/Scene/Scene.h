@@ -21,8 +21,11 @@ namespace Jade
         void OnUpdate(Timestep ts);
         void OnViewportResize(uint32_t width, uint32_t height);
 
-        std::string& GetName() { return m_Name; }
+        const std::string& GetName() const { return m_Name; }
         void SetName(const std::string& name) { m_Name = name; }
+
+        const std::string& GetFilePath() const { return m_FilePath; }
+        void SetFilePath(const std::string& path) { m_FilePath = path; }
 
     private:
         template<typename T>
@@ -32,6 +35,7 @@ namespace Jade
         entt::registry m_Registry;
         uint32_t m_ViewportWidth, m_ViewportHeight;
         std::string m_Name;
+        std::string m_FilePath;
 
         friend class Entity;
         friend class SceneHierarchyPanel;

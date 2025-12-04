@@ -20,7 +20,11 @@ namespace Jade
 
     void SceneHierarchyPanel::SetContext(const Ref<Scene>& scene)
     {
+        // Set the current scene context
         m_Context = scene;
+        // Clear selection
+        m_CurrentSelectedEntity = {};
+        m_LastSelectedEntity = {};
     }
 
     void SceneHierarchyPanel::OnImGuiRender()

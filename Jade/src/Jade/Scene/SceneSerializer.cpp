@@ -187,8 +187,7 @@ namespace Jade
 
         out << YAML::EndMap;
 
-        const std::string sceneExtension = ".jade";
-        std::ofstream fout(filepath + m_Scene->GetName() + sceneExtension);
+        std::ofstream fout(filepath);
         fout << out.c_str();
     }
 
