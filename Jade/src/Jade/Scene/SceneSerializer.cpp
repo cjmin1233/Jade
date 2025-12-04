@@ -164,7 +164,7 @@ namespace Jade
         out << YAML::BeginMap;
 
         // Scene name serialization
-        out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+        out << YAML::Key << "Scene" << YAML::Value << m_Scene->GetName();
 
         // Entities serialization
         out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
@@ -183,7 +183,8 @@ namespace Jade
 
         out << YAML::EndMap;
 
-        std::ofstream fout(filepath);
+        const std::string sceneExtension = ".jade";
+        std::ofstream fout(filepath + m_Scene->GetName() + sceneExtension);
         fout << out.c_str();
     }
 
@@ -204,6 +205,7 @@ namespace Jade
 
         // Scene name deserialization
         std::string sceneName = data["Scene"].as<std::string>();
+        m_Scene->SetName(sceneName);
         JADE_CORE_TRACE("Deserializing scene '{0}'", sceneName);
 
         // Entities deserialization

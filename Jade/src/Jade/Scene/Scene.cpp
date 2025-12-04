@@ -11,9 +11,15 @@
 namespace Jade
 {
     Scene::Scene()
+        : Scene("Untitled")
+    {
+    }
+
+    Scene::Scene(const std::string& name)
         : m_Registry()
         , m_ViewportWidth(1600)
         , m_ViewportHeight(900)
+        , m_Name(name)
     {
     }
 

@@ -39,7 +39,7 @@ namespace Jade
         fbSpec.Height = Application::Get().GetWindow().GetHeight();
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
-        m_ActiveScene = CreateRef<Scene>();
+        m_ActiveScene = CreateRef<Scene>("Test");
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
@@ -269,14 +269,14 @@ namespace Jade
                 {
                     SceneSerializer serializer(m_ActiveScene);
 
-                    serializer.Serialize("assets/scenes/scene1.jade");
+                    serializer.Serialize("assets/scenes/");
                 }
 
                 if (ImGui::MenuItem("Deserialize"))
                 {
                     SceneSerializer serializer(m_ActiveScene);
 
-                    serializer.Deserialize("assets/scenes/scene1.jade");
+                    serializer.Deserialize("assets/scenes/" + m_ActiveScene->GetName() + ".jade");
                 }
 
                 if (ImGui::MenuItem("Exit"))
