@@ -1,5 +1,3 @@
-#include "jdpch.h"
-
 #include "SceneHierarchyPanel.h"
 
 #include <Jade/Scene/Components.h>
@@ -7,6 +5,9 @@
 
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
+
+#include <string.h>
+#include <typeinfo>
 
 namespace Jade
 {
@@ -29,8 +30,6 @@ namespace Jade
 
     void SceneHierarchyPanel::OnImGuiRender()
     {
-        JADE_PROFILE_FUNCTION();
-
 #pragma region Scene Hierarchy
         ImGui::Begin("Scene Hierarchy");
 
@@ -76,8 +75,6 @@ namespace Jade
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
     {
-        JADE_PROFILE_FUNCTION();
-
         auto& tag = entity.GetComponent<TagComponent>().Tag;
 
         // Set up tree node flags
@@ -203,8 +200,6 @@ namespace Jade
 
     void SceneHierarchyPanel::DrawComponents(Entity entity)
     {
-        JADE_PROFILE_FUNCTION();
-
         static bool checked = true;
         if (ImGui::Checkbox("##Checkbox", &checked))
         {
@@ -218,7 +213,7 @@ namespace Jade
             ImGui::Text("Name:");
             char buffer[256];
             memset(buffer, 0, sizeof(buffer));
-            strcpy_s(buffer, sizeof(buffer), tag.Tag.c_str());
+            strncpy_s(buffer, sizeof(buffer), tag.Tag.c_str(), _TRUNCATE);
 
             ImGui::SameLine();
             if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))

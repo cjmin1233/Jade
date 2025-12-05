@@ -1,7 +1,9 @@
 #pragma once
 #include "Jade/Scene/Scene.h"
+#include "Jade/Core/Assert.h"
 
 #include <entt.hpp>
+#include <utility>
 
 namespace Jade
 {
