@@ -372,6 +372,13 @@ namespace Jade
     {
         for (size_t i = 0; i < m_DeletedEntities.size(); ++i)
         {
+            // Clear selection if the deleted entity was selected
+            if (m_CurrentSelectedEntity == m_DeletedEntities[i])
+            {
+                m_CurrentSelectedEntity = {};
+                m_LastSelectedEntity = {};
+            }
+
             m_Context->DestroyEntity(m_DeletedEntities[i]);
         }
 
