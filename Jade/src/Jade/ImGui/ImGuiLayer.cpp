@@ -10,6 +10,8 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 
+#include <ImGuizmo.h>
+
 namespace Jade
 {
     ImGuiLayer::ImGuiLayer()
@@ -94,9 +96,13 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
+        // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        // ImGuizmo New Frame
+        ImGuizmo::BeginFrame();
     }
 
     void ImGuiLayer::End()

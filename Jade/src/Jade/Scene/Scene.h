@@ -21,6 +21,8 @@ namespace Jade
         void OnUpdate(Timestep ts);
         void OnViewportResize(uint32_t width, uint32_t height);
 
+        Entity GetPrimaryCameraEntity();
+
         const std::string& GetName() const { return m_Name; }
         void SetName(const std::string& name) { m_Name = name; }
 

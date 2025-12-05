@@ -13,6 +13,8 @@ namespace Jade
 
         void SetContext(const Ref<Scene>& scene);
 
+        Entity GetSelectedEntity() const { return m_CurrentSelectedEntity; }
+
         void OnImGuiRender();
 
     private:

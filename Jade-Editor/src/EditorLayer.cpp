@@ -7,6 +7,8 @@
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <ImGuizmo.h>
+
 namespace Jade
 {
     EditorLayer::EditorLayer()
@@ -45,7 +47,7 @@ namespace Jade
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
-#if 0
+#if 1
         m_SquareEntity = m_ActiveScene->CreateEntity("Blue Square");
         m_SquareEntity.AddComponent<SpriteRendererComponent>(
             glm::vec4(0.2f, 0.3f, 0.8f, 1.0f)
@@ -389,6 +391,45 @@ namespace Jade
         // Draw the framebuffer's color attachment as an image
         uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
+
+        // Guizmo
+        Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+        Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+        if (selectedEntity && cameraEntity)
+        {
+            SceneCamera& camera = cameraEntity.GetComponent<CameraComponent>().Cam;
+            bool isOrthographic = camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic;
+
+            // Setup ImGuizmo
+            ImGuizmo::SetOrthographic(isOrthographic);      // Set orthographic or perspective mode based on camera
+            ImGuizmo::SetDrawlist();                        // Draw on top of the current ImGui window
+
+            float windowWidth = ImGui::GetWindowWidth();
+            float windowHeight = ImGui::GetWindowHeight();
+            // Set the ImGuizmo rectangle to match the viewport
+            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+            const glm::mat4& cameraProjection = camera.GetProjectionMatrix();
+            glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+            // Get the transform of the selected entity
+            TransformComponent& transformComponent = selectedEntity.GetComponent<TransformComponent>();
+            glm::mat4 transform = transformComponent.GetTransform();
+
+            // Manipulate the selected entity's transform
+            ImGuizmo::Manipulate(
+                glm::value_ptr(cameraView),
+                glm::value_ptr(cameraProjection),
+                ImGuizmo::OPERATION::TRANSLATE,
+                ImGuizmo::LOCAL,
+                glm::value_ptr(transform)
+            );
+
+            if (ImGuizmo::IsUsing())
+            {
+                transformComponent.Translation = transform[3];
+            }
+        }
 
         ImGui::End();
     }

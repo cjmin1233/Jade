@@ -142,6 +142,20 @@ namespace Jade
         }
     }
 
+    Entity Scene::GetPrimaryCameraEntity()
+    {
+        auto view = m_Registry.view<CameraComponent>();
+        for (entt::entity entity : view)
+        {
+            CameraComponent& cameraComponent = view.get<CameraComponent>(entity);
+            if (cameraComponent.Primary)
+            {
+                return Entity{ entity, this };
+            }
+        }
+        return Entity{};
+    }
+
     template<typename T>
     void Scene::OnComponentAdded(Entity entity, T& component)
     {
