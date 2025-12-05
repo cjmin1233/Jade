@@ -12,7 +12,7 @@
 
 namespace Jade
 {
-    std::string FileDialogs::OpenFile(const char* filter)
+    std::optional<std::string> FileDialogs::OpenFile(const char* filter)
     {
         OPENFILENAMEA ofn;  // common dialog box structure
         CHAR szFile[260] = { 0 };   // buffer for file name
@@ -35,11 +35,11 @@ namespace Jade
             return std::string(ofn.lpstrFile);
         }
 
-        // If the user canceled the dialog or an error occurred, return an empty string
-        return std::string();
+        // If the user canceled the dialog or an error occurred, return std::nullopt
+        return std::nullopt;
     }
 
-    std::string FileDialogs::SaveFile(const char* filter)
+    std::optional<std::string> FileDialogs::SaveFile(const char* filter)
     {
         OPENFILENAMEA ofn;  // common dialog box structure
         CHAR szFile[260] = { 0 };   // buffer for file name
@@ -62,7 +62,7 @@ namespace Jade
             return std::string(ofn.lpstrFile);
         }
 
-        // If the user canceled the dialog or an error occurred, return an empty string
-        return std::string();
+        // If the user canceled the dialog or an error occurred, return std::nullopt
+        return std::nullopt;
     }
 }

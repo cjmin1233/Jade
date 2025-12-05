@@ -450,20 +450,20 @@ namespace Jade
     // Open a scene from a file with a user-specified path
     void EditorLayer::OpenScene()
     {
-        std::string filepath = FileDialogs::OpenFile("Jade Scene (*.jade)\0*.jade\0");
+        auto filepath = FileDialogs::OpenFile("Jade Scene (*.jade)\0*.jade\0");
 
-        const std::string sceneName = Utils::GetFileName(filepath);
-
-        if (!filepath.empty())
+        if (filepath.has_value())
         {
+            const std::string sceneName = Utils::GetFileName(*filepath);
+
             m_ActiveScene = CreateRef<Scene>(sceneName);    // Set scene name based on file name
-            m_ActiveScene->SetFilePath(filepath);   // Set scene file path
+            m_ActiveScene->SetFilePath(*filepath);   // Set scene file path
             m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
             SceneSerializer serializer(m_ActiveScene);
 
-            serializer.Deserialize(filepath);
+            serializer.Deserialize(*filepath);
         }
     }
 
@@ -476,6 +476,7 @@ namespace Jade
             if (!filepath.empty())
             {
                 SceneSerializer serializer(m_ActiveScene);
+
                 serializer.Serialize(filepath);
             }
         }
@@ -484,17 +485,17 @@ namespace Jade
     // Save the active scene to a file with a user-specified path
     void EditorLayer::SaveSceneAs()
     {
-        std::string filepath = FileDialogs::SaveFile("Jade Scene (*.jade)\0*.jade\0");
+        auto filepath = FileDialogs::SaveFile("Jade Scene (*.jade)\0*.jade\0");
 
-        const std::string sceneName = Utils::GetFileName(filepath);
-
-        if (!filepath.empty())
+        if (filepath.has_value())
         {
+            const std::string sceneName = Utils::GetFileName(*filepath);
+
             m_ActiveScene->SetName(sceneName); // Set scene name based on file name
-            m_ActiveScene->SetFilePath(filepath);   // Set scene file path
+            m_ActiveScene->SetFilePath(*filepath);   // Set scene file path
             SceneSerializer serializer(m_ActiveScene);
 
-            serializer.Serialize(filepath);
+            serializer.Serialize(*filepath);
         }
     }
 } // namespace Jade
