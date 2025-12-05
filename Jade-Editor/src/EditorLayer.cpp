@@ -3,6 +3,7 @@
 #include <Jade/Scene/SceneSerializer.h>
 #include <Jade/Utils/PlatformUtils.h>
 #include <Jade/Utils/Utils.h>
+#include <Jade/Math/Math.h>
 
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -26,6 +27,7 @@ namespace Jade
         , m_SecondCameraEntity()
         , m_ViewportFocused(false)
         , m_ViewportHovered(false)
+        , m_GizmoType(-1)
         , m_SceneHierarchyPanel()
     {
     }
@@ -84,6 +86,7 @@ namespace Jade
 
                 float speed = 5.0f;
 
+#if 0
                 // Camera movement
                 if (Input::IsKeyPressed(Key::A))
                 {
@@ -110,15 +113,16 @@ namespace Jade
                     transform.Translation.z += speed * ts;
                 }
 
-                // Camera rotation
-                if (Input::IsKeyPressed(Key::Z))
-                {
-                    transform.Rotation.z += 90.0f * ts;
-                }
-                if (Input::IsKeyPressed(Key::C))
-                {
-                    transform.Rotation.z -= 90.0f * ts;
-                }
+                //// Camera rotation
+                //if (Input::IsKeyPressed(Key::Z))
+                //{
+                //    transform.Rotation.z += 90.0f * ts;
+                //}
+                //if (Input::IsKeyPressed(Key::C))
+                //{
+                //    transform.Rotation.z -= 90.0f * ts;
+                //}
+#endif
             }
         };
 
@@ -395,7 +399,8 @@ namespace Jade
         // Guizmo
         Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
         Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-        if (selectedEntity && cameraEntity)
+        // Only draw and manipulate the guizmo if an entity is selected and a camera exists
+        if (selectedEntity && cameraEntity && m_GizmoType != -1)
         {
             SceneCamera& camera = cameraEntity.GetComponent<CameraComponent>().Cam;
             bool isOrthographic = camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic;
@@ -410,24 +415,41 @@ namespace Jade
             ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
             const glm::mat4& cameraProjection = camera.GetProjectionMatrix();
+            // Invert the camera transform to get the view matrix
             glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
 
             // Get the transform of the selected entity
             TransformComponent& transformComponent = selectedEntity.GetComponent<TransformComponent>();
             glm::mat4 transform = transformComponent.GetTransform();
 
+            bool snap = Input::IsKeyPressed(Key::LeftControl);
+            float snapValue = 0.5f; // Snap to 0.5 for translation/scale
+            if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+            {
+                snapValue = 45.0f; // Snap to 45 degrees for rotation
+            }
+            float snapValues[3] = { snapValue, snapValue, snapValue };
+
             // Manipulate the selected entity's transform
             ImGuizmo::Manipulate(
                 glm::value_ptr(cameraView),
                 glm::value_ptr(cameraProjection),
-                ImGuizmo::OPERATION::TRANSLATE,
+                (ImGuizmo::OPERATION)m_GizmoType,
                 ImGuizmo::LOCAL,
-                glm::value_ptr(transform)
+                glm::value_ptr(transform),
+                nullptr,
+                snap ? snapValues : nullptr
             );
 
             if (ImGuizmo::IsUsing())
             {
-                transformComponent.Translation = transform[3];
+                glm::vec3 outTranslation, outRotation, outScale;
+                Math::DecomposeTransform(transform, outTranslation, outRotation, outScale);
+
+                glm::vec3 deltaRotation = outRotation - transformComponent.Rotation;
+                transformComponent.Translation = outTranslation;
+                transformComponent.Rotation += deltaRotation;
+                transformComponent.Scale = outScale;
             }
         }
 
@@ -476,6 +498,20 @@ namespace Jade
             }
         }
         break;
+
+        // Gizmo key shortcuts
+        case Key::Q:
+            m_GizmoType = -1;
+            break;
+        case Key::W:
+            m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+            break;
+        case Key::E:
+            m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+            break;
+        case Key::R:
+            m_GizmoType = ImGuizmo::OPERATION::SCALE;
+            break;
         }
 
         // Not handled

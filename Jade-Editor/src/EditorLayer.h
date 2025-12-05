@@ -49,6 +49,8 @@ namespace Jade
 
         bool m_ViewportFocused, m_ViewportHovered;
 
+        int m_GizmoType;
+
         SceneHierarchyPanel m_SceneHierarchyPanel;
     };
 } // namespace Jade
