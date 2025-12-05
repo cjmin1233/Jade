@@ -20,6 +20,8 @@ project "Jade"
         "vendor/stb_image/**.cpp",
         "vendor/glm/glm/**.hpp",
         "vendor/glm/glm/**.inl",
+        "vendor/ImGuizmo/ImGuizmo.h",
+        "vendor/ImGuizmo/ImGuizmo.cpp",
     }
 
     defines
@@ -40,6 +42,7 @@ project "Jade"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.entt}",
         "%{IncludeDir.yaml_cpp}",
+        "%{IncludeDir.ImGuizmo}",
     }
 
     links
@@ -57,6 +60,9 @@ project "Jade"
         defines
         {
         }
+
+    filter "files:vendor/ImGuizmo/**.cpp"
+        flags { "NoPCH" }   --ImGuizmo does not support precompiled headers
 
     filter "configurations:Debug"
         defines "JADE_DEBUG"

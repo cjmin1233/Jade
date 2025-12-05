@@ -20,6 +20,7 @@ project "Jade-Editor"
         "%{wks.location}/Jade/vendor",
         "%{IncludeDir.glm}",
         "%{IncludeDir.entt}",
+        "%{IncludeDir.ImGuizmo}",
     }
 
     links

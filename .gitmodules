@@ -16,5 +16,9 @@
     branch = master
 [submodule "Jade/vendor/yaml-cpp"]
     path = Jade/vendor/yaml-cpp
-    url = ../../cjmin1233/yaml-cpp
+    url = ../../cjmin1233/yaml-cpp.git
+    branch = master
+[submodule "Jade/vendor/ImGuizmo"]
+    path = Jade/vendor/ImGuizmo
+    url = ../../cjmin1233/ImGuizmo.git
     branch = master
