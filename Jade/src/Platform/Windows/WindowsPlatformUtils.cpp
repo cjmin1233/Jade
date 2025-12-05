@@ -55,6 +55,9 @@ namespace Jade
         ofn.lpstrTitle = "Save File";  // title of dialog
         ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;  // dialog options
 
+        // Set default extension based on the first filter's extension
+        ofn.lpstrDefExt = std::strchr(filter, '\0') + 1;
+
         // Display the Save dialog box
         if (GetSaveFileNameA(&ofn))
         {
