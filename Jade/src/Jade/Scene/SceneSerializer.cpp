@@ -235,7 +235,7 @@ namespace Jade
 
                 JADE_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
-                Entity deserializedEntity = m_Scene->CreateEntity(name, uuid);
+                Entity deserializedEntity = m_Scene->CreateEntity(name, (uint32_t)uuid);
 
 #pragma region TransformComponent Deserialization
                 // TransformComponent deserialization

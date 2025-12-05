@@ -436,6 +436,9 @@ namespace Jade
         }
         break;
         }
+
+        // Not handled
+        return false;
     }
 
     // Create a new empty scene
