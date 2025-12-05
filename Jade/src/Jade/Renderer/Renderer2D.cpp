@@ -442,31 +442,31 @@ namespace Jade
 #pragma endregion
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color)
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec4& color)
     {
-        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotationAngle, size, color);
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotation, size, color);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color)
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color)
     {
         // Transform matrix
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
+            * glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
             * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawRotatedQuad(transform, color);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
-        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotationAngle, size, texture, tilingFactor, tintColor);
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, rotation, size, texture, tilingFactor, tintColor);
     }
 
-    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
     {
         // Transform matrix
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
-            * glm::rotate(glm::mat4(1.0f), glm::radians(rotationAngle), { 0.0f, 0.0f, 1.0f })
+            * glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
             * glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
         DrawRotatedQuad(transform, texture, tilingFactor, tintColor);

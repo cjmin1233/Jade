@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Scene/SceneCamera.h"
 #include "Jade/Scene/ScriptableEntity.h"
 
@@ -38,7 +38,7 @@ namespace Jade
         // Get the transformation matrix (S * R * T)
         glm::mat4 GetTransform() const
         {
-            glm::mat4 rotation = glm::toMat4(glm::quat(glm::radians(Rotation)));
+            glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
 
             return glm::translate(glm::mat4(1.0f), Translation)
                 * rotation

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Renderer/OrthographicCamera.h"
 #include "Jade/Renderer/Texture.h"
 
@@ -33,12 +33,12 @@ namespace Jade
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
 
         // Rotated Primitives
-        static void DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
-        static void DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
+        static void DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
+        static void DrawRotatedQuad(const glm::vec3& position, float rotation, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
         // Rotated Textured
-        static void DrawRotatedQuad(const glm::vec2& position, float rotationAngle, const glm::vec2& size,
+        static void DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size,
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
-        static void DrawRotatedQuad(const glm::vec3& position, float rotationAngle, const glm::vec2& size,
+        static void DrawRotatedQuad(const glm::vec3& position, float rotation, const glm::vec2& size,
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
 
         // Rotated Quad with transform matrix

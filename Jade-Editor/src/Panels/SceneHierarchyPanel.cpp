@@ -227,7 +227,10 @@ namespace Jade
         DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
             {
                 ImGuiUtils::DrawVec3Control("Translation", component.Translation);
-                ImGuiUtils::DrawVec3Control("Rotation", component.Rotation);
+                // Convert rotation to degrees for display
+                glm::vec3 rotationDeg = glm::degrees(component.Rotation);
+                ImGuiUtils::DrawVec3Control("Rotation", rotationDeg);
+                component.Rotation = glm::radians(rotationDeg);
                 ImGuiUtils::DrawVec3Control("Scale", component.Scale, 1.0f);
             });
 
