@@ -7,13 +7,20 @@
 
 namespace Jade::Math
 {
+    // Decomposes a transformation matrix into its translation, rotation (in radians), and scale components.
     bool DecomposeTransform(const glm::mat4& transform, glm::vec3& outTranslation, glm::vec3& outRotation, glm::vec3& outScale)
     {
+        // Note: glm::mat4 is column-major by default.
+        // localMatrix[column][row] -> access element at (row, column)
         glm::mat4 localMatrix(transform);
 
-        // Normalize the matrix.
+        // If the localMatrix[3][3] is close to zero, the matrix is not invertible.
+        // We cannot decompose such a matrix, thus we return false.
         if (glm::epsilonEqual(localMatrix[3][3], static_cast<float>(0), glm::epsilon<float>()))
             return false;
+
+        // Normalize the matrix.
+        localMatrix /= localMatrix[3][3];
 
         // First, isolate perspective.  This is the messiest.
         if (
@@ -28,55 +35,62 @@ namespace Jade::Math
         }
 
         // Next take care of translation (easy).
+        // Extract translation
         outTranslation = glm::vec3(localMatrix[3]);
-        localMatrix[3] = glm::vec4(0, 0, 0, localMatrix[3].w);  // Clear translation
+        // Clear translation
+        localMatrix[3] = glm::vec4(0, 0, 0, localMatrix[3].w);
 
-        glm::vec3 row[3], pdum3;
+        glm::vec3 basis[3];
 
-        // Now get scale and shear.
+        // Copy the upper 3x3 matrix.
         for (glm::length_t i = 0; i < 3; ++i)
         {
             for (glm::length_t j = 0; j < 3; ++j)
             {
-                row[i][j] = localMatrix[i][j];
+                basis[i][j] = localMatrix[i][j];
             }
         }
 
-        outScale.x = glm::length(row[0]);
-        row[0] = glm::detail::scale(row[0], static_cast<float>(1));
-        outScale.y = glm::length(row[1]);
-        row[1] = glm::detail::scale(row[1], static_cast<float>(1));
-        outScale.z = glm::length(row[2]);
-        row[2] = glm::detail::scale(row[2], static_cast<float>(1));
+        // Extract the scales.
+        outScale.x = glm::length(basis[0]);
+        outScale.y = glm::length(basis[1]);
+        outScale.z = glm::length(basis[2]);
+        // Normalize the basis vectors.
+        basis[0] = glm::normalize(basis[0]);
+        basis[1] = glm::normalize(basis[1]);
+        basis[2] = glm::normalize(basis[2]);
 
-#if 0
-        // At this point, the matrix (in rows[]) is orthonormal.
+#if 1
+        // At this point, the matrix (in basis) is orthonormal.
         // Check for a coordinate system flip.  If the determinant
         // is -1, then negate the matrix and the scaling factors.
+        glm::vec3 pdum3 = glm::cross(basis[1], basis[2]); // v3Cross(row1, row2, pdum3);
 
-        pdum3 = glm::cross(row[1], row[2]); // v3Cross(row1, row2, pdum3);
-        if (glm::dot(row[0], pdum3) < 0)
+        // If the determinant is -1, we need to invert one scale
+        if (glm::dot(basis[0], pdum3) < 0)
         {
             for (glm::length_t i = 0; i < 3; i++)
             {
                 outScale[i] *= static_cast<float>(-1);
-                row[i] *= static_cast<float>(-1);
+                basis[i] *= static_cast<float>(-1);
             }
         }
 #endif
 
-        outRotation.y = asin(-row[0][2]);
+        // Now, extract the rotations.
+        outRotation.y = asin(-basis[0][2]); // Pitch
 
         // remaining angles depend on cos(y)
+        // Avoid gimbal lock
         if (cos(outRotation.y) != 0)
         {
-            outRotation.x = atan2(row[1][2], row[2][2]);
-            outRotation.z = atan2(row[0][1], row[0][0]);
+            outRotation.x = atan2(basis[1][2], basis[2][2]);    // Roll
+            outRotation.z = atan2(basis[0][1], basis[0][0]);    // Yaw
         }
         else
         {
-            outRotation.x = atan2(-row[2][0], row[1][1]);
-            outRotation.z = 0;
+            outRotation.x = atan2(-basis[2][0], basis[1][1]);   // Roll
+            outRotation.z = 0;                                  // Yaw
         }
 
         return true;

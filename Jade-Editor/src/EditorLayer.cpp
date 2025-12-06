@@ -422,6 +422,7 @@ namespace Jade
             TransformComponent& transformComponent = selectedEntity.GetComponent<TransformComponent>();
             glm::mat4 transform = transformComponent.GetTransform();
 
+            // Snapping
             bool snap = Input::IsKeyPressed(Key::LeftControl);
             float snapValue = 0.5f; // Snap to 0.5 for translation/scale
             if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
@@ -446,8 +447,9 @@ namespace Jade
                 glm::vec3 outTranslation, outRotation, outScale;
                 Math::DecomposeTransform(transform, outTranslation, outRotation, outScale);
 
-                glm::vec3 deltaRotation = outRotation - transformComponent.Rotation;
                 transformComponent.Translation = outTranslation;
+                // For continuous rotation, calculate the delta and add it to the existing rotation
+                glm::vec3 deltaRotation = outRotation - transformComponent.Rotation;
                 transformComponent.Rotation += deltaRotation;
                 transformComponent.Scale = outScale;
             }
