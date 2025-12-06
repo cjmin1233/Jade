@@ -503,15 +503,23 @@ namespace Jade
 
         // Gizmo key shortcuts
         case Key::Q:
+            if (ImGuizmo::IsUsing())
+                break;
             m_GizmoType = -1;
             break;
         case Key::W:
+            if (ImGuizmo::IsUsing())
+                break;
             m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
             break;
         case Key::E:
+            if (ImGuizmo::IsUsing())
+                break;
             m_GizmoType = ImGuizmo::OPERATION::ROTATE;
             break;
         case Key::R:
+            if (ImGuizmo::IsUsing())
+                break;
             m_GizmoType = ImGuizmo::OPERATION::SCALE;
             break;
         }
