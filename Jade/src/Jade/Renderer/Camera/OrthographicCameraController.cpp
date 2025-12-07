@@ -1,6 +1,6 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
-#include "Jade/Renderer/OrthographicCameraController.h"
+#include "Jade/Renderer/Camera/OrthographicCameraController.h"
 
 #include "Jade/Core/Input.h"
 #include "Jade/Core/KeyCodes.h"

@@ -1,8 +1,8 @@
 #pragma once
-#include "Jade/Renderer/OrthographicCamera.h"
+#include "Jade/Renderer/Camera/OrthographicCamera.h"
 #include "Jade/Renderer/Texture.h"
 
-#include "Jade/Renderer/Camera.h"
+#include "Jade/Renderer/Camera/Camera.h"
 
 namespace Jade
 {

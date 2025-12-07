@@ -1,6 +1,6 @@
 #pragma once
 #include "Jade/Renderer/RenderCommand.h"
-#include "Jade/Renderer/OrthographicCamera.h"
+#include "Jade/Renderer/Camera/OrthographicCamera.h"
 #include "Jade/Renderer/Shader.h"
 
 namespace Jade

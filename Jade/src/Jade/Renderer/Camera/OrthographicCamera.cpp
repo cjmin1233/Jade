@@ -1,6 +1,6 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
-#include "Jade/Renderer/OrthographicCamera.h"
+#include "Jade/Renderer/Camera/OrthographicCamera.h"
 
 namespace Jade
 {

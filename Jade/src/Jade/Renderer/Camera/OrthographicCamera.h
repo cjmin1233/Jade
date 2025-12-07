@@ -1,5 +1,5 @@
-﻿#pragma once
-#include "Jade/Renderer/Camera.h"
+#pragma once
+#include "Jade/Renderer/Camera/Camera.h"
 
 namespace Jade
 {

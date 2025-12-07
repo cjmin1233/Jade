@@ -1,5 +1,5 @@
-﻿#pragma once
-#include "Jade/Renderer/OrthographicCamera.h"
+#pragma once
+#include "Jade/Renderer/Camera/OrthographicCamera.h"
 
 #include "Jade/Core/Timestep.h"
 
