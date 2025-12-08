@@ -211,6 +211,48 @@ namespace Jade
         s_Data.TextureShader->SetUniformMat4("u_ViewProjection", viewProj);
 
         // Calculate view bounds for culling
+        if (s_Data.CullingEnabled)
+        {
+            const glm::mat4& invViewProj = glm::inverse(viewProj);
+
+            auto toWorld = [&](const glm::vec2& ndc)
+                {
+                    glm::vec4 p = invViewProj * glm::vec4(ndc, 0.0f, 1.0f);
+                    return glm::vec2(p) / p.w;
+                };
+
+            // Transform NDC corners to world space
+            glm::vec2 c0 = toWorld({ -1.0f, -1.0f });
+            glm::vec2 c1 = toWorld({ 1.0f,  -1.0f });
+            glm::vec2 c2 = toWorld({ 1.0f, 1.0f });
+            glm::vec2 c3 = toWorld({ -1.0f, 1.0f });
+
+            // Compute AABB of the view
+            glm::vec2 vmin = glm::min(glm::min(c0, c1), glm::min(c2, c3));
+            glm::vec2 vmax = glm::max(glm::max(c0, c1), glm::max(c2, c3));
+
+            // Apply culling padding
+            const glm::vec2 pad(s_Data.CullingPadding);
+            s_Data.ViewMin = vmin - pad;
+            s_Data.ViewMax = vmax + pad;
+        }
+
+        // Start a new batch
+        StartBatch();
+    }
+
+    void Renderer2D::BeginScene(const EditorCamera& camera)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        // Set view projection matrix
+        glm::mat4 viewProj = camera.GetViewProjectionMatrix();
+
+        s_Data.TextureShader->Bind();
+        s_Data.TextureShader->SetUniformMat4("u_ViewProjection", viewProj);
+
+        // Calculate view bounds for culling
+        if (s_Data.CullingEnabled)
         {
             const glm::mat4& invViewProj = glm::inverse(viewProj);
 

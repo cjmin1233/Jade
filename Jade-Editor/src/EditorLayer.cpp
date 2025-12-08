@@ -25,6 +25,7 @@ namespace Jade
         , m_SquareEntity()
         , m_CameraEntity()
         , m_SecondCameraEntity()
+        , m_EditorCamera()
         , m_ViewportFocused(false)
         , m_ViewportHovered(false)
         , m_GizmoType(-1)
@@ -46,6 +47,8 @@ namespace Jade
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
         m_ActiveScene = CreateRef<Scene>();
+
+        m_EditorCamera = EditorCamera(45.0f, fbSpec.Width / (float)fbSpec.Height, 0.1f, 1000.0f);
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
@@ -158,6 +161,9 @@ namespace Jade
                 //// Resize camera
                 //m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
 
+                // Resize editor camera
+                m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
+
                 // Notify scene of viewport resize
                 m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }
@@ -181,8 +187,12 @@ namespace Jade
             RenderCommand::Clear();
         }
 
+        // Update Editor Camera
+        m_EditorCamera.OnUpdate(ts);
+
         // Update scene
-        m_ActiveScene->OnUpdate(ts);
+        //m_ActiveScene->OnUpdateRuntime(ts);
+        m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
         m_FrameBuffer->Unbind();
     }
@@ -357,6 +367,13 @@ namespace Jade
             m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
         }
 
+        ImGui::Separator();
+
+        const glm::vec3& camPosition = m_EditorCamera.GetPosition();
+        const glm::vec3& camFocalPoint = m_EditorCamera.GetFocalPoint();
+        ImGui::Text("Camera Position: (%.2f, %.2f, %.2f)", camPosition.x, camPosition.y, camPosition.z);
+        ImGui::Text("Camera Focal Point: (%.2f, %.2f, %.2f)", camFocalPoint.x, camFocalPoint.y, camFocalPoint.z);
+
         ImGui::End();
 
         RenderViewport();
@@ -366,6 +383,7 @@ namespace Jade
     void EditorLayer::OnEvent(Event& event)
     {
         //m_CameraController.OnEvent(event);
+        m_EditorCamera.OnEvent(event);
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(JADE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
@@ -398,15 +416,15 @@ namespace Jade
 
         // Guizmo
         Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
-        Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+        //Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
         // Only draw and manipulate the guizmo if an entity is selected and a camera exists
-        if (selectedEntity && cameraEntity && m_GizmoType != -1)
+        if (selectedEntity && m_GizmoType != -1)
         {
-            SceneCamera& camera = cameraEntity.GetComponent<CameraComponent>().Cam;
-            bool isOrthographic = camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic;
+            //SceneCamera& camera = cameraEntity.GetComponent<CameraComponent>().Cam;
+            //bool isOrthographic = camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic;
 
             // Setup ImGuizmo
-            ImGuizmo::SetOrthographic(isOrthographic);      // Set orthographic or perspective mode based on camera
+            ImGuizmo::SetOrthographic(false);      // Set orthographic or perspective mode based on camera
             ImGuizmo::SetDrawlist();                        // Draw on top of the current ImGui window
 
             float windowWidth = ImGui::GetWindowWidth();
@@ -414,9 +432,14 @@ namespace Jade
             // Set the ImGuizmo rectangle to match the viewport
             ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
 
-            const glm::mat4& cameraProjection = camera.GetProjectionMatrix();
-            // Invert the camera transform to get the view matrix
-            glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+            // Runtime camera from entity
+            //const glm::mat4& cameraProjection = camera.GetProjectionMatrix();
+            //// Invert the camera transform to get the view matrix
+            //glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+            // Editor camera
+            const glm::mat4& cameraProjection = m_EditorCamera.GetProjectionMatrix();
+            glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
             // Get the transform of the selected entity
             TransformComponent& transformComponent = selectedEntity.GetComponent<TransformComponent>();

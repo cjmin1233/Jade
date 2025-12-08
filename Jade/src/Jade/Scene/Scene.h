@@ -1,5 +1,6 @@
 #pragma once
 #include "Jade/Core/Timestep.h"
+#include "Jade/Renderer/Camera/EditorCamera.h"
 
 #include <entt.hpp>
 
@@ -18,7 +19,8 @@ namespace Jade
         Entity CreateEntity(const std::string& name, uint32_t id);
         void DestroyEntity(Entity entity);
 
-        void OnUpdate(Timestep ts);
+        void OnUpdateRuntime(Timestep ts);
+        void OnUpdateEditor(Timestep ts, EditorCamera& camera);
         void OnViewportResize(uint32_t width, uint32_t height);
 
         Entity GetPrimaryCameraEntity();

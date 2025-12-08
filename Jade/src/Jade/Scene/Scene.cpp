@@ -61,7 +61,7 @@ namespace Jade
         m_Registry.destroy(entity);
     }
 
-    void Scene::OnUpdate(Timestep ts)
+    void Scene::OnUpdateRuntime(Timestep ts)
     {
         JADE_PROFILE_FUNCTION();
 
@@ -123,6 +123,26 @@ namespace Jade
 
             Renderer2D::EndScene();
         }
+    }
+
+    void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        Renderer2D::BeginScene(camera);
+
+        // Grouping entities with both TransformComponent and SpriteRendererComponent
+        // and iterating over them for rendering
+        auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+        for (entt::entity entity : group)
+        {
+            TransformComponent& transform = group.get<TransformComponent>(entity);
+            SpriteRendererComponent& sprite = group.get<SpriteRendererComponent>(entity);
+
+            Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+        }
+
+        Renderer2D::EndScene();
     }
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height)

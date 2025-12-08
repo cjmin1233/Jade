@@ -1,8 +1,8 @@
 #pragma once
 #include "Jade/Renderer/Camera/OrthographicCamera.h"
 #include "Jade/Renderer/Texture.h"
-
 #include "Jade/Renderer/Camera/Camera.h"
+#include "Jade/Renderer/Camera/EditorCamera.h"
 
 namespace Jade
 {
@@ -13,6 +13,7 @@ namespace Jade
         static void Shutdown();
 
         static void BeginScene(const Camera& camera, const glm::mat4& transform);
+        static void BeginScene(const EditorCamera& camera);
         static void BeginScene(const OrthographicCamera& camera);   // TODO: Remove this overload later
         static void EndScene();
         static void Flush();

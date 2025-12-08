@@ -3,6 +3,7 @@
 #include <Jade/Core/Layer.h>
 
 #include "Panels/SceneHierarchyPanel.h"
+#include "Jade/Renderer/Camera/EditorCamera.h"
 
 #include <glm/glm.hpp>
 
@@ -44,6 +45,8 @@ namespace Jade
         Entity m_SquareEntity;
         Entity m_CameraEntity;
         Entity m_SecondCameraEntity;
+
+        EditorCamera m_EditorCamera;
 
         bool m_PrimaryCamera = true;
 
