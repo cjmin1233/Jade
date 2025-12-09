@@ -9,38 +9,12 @@
 namespace Jade
 {
     EditorCamera::EditorCamera()
-        : m_ViewMatrix()
-        , m_Position(0.0f)
-        , m_FocalPoint(0.0f)
-        , m_InitialMousePosition(0.0f)
-        , m_FOV(45.0f)
-        , m_AspectRatio(16.0f / 9.0f)
-        , m_NearClip(0.1f)
-        , m_FarClip(1000.0f)
-        , m_Distance(10.0f)
-        , m_Pitch(0.0f)
-        , m_Yaw(0.0f)
-        , m_ViewportWidth(1280.0f)
-        , m_ViewportHeight(720.0f)
     {
         UpdateView();
     }
 
-    EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
-        : Camera(glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip))
-        , m_ViewMatrix()
-        , m_Position(0.0f)
-        , m_FocalPoint(0.0f)
-        , m_InitialMousePosition(0.0f)
-        , m_FOV(fov)
-        , m_AspectRatio(aspectRatio)
-        , m_NearClip(nearClip)
-        , m_FarClip(farClip)
-        , m_Distance(10.0f)
-        , m_Pitch(0.0f)
-        , m_Yaw(0.0f)
-        , m_ViewportWidth(1280.0f)
-        , m_ViewportHeight(720.0f)
+    EditorCamera::EditorCamera(float fov, float nearClip, float farClip, float aspectRatio)
+        : Camera(ProjectionType::Perspective, fov, nearClip, farClip, aspectRatio)
     {
         UpdateView();
     }
@@ -141,12 +115,6 @@ namespace Jade
         return glm::quat(glm::vec3(-m_Pitch, -m_Yaw, 0.0f));
     }
 
-    void EditorCamera::UpdateProjection()
-    {
-        m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
-        m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), m_AspectRatio, m_NearClip, m_FarClip);
-    }
-
     void EditorCamera::UpdateView()
     {
         m_Position = CalculatePosition();
@@ -154,6 +122,8 @@ namespace Jade
         glm::quat orientation = GetOrientation();
         m_ViewMatrix = glm::translate(glm::mat4(1.0f), m_Position) * glm::toMat4(orientation);
         m_ViewMatrix = glm::inverse(m_ViewMatrix);
+
+        UpdateViewProjection();
     }
 
     bool EditorCamera::OnMouseScroll(MouseScrolledEvent& e)

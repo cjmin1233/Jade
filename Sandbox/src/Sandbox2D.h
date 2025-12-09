@@ -16,8 +16,6 @@ public:
     virtual void OnEvent(Jade::Event& event) override;
 
 private:
-    Jade::OrthographicCameraController m_CameraController;
-
     Jade::Ref<Jade::Texture2D> m_Texture;
     glm::vec2 m_SquareSize;
     glm::vec2 m_TilingFactor;

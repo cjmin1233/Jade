@@ -14,7 +14,6 @@ namespace Jade
 {
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
-        , m_CameraController(Application::Get().GetWindow().GetAspectRatio(), true)
         , m_Texture(nullptr)
         , m_SquareSize(1.0f, 1.0f)
         , m_TilingFactor(1.0f)
@@ -48,7 +47,7 @@ namespace Jade
 
         m_ActiveScene = CreateRef<Scene>();
 
-        m_EditorCamera = EditorCamera(45.0f, fbSpec.Width / (float)fbSpec.Height, 0.1f, 1000.0f);
+        m_EditorCamera = EditorCamera(45.0f, 0.1f, 1000.0f, (float)fbSpec.Width / fbSpec.Height);
 
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
@@ -148,7 +147,7 @@ namespace Jade
 
         {
             // Update Camera
-            JADE_PROFILE_SCOPE("CameraController::OnUpdate");
+            JADE_PROFILE_SCOPE("Camera Update");
 
             if (FrameBufferSpecification spec = m_FrameBuffer->GetSpecification();
                 // Only resize if both width and height are greater than zero

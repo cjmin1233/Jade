@@ -5,31 +5,70 @@
 namespace Jade
 {
     Camera::Camera()
-        : m_ProjectionMatrix(1.0f)
-        , m_ViewProjectionMatrix(1.0f)
-        , m_Position()
-        , m_Rotation()
     {
-        UpdateViewProjectionMatrix();
+        UpdateProjection();
     }
 
-    Camera::Camera(const glm::mat4& projection)
-        : m_ProjectionMatrix(projection)
-        , m_ViewProjectionMatrix(1.0f)
-        , m_Position()
-        , m_Rotation()
+    Camera::Camera(ProjectionType type,
+        float fovOrSize,
+        float nearClip,
+        float farClip,
+        float aspectRatio)
+        : m_ProjectionType(type)
+        , m_AspectRatio(aspectRatio)
     {
-        UpdateViewProjectionMatrix();
+        switch (m_ProjectionType)
+        {
+        case ProjectionType::Perspective:
+            m_PerspectiveFOV = fovOrSize;
+            m_PerspectiveNear = nearClip;
+            m_PerspectiveFar = farClip;
+            break;
+        case ProjectionType::Orthographic:
+            m_OrthographicSize = fovOrSize;
+            m_OrthographicNear = nearClip;
+            m_OrthographicFar = farClip;
+            break;
+        default:
+            break;
+        }
+
+        UpdateProjection();
     }
 
-    void Camera::UpdateViewProjectionMatrix()
+    void Camera::UpdateProjection()
     {
         JADE_PROFILE_FUNCTION();
 
-        glm::mat4 translation = glm::translate(glm::mat4(1.0f), m_Position);
-        glm::mat4 transform = translation * glm::mat4_cast(m_Rotation);
-        glm::mat4 view = glm::inverse(transform);
+        switch (m_ProjectionType)
+        {
+        case ProjectionType::Perspective:
+            m_ProjectionMatrix = glm::perspective(
+                glm::radians(m_PerspectiveFOV),
+                m_AspectRatio,
+                m_PerspectiveNear,
+                m_PerspectiveFar);
+            break;
+        case ProjectionType::Orthographic:
+            m_ProjectionMatrix = glm::ortho(
+                -m_OrthographicSize * m_AspectRatio * 0.5f,
+                m_OrthographicSize * m_AspectRatio * 0.5f,
+                -m_OrthographicSize * 0.5f,
+                m_OrthographicSize * 0.5f,
+                m_OrthographicNear,
+                m_OrthographicFar);
+            break;
+        default:
+            break;
+        }
 
-        m_ViewProjectionMatrix = m_ProjectionMatrix * view;
+        UpdateViewProjection();
+    }
+
+    void Camera::UpdateViewProjection()
+    {
+        JADE_PROFILE_FUNCTION();
+
+        m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
 }

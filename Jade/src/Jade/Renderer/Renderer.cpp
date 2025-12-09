@@ -29,11 +29,6 @@ namespace Jade
         RenderCommand::SetViewport(0, 0, width, height);
     }
 
-    void Renderer::BeginScene(OrthographicCamera& camera)
-    {
-        s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
-    }
-
     void Renderer::EndScene()
     {
     }

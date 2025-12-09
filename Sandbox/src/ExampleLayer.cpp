@@ -10,7 +10,6 @@ ExampleLayer::ExampleLayer()
     , m_TriangleVA(nullptr)
     , m_SquareVA(nullptr)
     , m_Texture(nullptr)
-    , m_CameraController(1280.0f / 720.0f, true)
 {
 #pragma region Triangle Setup
     // Vertex Array
@@ -108,10 +107,10 @@ void ExampleLayer::OnUpdate(Jade::Timestep ts)
     Jade::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
     Jade::RenderCommand::Clear();
 
-    // Update Camera
-    m_CameraController.OnUpdate(ts);
+    //// Update Camera
+    //m_CameraController.OnUpdate(ts);
 
-    Jade::Renderer::BeginScene(m_CameraController.GetCamera());
+    //Jade::Renderer::BeginScene(m_CameraController.GetCamera());
 
     auto textureShader = m_ShaderLibrary.Get("texture");
     auto flatColorShader = m_ShaderLibrary.Get("FlatColor");
@@ -153,5 +152,5 @@ void ExampleLayer::OnImGuiRender()
 
 void ExampleLayer::OnEvent(Jade::Event& event)
 {
-    m_CameraController.OnEvent(event);
+    //m_CameraController.OnEvent(event);
 }

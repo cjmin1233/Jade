@@ -5,7 +5,6 @@
 
 Sandbox2D::Sandbox2D()
     : Layer("Sandbox2D")
-    , m_CameraController(1280.0f / 720.0f, true)
     , m_Texture(nullptr)
     , m_SquareSize(1.0f, 1.0f)
     , m_TilingFactor(1.0f)
@@ -36,11 +35,11 @@ void Sandbox2D::OnUpdate(Jade::Timestep ts)
 {       
     JADE_PROFILE_FUNCTION();
 
-    {
-        // Update Camera
-        JADE_PROFILE_SCOPE("CameraController::OnUpdate");
-        m_CameraController.OnUpdate(ts);
-    }
+    //{
+    //    // Update Camera
+    //    JADE_PROFILE_SCOPE("CameraController::OnUpdate");
+    //    m_CameraController.OnUpdate(ts);
+    //}
 
     {
         // Render
@@ -53,7 +52,7 @@ void Sandbox2D::OnUpdate(Jade::Timestep ts)
     {
         // Draw Calls
         JADE_PROFILE_SCOPE("Renderer Draw");
-        Jade::Renderer2D::BeginScene(m_CameraController.GetCamera());
+        //Jade::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
         static float rotation = 0.0f;
         rotation += ts * 50.0f;
@@ -91,5 +90,5 @@ void Sandbox2D::OnImGuiRender()
 
 void Sandbox2D::OnEvent(Jade::Event& event)
 {
-    m_CameraController.OnEvent(event);
+    //m_CameraController.OnEvent(event);
 }

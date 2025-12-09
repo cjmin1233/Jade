@@ -31,8 +31,6 @@ namespace Jade
         void SaveSceneAs();
 
     private:
-        OrthographicCameraController m_CameraController;
-
         Ref<Texture2D> m_Texture;
         glm::vec2 m_SquareSize;
         glm::vec2 m_TilingFactor;

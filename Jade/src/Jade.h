@@ -22,8 +22,6 @@
 #include "Jade/Renderer/Shader.h"
 #include "Jade/Renderer/Buffer.h"
 #include "Jade/Renderer/VertexArray.h"
-#include "Jade/Renderer/Camera/OrthographicCamera.h"
-#include "Jade/Renderer/Camera/OrthographicCameraController.h"
 #include "Jade/Renderer/Texture.h"
 #include "Jade/Renderer/FrameBuffer.h"
 #pragma endregion
