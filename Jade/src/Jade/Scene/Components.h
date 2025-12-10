@@ -1,6 +1,7 @@
 #pragma once
 #include "Jade/Scene/SceneCamera.h"
 #include "Jade/Scene/ScriptableEntity.h"
+#include "Jade/Renderer/Texture.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -50,6 +51,8 @@ namespace Jade
     {
         // RGBA color
         glm::vec4 Color{ 1.0f };
+
+        Ref<Texture2D> Texture = nullptr;
 
         SpriteRendererComponent() = default;
         SpriteRendererComponent(const SpriteRendererComponent&) = default;

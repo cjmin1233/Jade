@@ -62,6 +62,10 @@ namespace Jade
         red_square.AddComponent<SpriteRendererComponent>(glm::vec4(0.8f, 0.3f, 0.2f, 1.0f));
         red_square.GetComponent<TransformComponent>().Translation = glm::vec3(1.0f, 0.0f, 0.0f);
 
+        auto textured_square = m_ActiveScene->CreateEntity("Textured Square");
+        textured_square.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f)).Texture = m_Texture;
+        textured_square.GetComponent<TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 0.0f);
+
         // Camera Entity
         m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
         m_CameraEntity.AddComponent<CameraComponent>();
