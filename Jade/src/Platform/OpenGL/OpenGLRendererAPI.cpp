@@ -1,4 +1,4 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 

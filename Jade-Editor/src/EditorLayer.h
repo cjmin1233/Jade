@@ -38,6 +38,7 @@ namespace Jade
 
         Ref<FrameBuffer> m_FrameBuffer;
         glm::vec2 m_ViewportSize;
+        glm::vec2 m_ViewportBounds[2];      // min, max bounds of the viewport
 
         Ref<Scene> m_ActiveScene;
         Entity m_SquareEntity;

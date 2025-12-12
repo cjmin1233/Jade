@@ -34,6 +34,7 @@ in vec2 v_TilingFactor;
 uniform sampler2D u_Textures[32];
 
 out vec4 color;
+out int color2;
 
 void main()
 {
@@ -77,4 +78,6 @@ void main()
     }
 
     color = texColor;
+
+    color2 = 123;
 }

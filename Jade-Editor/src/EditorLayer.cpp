@@ -20,6 +20,7 @@ namespace Jade
         , m_SquareColor(1.0f)
         , m_FrameBuffer(nullptr)
         , m_ViewportSize(0.0f, 0.0f)
+        , m_ViewportBounds{}
         , m_ActiveScene(nullptr)
         , m_SquareEntity()
         , m_CameraEntity()
@@ -43,6 +44,12 @@ namespace Jade
         FrameBufferSpecification fbSpec;
         fbSpec.Width = Application::Get().GetWindow().GetWidth();
         fbSpec.Height = Application::Get().GetWindow().GetHeight();
+        fbSpec.AttachmentSpec =
+        {
+            FrameBufferTextureFormat::RGBA8,
+            FrameBufferTextureFormat::RED_INTEGER,
+            FrameBufferTextureFormat::Depth,
+        };
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
         m_ActiveScene = CreateRef<Scene>();
@@ -196,6 +203,24 @@ namespace Jade
         // Update scene
         //m_ActiveScene->OnUpdateRuntime(ts);
         m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
+
+        ImVec2 mousePos = ImGui::GetMousePos();
+        mousePos.x -= m_ViewportBounds[0].x;
+        mousePos.y -= m_ViewportBounds[0].y;
+
+        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
+        mousePos.y = viewportSize.y - mousePos.y;
+
+        int mouseX = (int)mousePos.x, mouseY = (int)mousePos.y;
+
+        if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+        {
+            int pixelData = m_FrameBuffer->ReadPixel(0, mouseX, mouseY);
+            int redPixelData = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
+
+            JADE_CORE_WARN("Pixel Data = {0}", pixelData);
+            JADE_CORE_WARN("Red Pixel Data = {0}", redPixelData);
+        }
 
         m_FrameBuffer->Unbind();
     }
@@ -354,6 +379,7 @@ namespace Jade
 
         m_SceneHierarchyPanel.OnImGuiRender();
 
+#pragma region Stats
         ImGui::Begin("Stats");
 
         auto stats = Renderer2D::GetStats();
@@ -378,9 +404,9 @@ namespace Jade
         ImGui::Text("Camera Focal Point: (%.2f, %.2f, %.2f)", camFocalPoint.x, camFocalPoint.y, camFocalPoint.z);
 
         ImGui::End();
+#pragma endregion
 
         RenderViewport();
-
     }
 
     void EditorLayer::OnEvent(Event& event)
@@ -413,10 +439,27 @@ namespace Jade
         ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
         m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
-        // Draw the framebuffer's color attachment as an image
-        uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID();
+        // Get the renderer ID of the framebuffer's color attachment
+        uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
+        // Get the current cursor position (top-left corner of the viewport)
+        ImVec2 viewportOffset = ImGui::GetCursorPos();
+
+        // Draw the image (flipped vertically)
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
 
+        // Get the window position in screen coordinates
+        // (0, 0) -> top-left corner of the screen
+        ImVec2 minBound = ImGui::GetWindowPos();
+
+        // Calculate the bounds of the viewport in screen coordinates
+        minBound.x += viewportOffset.x;
+        minBound.y += viewportOffset.y;
+        ImVec2 maxBound = { minBound.x + m_ViewportSize.x, minBound.y + m_ViewportSize.y };
+
+        m_ViewportBounds[0] = { minBound.x, minBound.y };
+        m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+
+#pragma region Guizmo
         // Guizmo
         Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
         //Entity cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
@@ -480,6 +523,7 @@ namespace Jade
                 transformComponent.Scale = outScale;
             }
         }
+#pragma endregion
 
         ImGui::End();
     }
