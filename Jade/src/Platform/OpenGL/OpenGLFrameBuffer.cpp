@@ -95,6 +95,19 @@ namespace Jade
 
             return false;
         }
+
+        // Map FrameBufferTextureFormat to OpenGL base format
+        static GLenum JadeFBTextureFormatToOpenGLBaseFormat(FrameBufferTextureFormat format)
+        {
+            switch (format)
+            {
+            case FrameBufferTextureFormat::RGBA8:        return GL_RGBA;
+            case FrameBufferTextureFormat::RED_INTEGER:  return GL_RED_INTEGER;
+            }
+
+            JADE_CORE_ASSERT(false, "Unknown FrameBufferTextureFormat!");
+            return 0;
+        }
     }
 
     OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
@@ -257,6 +270,22 @@ namespace Jade
         m_Specification.Width = width;
         m_Specification.Height = height;
         Invalidate();
+    }
+
+    void OpenGLFrameBuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+    {
+        JADE_PROFILE_FUNCTION();
+
+        JADE_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(),
+            "Attachment index out of bounds!");
+
+        auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
+
+        // Clear the specified attachment with the given value
+        // parameters: texture, level, format, type, data
+        glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
+            Utils::JadeFBTextureFormatToOpenGLBaseFormat(spec.TextureFormat),
+            GL_INT, &value);
     }
 
     int OpenGLFrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
