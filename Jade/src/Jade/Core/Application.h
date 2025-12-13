@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Core/Base.h"
 
 #include "Jade/Core/LayerStack.h"
@@ -28,11 +28,11 @@ namespace Jade
 
         void OnEvent(Event& e);
 
-        void PushLayer(Layer* layer);
-        void PushOverlay(Layer* overlay);
+        void PushLayer(const Ref<Layer>& layer);
+        void PushOverlay(const Ref<Layer>& overlay);
 
         inline Window& GetWindow() { return *m_Window; }
-        inline ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+        inline Ref<ImGuiLayer> GetImGuiLayer() { return m_ImGuiLayer; }
 
         void Close();
 
@@ -45,7 +45,7 @@ namespace Jade
         bool OnWindowResize(WindowResizeEvent& e);
 
         Scope<Window> m_Window;
-        ImGuiLayer* m_ImGuiLayer;
+        Ref<ImGuiLayer> m_ImGuiLayer;
         LayerStack m_LayerStack;
 
         float m_LastFrameTime;

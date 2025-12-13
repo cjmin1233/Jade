@@ -1,4 +1,4 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
 #include "Jade/Core/Application.h"
 #include "Jade/Core/Log.h"
@@ -13,8 +13,8 @@ namespace Jade
     Application* Application::s_Instance = nullptr;
 
     Application::Application(const ApplicationSpecification& specification)
-        : m_Window(Scope<Window>(Window::Create(WindowProps(specification.Name, specification.Width, specification.Height))))
-        , m_ImGuiLayer(new ImGuiLayer())
+        : m_Window(Window::Create(WindowProps(specification.Name, specification.Width, specification.Height)))
+        , m_ImGuiLayer(CreateRef<ImGuiLayer>())
         , m_LayerStack()
         , m_LastFrameTime(0.0f)
         , m_Running(true)
@@ -62,7 +62,7 @@ namespace Jade
                     JADE_PROFILE_SCOPE("LayerStack OnUpdate");
 
                     // Update layers
-                    for (Layer* layer : m_LayerStack)
+                    for (auto& layer : m_LayerStack)
                     {
                         layer->OnUpdate(timestep);
                     }
@@ -73,7 +73,7 @@ namespace Jade
 
                     // ImGui Rendering
                     m_ImGuiLayer->Begin();
-                    for (Layer* layer : m_LayerStack)
+                    for (auto& layer : m_LayerStack)
                     {
                         layer->OnImGuiRender();
                     }
@@ -90,7 +90,7 @@ namespace Jade
     {
         JADE_PROFILE_FUNCTION();
 
-        // 특정 타입의 이벤트를 App 단에서 먼저 처리.
+        // Dispatch events to appropriate handlers
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(JADE_BIND_EVENT_FN(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(JADE_BIND_EVENT_FN(Application::OnWindowResize));
@@ -104,7 +104,7 @@ namespace Jade
         }
     }
 
-    void Application::PushLayer(Layer* layer)
+    void Application::PushLayer(const Ref<Layer>& layer)
     {
         JADE_PROFILE_FUNCTION();
 
@@ -112,7 +112,7 @@ namespace Jade
         layer->OnAttach();
     }
 
-    void Application::PushOverlay(Layer* layer)
+    void Application::PushOverlay(const Ref<Layer>& layer)
     {
         JADE_PROFILE_FUNCTION();
 

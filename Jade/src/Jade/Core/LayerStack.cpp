@@ -1,4 +1,4 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
 #include "Jade/Core/LayerStack.h"
 
@@ -12,24 +12,20 @@ namespace Jade
 
     LayerStack::~LayerStack()
     {
-        for (Layer* layer : m_Layers)
-        {
-            delete layer;
-        }
     }
 
-    void LayerStack::PushLayer(Layer* layer)
+    void LayerStack::PushLayer(const Ref<Layer>& layer)
     {
         m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
         m_LayerInsertIndex++;
     }
 
-    void LayerStack::PushOverlay(Layer* overlay)
+    void LayerStack::PushOverlay(const Ref<Layer>& overlay)
     {
         m_Layers.emplace_back(overlay);
     }
 
-    void LayerStack::PopLayer(Layer* layer)
+    void LayerStack::PopLayer(const Ref<Layer>& layer)
     {
         auto it = std::find(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex, layer);
 
@@ -40,7 +36,7 @@ namespace Jade
         }
     }
 
-    void LayerStack::PopOverlay(Layer* overlay)
+    void LayerStack::PopOverlay(const Ref<Layer>& overlay)
     {
         auto it = std::find(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(), overlay);
 

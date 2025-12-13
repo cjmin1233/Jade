@@ -14,7 +14,7 @@ namespace Jade
         EditorApp()
             : Application(ApplicationSpecification{ "Jade Editor", 1600, 900 })
         {
-            PushLayer(new EditorLayer());
+            PushLayer(CreateRef<EditorLayer>());
         }
         ~EditorApp() = default;
     };
