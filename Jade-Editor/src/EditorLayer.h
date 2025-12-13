@@ -32,22 +32,14 @@ namespace Jade
 
     private:
         Ref<Texture2D> m_Texture;
-        glm::vec2 m_SquareSize;
-        glm::vec2 m_TilingFactor;
-        glm::vec4 m_SquareColor;
 
         Ref<FrameBuffer> m_FrameBuffer;
         glm::vec2 m_ViewportSize;
         glm::vec2 m_ViewportBounds[2];      // min, max bounds of the viewport
 
         Ref<Scene> m_ActiveScene;
-        Entity m_SquareEntity;
-        Entity m_CameraEntity;
-        Entity m_SecondCameraEntity;
 
         EditorCamera m_EditorCamera;
-
-        bool m_PrimaryCamera = true;
 
         bool m_ViewportFocused, m_ViewportHovered;
 

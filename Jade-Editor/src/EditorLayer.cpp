@@ -15,16 +15,10 @@ namespace Jade
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
         , m_Texture(nullptr)
-        , m_SquareSize(1.0f, 1.0f)
-        , m_TilingFactor(1.0f)
-        , m_SquareColor(1.0f)
         , m_FrameBuffer(nullptr)
         , m_ViewportSize(0.0f, 0.0f)
         , m_ViewportBounds{}
         , m_ActiveScene(nullptr)
-        , m_SquareEntity()
-        , m_CameraEntity()
-        , m_SecondCameraEntity()
         , m_EditorCamera()
         , m_ViewportFocused(false)
         , m_ViewportHovered(false)
@@ -41,6 +35,7 @@ namespace Jade
 
         m_Texture = Texture2D::Create("assets/textures/test.png");
 
+        // Create Framebuffer
         FrameBufferSpecification fbSpec;
         fbSpec.Width = Application::Get().GetWindow().GetWidth();
         fbSpec.Height = Application::Get().GetWindow().GetHeight();
@@ -52,97 +47,18 @@ namespace Jade
         };
         m_FrameBuffer = FrameBuffer::Create(fbSpec);
 
-        m_ActiveScene = CreateRef<Scene>();
-
+        // Setup Editor Camera
         m_EditorCamera = EditorCamera(45.0f, 0.1f, 1000.0f, (float)fbSpec.Width / fbSpec.Height);
 
+        // Create a empty scene
+        m_ActiveScene = CreateRef<Scene>();
+        // Set the scene in the scene hierarchy panel
         m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
-#if 1
-        m_SquareEntity = m_ActiveScene->CreateEntity("Blue Square");
-        m_SquareEntity.AddComponent<SpriteRendererComponent>(
-            glm::vec4(0.2f, 0.3f, 0.8f, 1.0f)
-        );
-        m_SquareEntity.GetComponent<TransformComponent>().Translation = glm::vec3(-1.0f, 0.0f, 0.0f);
-
-        auto red_square = m_ActiveScene->CreateEntity("Red Square");
-        red_square.AddComponent<SpriteRendererComponent>(glm::vec4(0.8f, 0.3f, 0.2f, 1.0f));
-        red_square.GetComponent<TransformComponent>().Translation = glm::vec3(1.0f, 0.0f, 0.0f);
-
+        // Create test entities
         auto textured_square = m_ActiveScene->CreateEntity("Textured Square");
         textured_square.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f)).Texture = m_Texture;
         textured_square.GetComponent<TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 0.0f);
-
-        // Camera Entity
-        m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-        m_CameraEntity.AddComponent<CameraComponent>();
-        m_CameraEntity.GetComponent<TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 5.0f);
-
-        // Second Camera Entity
-        m_SecondCameraEntity = m_ActiveScene->CreateEntity("Second Camera Entity");
-        auto& cameraComp = m_SecondCameraEntity.AddComponent<CameraComponent>();
-        cameraComp.Primary = false;
-        m_SecondCameraEntity.GetComponent<TransformComponent>().Translation = glm::vec3(0.0f, 0.0f, 5.0f);
-
-        class CameraController : public ScriptableEntity
-        {
-        public:
-            virtual void OnCreate() override
-            {
-            }
-
-            virtual void OnDestroy() override {}
-
-            virtual void OnUpdate(Timestep ts) override
-            {
-                TransformComponent& transform = GetComponent<TransformComponent>();
-
-                float speed = 5.0f;
-
-#if 0
-                // Camera movement
-                if (Input::IsKeyPressed(Key::A))
-                {
-                    transform.Translation.x -= speed * ts;
-                }
-                if (Input::IsKeyPressed(Key::D))
-                {
-                    transform.Translation.x += speed * ts;
-                }
-                if (Input::IsKeyPressed(Key::E))
-                {
-                    transform.Translation.y += speed * ts;
-                }
-                if (Input::IsKeyPressed(Key::Q))
-                {
-                    transform.Translation.y -= speed * ts;
-                }
-                if (Input::IsKeyPressed(Key::W))
-                {
-                    transform.Translation.z -= speed * ts;
-                }
-                if (Input::IsKeyPressed(Key::S))
-                {
-                    transform.Translation.z += speed * ts;
-                }
-
-                //// Camera rotation
-                //if (Input::IsKeyPressed(Key::Z))
-                //{
-                //    transform.Rotation.z += 90.0f * ts;
-                //}
-                //if (Input::IsKeyPressed(Key::C))
-                //{
-                //    transform.Rotation.z -= 90.0f * ts;
-                //}
-#endif
-            }
-        };
-
-        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-
-        m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-#endif
     }
 
     void EditorLayer::OnDetach()
@@ -168,21 +84,12 @@ namespace Jade
                 // Resize framebuffer
                 m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 
-                //// Resize camera
-                //m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-
                 // Resize editor camera
                 m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 
                 // Notify scene of viewport resize
                 m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
             }
-
-            //// Only update the camera if the viewport is focused
-            //if (m_ViewportFocused)
-            //{
-            //    m_CameraController.OnUpdate(ts);
-            //}
         }
 
         {
@@ -390,14 +297,6 @@ namespace Jade
 
         ImGui::Separator();
 
-        if (ImGui::Checkbox("Use main camera", &m_PrimaryCamera))
-        {
-            m_CameraEntity.GetComponent<CameraComponent>().Primary = m_PrimaryCamera;
-            m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !m_PrimaryCamera;
-        }
-
-        ImGui::Separator();
-
         const glm::vec3& camPosition = m_EditorCamera.GetPosition();
         const glm::vec3& camFocalPoint = m_EditorCamera.GetFocalPoint();
         ImGui::Text("Camera Position: (%.2f, %.2f, %.2f)", camPosition.x, camPosition.y, camPosition.z);
@@ -411,7 +310,6 @@ namespace Jade
 
     void EditorLayer::OnEvent(Event& event)
     {
-        //m_CameraController.OnEvent(event);
         m_EditorCamera.OnEvent(event);
 
         EventDispatcher dispatcher(event);
