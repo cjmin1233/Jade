@@ -1,4 +1,4 @@
-﻿#include "jdpch.h"
+#include "jdpch.h"
 
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
@@ -86,21 +86,46 @@ namespace Jade
             case ShaderDataType::Float2:
             case ShaderDataType::Float3:
             case ShaderDataType::Float4:
+            {
+                // Enable the vertex attribute array at the current slot index
+                glEnableVertexAttribArray(m_VertexAttribSlotIndex);
+
+                glVertexAttribPointer
+                (
+                    m_VertexAttribSlotIndex,                        // Attribute slot index
+                    element.GetComponentCount(),                    // Number of components (e.g., 3 for vec3)
+                    ShaderDataTypeToOpenGLBaseType(element.Type),   // Data type
+                    element.Normalized ? GL_TRUE : GL_FALSE,        // Normalized
+                    layout.GetStride(),                             // Stride
+                    (const void*)element.Offset                     // Offset
+                );
+
+                // Move to the next attribute slot index
+                ++m_VertexAttribSlotIndex;
+                break;
+            }
             case ShaderDataType::Int:
             case ShaderDataType::Int2:
             case ShaderDataType::Int3:
             case ShaderDataType::Int4:
             case ShaderDataType::Bool:
             {
+                // Enable the vertex attribute array at the current slot index
                 glEnableVertexAttribArray(m_VertexAttribSlotIndex);
-                glVertexAttribPointer(
-                    m_VertexAttribSlotIndex,
-                    element.GetComponentCount(),
-                    ShaderDataTypeToOpenGLBaseType(element.Type),
-                    element.Normalized ? GL_TRUE : GL_FALSE,
-                    layout.GetStride(),
-                    (const void*)element.Offset);
 
+                // Set up integer attribute pointer
+                // Difference between glVertexAttribPointer and glVertexAttribIPointer is that
+                // the latter is used for integer data types
+                glVertexAttribIPointer
+                (
+                    m_VertexAttribSlotIndex,                        // Attribute slot index
+                    element.GetComponentCount(),                    // Number of components
+                    ShaderDataTypeToOpenGLBaseType(element.Type),   // Data type
+                    layout.GetStride(),                             // Stride
+                    (const void*)element.Offset                     // Offset
+                );
+
+                // Move to the next attribute slot index
                 ++m_VertexAttribSlotIndex;
                 break;
             }
@@ -110,24 +135,33 @@ namespace Jade
                 uint8_t count = element.GetComponentCount();
                 for (uint8_t i = 0; i < count; ++i)
                 {
+                    // Enable each column of the matrix as a separate vertex attribute
                     glEnableVertexAttribArray(m_VertexAttribSlotIndex);
-                    glVertexAttribPointer(
-                        m_VertexAttribSlotIndex,
-                        count,
-                        ShaderDataTypeToOpenGLBaseType(element.Type),
-                        element.Normalized ? GL_TRUE : GL_FALSE,
-                        layout.GetStride(),
-                        (const void*)(element.Offset + sizeof(float) * count * i));
+
+                    glVertexAttribPointer
+                    (
+                        m_VertexAttribSlotIndex,                                    // Attribute slot index
+                        count,                                                      // Number of components per column
+                        ShaderDataTypeToOpenGLBaseType(element.Type),               // Data type
+                        element.Normalized ? GL_TRUE : GL_FALSE,                    // Normalized
+                        layout.GetStride(),                                         // Stride
+                        (const void*)(element.Offset + sizeof(float) * count * i)   // Offset for each column
+                    );
 
                     // Set attribute divisor for instanced rendering
+                    // This makes sure that the matrix attribute advances once per instance
+                    // rather than per vertex
+                    // parameters: index, divisor
                     glVertexAttribDivisor(m_VertexAttribSlotIndex, 1);
 
+                    // Move to the next attribute slot index
                     ++m_VertexAttribSlotIndex;
                 }
                 break;
             }
             default:
                 JADE_CORE_ASSERT(false, "Unknown ShaderDataType!");
+                break;
             }
         }
 

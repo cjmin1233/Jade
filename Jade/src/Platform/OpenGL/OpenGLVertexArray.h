@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Renderer/VertexArray.h"
 
 namespace Jade
@@ -26,7 +26,7 @@ namespace Jade
 
     private:
         uint32_t m_RendererID;
-        uint32_t m_VertexAttribSlotIndex;
+        uint32_t m_VertexAttribSlotIndex;   // Tracks the current vertex attribute slot index
         std::vector<Ref<VertexBuffer>> m_VertexBuffers;
         Ref<IndexBuffer> m_IndexBuffer;
     };
