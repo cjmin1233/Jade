@@ -127,8 +127,8 @@ namespace Jade
             // Flip y coordinate to match framebuffer coordinates (OpenGL FBO has origin at bottom-left)
             mousePos.y = (m_ViewportBounds[1].y - m_ViewportBounds[0].y) - mousePos.y;
 
-            int pixelData = m_FrameBuffer->ReadPixel(0, mousePos.x, mousePos.y);
-            int redPixelData = m_FrameBuffer->ReadPixel(1, mousePos.x, mousePos.y);
+            int pixelData = m_FrameBuffer->ReadPixel(0, (int)mousePos.x, (int)mousePos.y);
+            int redPixelData = m_FrameBuffer->ReadPixel(1, (int)mousePos.x, (int)mousePos.y);
 
             JADE_CORE_WARN("Pixel Data = {0}", pixelData);
             JADE_CORE_WARN("Red Pixel Data = {0}", redPixelData);

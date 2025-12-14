@@ -2,6 +2,7 @@
 #include "Jade/Renderer/Texture.h"
 #include "Jade/Renderer/Camera/Camera.h"
 #include "Jade/Renderer/Camera/EditorCamera.h"
+#include "Jade/Scene/Components.h"
 
 namespace Jade
 {
@@ -27,9 +28,10 @@ namespace Jade
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
 
         // Single Quad with transform matrix
-        static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+        static void DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID = -1);
         static void DrawQuad(const glm::mat4& transform,
-            const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
+            const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f),
+            int entityID = -1);
 
         // Rotated Primitives
         static void DrawRotatedQuad(const glm::vec2& position, float rotation, const glm::vec2& size, const glm::vec4& color = glm::vec4(1.0f));
@@ -45,6 +47,8 @@ namespace Jade
         static void DrawRotatedQuad(const glm::mat4& transform,
             const Ref<Texture2D>& texture, const glm::vec2& tilingFactor = glm::vec2(1.0f), const glm::vec4& tintColor = glm::vec4(1.0f));
 #pragma endregion
+
+        static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
 
         // Stats
         struct Statistics

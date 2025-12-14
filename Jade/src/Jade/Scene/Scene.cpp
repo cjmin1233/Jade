@@ -118,7 +118,8 @@ namespace Jade
                 TransformComponent& transform = group.get<TransformComponent>(entity);
                 SpriteRendererComponent& sprite = group.get<SpriteRendererComponent>(entity);
 
-                Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+                // Draw the sprite with the entity ID as an integer
+                Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
             }
 
             Renderer2D::EndScene();
@@ -139,12 +140,8 @@ namespace Jade
             TransformComponent& transform = group.get<TransformComponent>(entity);
             SpriteRendererComponent& sprite = group.get<SpriteRendererComponent>(entity);
 
-            if (sprite.Texture)
-            {
-                Renderer2D::DrawQuad(transform.GetTransform(), sprite.Texture, glm::vec2(1.0f), sprite.Color);
-                continue;
-            }
-            Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+            // Draw the sprite with the entity ID as an integer
+            Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
         }
 
         Renderer2D::EndScene();

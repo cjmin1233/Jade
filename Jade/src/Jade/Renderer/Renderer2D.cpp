@@ -17,6 +17,9 @@ namespace Jade
         glm::vec2 TexCoord;
         float TexIndex;
         glm::vec2 TilingFactor;
+
+        // Editor-only
+        int EntityID;
     };
 
     // Renderer2D internal data
@@ -42,19 +45,19 @@ namespace Jade
         // Predefined quad vertex positions
         const glm::vec4 QuadVertexPositions[4] =
         {
-            { -0.5f, -0.5f, 0.0f, 1.0f },
-            {  0.5f, -0.5f, 0.0f, 1.0f },
-            {  0.5f,  0.5f, 0.0f, 1.0f },
-            { -0.5f,  0.5f, 0.0f, 1.0f }
+            { -0.5f, -0.5f, 0.0f, 1.0f },   // 0 for Bottom-left
+            {  0.5f, -0.5f, 0.0f, 1.0f },   // 1 for Bottom-right
+            {  0.5f,  0.5f, 0.0f, 1.0f },   // 2 for Top-right
+            { -0.5f,  0.5f, 0.0f, 1.0f }    // 3 for Top-left
         };
 
         // Predefined quad texture coordinates
         const glm::vec2 QuadTextureCoords[4] =
         {
-            { 0.0f, 0.0f },
-            { 1.0f, 0.0f },
-            { 1.0f, 1.0f },
-            { 0.0f, 1.0f }
+            { 0.0f, 0.0f }, // 0 for Bottom-left
+            { 1.0f, 0.0f }, // 1 for Bottom-right
+            { 1.0f, 1.0f }, // 2 for Top-right
+            { 0.0f, 1.0f }  // 3 for Top-left
         };
 
         // Culling data
@@ -142,7 +145,8 @@ namespace Jade
             { ShaderDataType::Float4, "a_Color" },
             { ShaderDataType::Float2, "a_TexCoord" },
             { ShaderDataType::Float,  "a_TexIndex" },
-            { ShaderDataType::Float2, "a_TilingFactor" }
+            { ShaderDataType::Float2, "a_TilingFactor" },
+            { ShaderDataType::Int,    "a_EntityID" }  // Editor-only
             });
 
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
@@ -363,7 +367,12 @@ namespace Jade
         DrawQuad(transform, texture, tilingFactor, tintColor);
     }
 
-    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color)
+    /// <summary>
+    /// Adds a colored quad to the batch with the given transform.
+    /// textureIndex is 0 for white texture.
+    /// </summary>
+    /// <param name="entityID">The ID of the entity associated with the quad. default -1 (no entity)</param>
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color, int entityID)
     {
         JADE_PROFILE_FUNCTION();
 
@@ -386,6 +395,7 @@ namespace Jade
             s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[i];
             s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
             s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+            s_Data.QuadVertexBufferPtr->EntityID = entityID;
 
             s_Data.QuadVertexBufferPtr++;
         }
@@ -395,7 +405,12 @@ namespace Jade
 #pragma endregion
     }
 
-    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor, const glm::vec4& tintColor)
+    /// <summary>
+    /// Adds a textured quad to the batch with the given transform.
+    /// </summary>
+    /// <param name="entityID">The ID of the entity associated with the quad. default -1 (no entity)</param>
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec2& tilingFactor,
+        const glm::vec4& tintColor, int entityID)
     {
         JADE_PROFILE_FUNCTION();
 
@@ -437,6 +452,7 @@ namespace Jade
             s_Data.QuadVertexBufferPtr->TexCoord = s_Data.QuadTextureCoords[i];
             s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
             s_Data.QuadVertexBufferPtr->TilingFactor = tilingFactor;
+            s_Data.QuadVertexBufferPtr->EntityID = entityID;
 
             s_Data.QuadVertexBufferPtr++;
         }
@@ -559,6 +575,18 @@ namespace Jade
 #pragma endregion
     }
 #pragma endregion
+
+    void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
+    {
+        if (src.Texture)
+        {
+            DrawQuad(transform, src.Texture, glm::vec2(1.0f), src.Color, entityID);
+        }
+        else
+        {
+            DrawQuad(transform, src.Color, entityID);
+        }
+    }
 
     void Renderer2D::ResetStats()
     {
