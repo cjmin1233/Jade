@@ -21,7 +21,7 @@ namespace Jade
         case GL_DEBUG_SEVERITY_HIGH:         JADE_CORE_CRITICAL(message); return;
         case GL_DEBUG_SEVERITY_MEDIUM:       JADE_CORE_ERROR(message); return;
         case GL_DEBUG_SEVERITY_LOW:          JADE_CORE_WARN(message); return;
-        case GL_DEBUG_SEVERITY_NOTIFICATION: JADE_CORE_TRACE(message); return;
+        case GL_DEBUG_SEVERITY_NOTIFICATION: /*JADE_CORE_TRACE(message);*/ return;
         }
 
         JADE_CORE_ASSERT(false, "Unknown severity level!");

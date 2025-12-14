@@ -116,18 +116,19 @@ namespace Jade
         m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
         ImVec2 mousePos = ImGui::GetMousePos();
-        mousePos.x -= m_ViewportBounds[0].x;
-        mousePos.y -= m_ViewportBounds[0].y;
 
-        glm::vec2 viewportSize = m_ViewportBounds[1] - m_ViewportBounds[0];
-        mousePos.y = viewportSize.y - mousePos.y;
-
-        int mouseX = (int)mousePos.x, mouseY = (int)mousePos.y;
-
-        if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
+        if (mousePos.x >= m_ViewportBounds[0].x && mousePos.y >= m_ViewportBounds[0].y &&
+            mousePos.x < m_ViewportBounds[1].x && mousePos.y < m_ViewportBounds[1].y)
         {
-            int pixelData = m_FrameBuffer->ReadPixel(0, mouseX, mouseY);
-            int redPixelData = m_FrameBuffer->ReadPixel(1, mouseX, mouseY);
+            // Mouse is inside viewport
+            // preprocess to get coordinates relative to viewport
+            mousePos.x -= m_ViewportBounds[0].x;
+            mousePos.y -= m_ViewportBounds[0].y;
+            // Flip y coordinate to match framebuffer coordinates (OpenGL FBO has origin at bottom-left)
+            mousePos.y = (m_ViewportBounds[1].y - m_ViewportBounds[0].y) - mousePos.y;
+
+            int pixelData = m_FrameBuffer->ReadPixel(0, mousePos.x, mousePos.y);
+            int redPixelData = m_FrameBuffer->ReadPixel(1, mousePos.x, mousePos.y);
 
             JADE_CORE_WARN("Pixel Data = {0}", pixelData);
             JADE_CORE_WARN("Red Pixel Data = {0}", redPixelData);
@@ -344,7 +345,7 @@ namespace Jade
         // Get the renderer ID of the framebuffer's color attachment
         uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
         // Get the current cursor position (top-left corner of the viewport)
-        ImVec2 viewportOffset = ImGui::GetCursorPos();
+        ImVec2 viewportOffset = ImGui::GetCursorPos();  // -> currently (0, 24) due to menu bar height
 
         // Draw the image (flipped vertically)
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
@@ -354,6 +355,7 @@ namespace Jade
         ImVec2 minBound = ImGui::GetWindowPos();
 
         // Calculate the bounds of the viewport in screen coordinates
+        // by adding the viewport offset to the window position (to account for menu bar height)
         minBound.x += viewportOffset.x;
         minBound.y += viewportOffset.y;
         ImVec2 maxBound = { minBound.x + m_ViewportSize.x, minBound.y + m_ViewportSize.y };
