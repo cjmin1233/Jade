@@ -344,24 +344,16 @@ namespace Jade
 
         // Get the renderer ID of the framebuffer's color attachment
         uint32_t textureID = m_FrameBuffer->GetColorAttachmentRendererID(0);
-        // Get the current cursor position (top-left corner of the viewport)
-        ImVec2 viewportOffset = ImGui::GetCursorPos();  // -> currently (0, 24) due to menu bar height
-
         // Draw the image (flipped vertically)
         ImGui::Image((void*)(uintptr_t)textureID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2(0, 1), ImVec2(1, 0));
 
-        // Get the window position in screen coordinates
-        // (0, 0) -> top-left corner of the screen
-        ImVec2 minBound = ImGui::GetWindowPos();
-
-        // Calculate the bounds of the viewport in screen coordinates
-        // by adding the viewport offset to the window position (to account for menu bar height)
-        minBound.x += viewportOffset.x;
-        minBound.y += viewportOffset.y;
-        ImVec2 maxBound = { minBound.x + m_ViewportSize.x, minBound.y + m_ViewportSize.y };
-
-        m_ViewportBounds[0] = { minBound.x, minBound.y };
-        m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+        // Get the window position and content region
+        ImVec2 viewportOffset = ImGui::GetWindowPos();
+        ImVec2 viewportMinRegion = ImGui::GetWindowContentRegionMin();
+        ImVec2 viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+        // Calculate the bounds of the viewport in screen space
+        m_ViewportBounds[0] = { viewportOffset.x + viewportMinRegion.x, viewportOffset.y + viewportMinRegion.y };
+        m_ViewportBounds[1] = { viewportOffset.x + viewportMaxRegion.x, viewportOffset.y + viewportMaxRegion.y };
 
 #pragma region Guizmo
         // Guizmo
@@ -377,10 +369,10 @@ namespace Jade
             ImGuizmo::SetOrthographic(false);      // Set orthographic or perspective mode based on camera
             ImGuizmo::SetDrawlist();                        // Draw on top of the current ImGui window
 
-            float windowWidth = ImGui::GetWindowWidth();
-            float windowHeight = ImGui::GetWindowHeight();
+            float windowWidth = m_ViewportBounds[1].x - m_ViewportBounds[0].x;
+            float windowHeight = m_ViewportBounds[1].y - m_ViewportBounds[0].y;
             // Set the ImGuizmo rectangle to match the viewport
-            ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+            ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, windowWidth, windowHeight);
 
             // Runtime camera from entity
             //const glm::mat4& cameraProjection = camera.GetProjectionMatrix();
