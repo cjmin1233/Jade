@@ -1,9 +1,11 @@
 #pragma once
 #include <Jade.h>
 #include <Jade/Core/Layer.h>
+#include <Jade/Events/KeyEvent.h>
+#include <Jade/Events/MouseEvent.h>
+#include <Jade/Renderer/Camera/EditorCamera.h>
 
 #include "Panels/SceneHierarchyPanel.h"
-#include "Jade/Renderer/Camera/EditorCamera.h"
 
 #include <glm/glm.hpp>
 
@@ -24,6 +26,7 @@ namespace Jade
         void RenderViewport();
 
         bool OnKeyPressed(KeyPressedEvent& e);
+        bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 
         void NewScene();
         void OpenScene();
@@ -31,19 +34,20 @@ namespace Jade
         void SaveSceneAs();
 
     private:
-        Ref<Texture2D> m_Texture;
+        Ref<Texture2D> m_Texture = nullptr;
 
-        Ref<FrameBuffer> m_FrameBuffer;
-        glm::vec2 m_ViewportSize;
-        glm::vec2 m_ViewportBounds[2];      // min, max bounds of the viewport
+        Ref<FrameBuffer> m_FrameBuffer = nullptr;
+        glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+        glm::vec2 m_ViewportBounds[2] = {};     // min, max bounds of the viewport
+        Entity m_HoveredEntity = {};
 
-        Ref<Scene> m_ActiveScene;
+        Ref<Scene> m_ActiveScene = nullptr;
 
         EditorCamera m_EditorCamera;
 
-        bool m_ViewportFocused, m_ViewportHovered;
+        bool m_ViewportFocused = false, m_ViewportHovered = false;
 
-        int m_GizmoType;
+        int m_GizmoType = -1;
 
         SceneHierarchyPanel m_SceneHierarchyPanel;
     };

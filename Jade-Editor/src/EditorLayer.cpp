@@ -14,15 +14,7 @@ namespace Jade
 {
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
-        , m_Texture(nullptr)
-        , m_FrameBuffer(nullptr)
-        , m_ViewportSize(0.0f, 0.0f)
-        , m_ViewportBounds{}
-        , m_ActiveScene(nullptr)
         , m_EditorCamera()
-        , m_ViewportFocused(false)
-        , m_ViewportHovered(false)
-        , m_GizmoType(-1)
         , m_SceneHierarchyPanel()
     {
     }
@@ -104,7 +96,6 @@ namespace Jade
             RenderCommand::Clear();
 
             // Clear attachments
-            m_FrameBuffer->ClearAttachment(0, 0);
             m_FrameBuffer->ClearAttachment(1, -1);
         }
 
@@ -132,6 +123,8 @@ namespace Jade
 
             JADE_CORE_WARN("Pixel Data = {0}", pixelData);
             JADE_CORE_WARN("Red Pixel Data = {0}", redPixelData);
+
+            m_HoveredEntity = (redPixelData == -1) ? Entity() : Entity((entt::entity)redPixelData, m_ActiveScene.get());
         }
 
         m_FrameBuffer->Unbind();
@@ -243,20 +236,6 @@ namespace Jade
                     SaveSceneAs();
                 }
 
-                //if (ImGui::MenuItem("Serialize"))
-                //{
-                //    SceneSerializer serializer(m_ActiveScene);
-
-                //    serializer.Serialize("assets/scenes/");
-                //}
-
-                //if (ImGui::MenuItem("Deserialize"))
-                //{
-                //    SceneSerializer serializer(m_ActiveScene);
-
-                //    serializer.Deserialize("assets/scenes/" + m_ActiveScene->GetName() + ".jade");
-                //}
-
                 if (ImGui::MenuItem("Exit"))
                 {
                     Application::Get().Close();
@@ -319,6 +298,7 @@ namespace Jade
 
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<KeyPressedEvent>(JADE_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(JADE_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
     }
 
     void EditorLayer::RenderViewport()
@@ -488,6 +468,20 @@ namespace Jade
                 break;
             m_GizmoType = ImGuizmo::OPERATION::SCALE;
             break;
+        }
+
+        // Not handled
+        return false;
+    }
+
+    bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        if (e.GetMouseButton() == Mouse::ButtonLeft)
+        {
+            if (m_ViewportHovered && !ImGuizmo::IsOver() && !ImGuizmo::IsUsing() && !Input::IsKeyPressed(Key::LeftAlt))
+            {
+                m_SceneHierarchyPanel.SetLastSelectedEntity(m_HoveredEntity);
+            }
         }
 
         // Not handled

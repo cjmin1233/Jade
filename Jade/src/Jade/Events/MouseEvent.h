@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Events/Event.h"
 #include "Jade/Core/MouseCodes.h"
 
@@ -61,7 +61,6 @@ namespace Jade
     protected:
         MouseButtonEvent(const Mouse button)
             : m_Button(button) {}
-
 
         Mouse m_Button;
     };

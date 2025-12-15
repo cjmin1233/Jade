@@ -53,7 +53,6 @@ namespace Jade
             m_LastSelectedEntity = {};
         }
 
-
         ImGui::End();
 #pragma endregion
 
@@ -379,6 +378,9 @@ namespace Jade
             if (m_CurrentSelectedEntity == m_DeletedEntities[i])
             {
                 m_CurrentSelectedEntity = {};
+            }
+            if (m_LastSelectedEntity == m_DeletedEntities[i])
+            {
                 m_LastSelectedEntity = {};
             }
 
