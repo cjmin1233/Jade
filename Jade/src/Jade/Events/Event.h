@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Core/Base.h"
 #include "Jade/Debug/Instrumentor.h"
 
@@ -35,7 +35,6 @@ namespace Jade
     {
     public:
         virtual ~Event() = default;
-
 
         virtual EventType GetEventType() const = 0;
         virtual const char* GetName() const = 0;

@@ -35,6 +35,7 @@ namespace Jade
 
         const glm::vec3& GetPosition() const { return m_Position; }
         const glm::vec3& GetFocalPoint() const { return m_FocalPoint; }
+        void SetFocalPoint(const glm::vec3& focalPoint) { m_FocalPoint = focalPoint; UpdateView(); }
         glm::quat GetOrientation() const;
 
         float GetPitch() const { return m_Pitch; }

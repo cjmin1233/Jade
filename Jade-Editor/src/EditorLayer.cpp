@@ -471,6 +471,21 @@ namespace Jade
                 break;
             m_GizmoType = ImGuizmo::OPERATION::SCALE;
             break;
+
+        // Focus selected entity
+        case Key::F:
+        {
+            Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+            if (selectedEntity)
+            {
+                TransformComponent* transform = selectedEntity.TryGetComponent<TransformComponent>();
+                if (transform)
+                {
+                    m_EditorCamera.SetFocalPoint(transform->Translation);
+                }
+            }
+        }
+        break;
         }
 
         // Not handled
@@ -485,6 +500,11 @@ namespace Jade
                 && !Input::IsKeyPressed(Key::LeftAlt) && !Input::IsMouseButtonPressed(Mouse::ButtonRight))
             {
                 m_SceneHierarchyPanel.SetLastSelectedEntity(m_HoveredEntity);
+
+                if (m_GizmoType == -1 && m_HoveredEntity)
+                {
+                    m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+                }
             }
         }
 

@@ -89,7 +89,7 @@ namespace Jade
         // Handle selection
         if (ImGui::IsItemClicked())
         {
-            m_LastSelectedEntity = entity;
+            SetLastSelectedEntity(entity);
         }
 
         // If the node is opened, we would draw its children here

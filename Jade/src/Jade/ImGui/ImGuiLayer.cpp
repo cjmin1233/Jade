@@ -84,12 +84,12 @@ namespace Jade
         JADE_PROFILE_FUNCTION();
 
         // Block events when ImGui wants to capture them
-        if (m_BlockEvents)
-        {
-            ImGuiIO& io = ImGui::GetIO();
-            event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
-            event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
-        }
+        //if (m_BlockEvents)
+        //{
+        //    ImGuiIO& io = ImGui::GetIO();
+        //    event.Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+        //    event.Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+        //}
     }
 
     void ImGuiLayer::Begin()
