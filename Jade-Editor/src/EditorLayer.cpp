@@ -481,7 +481,8 @@ namespace Jade
     {
         if (e.GetMouseButton() == Mouse::ButtonLeft)
         {
-            if (m_ViewportHovered && !ImGuizmo::IsOver() && !ImGuizmo::IsUsing() && !Input::IsKeyPressed(Key::LeftAlt))
+            if (m_ViewportHovered && !ImGuizmo::IsOver() && !ImGuizmo::IsUsing()
+                && !Input::IsKeyPressed(Key::LeftAlt) && !Input::IsMouseButtonPressed(Mouse::ButtonRight))
             {
                 m_SceneHierarchyPanel.SetLastSelectedEntity(m_HoveredEntity);
             }
