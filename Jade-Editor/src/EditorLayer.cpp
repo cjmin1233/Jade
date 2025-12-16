@@ -99,8 +99,11 @@ namespace Jade
             m_FrameBuffer->ClearAttachment(1, -1);
         }
 
-        // Update Editor Camera
-        m_EditorCamera.OnUpdate(ts);
+        // Only update if ImGuizmo is not using the camera (to prevent conflicts)
+        if (!ImGuizmo::IsUsing())
+        {
+            m_EditorCamera.OnUpdate(ts);
+        }
 
         // Update scene
         //m_ActiveScene->OnUpdateRuntime(ts);

@@ -27,7 +27,7 @@ namespace Jade
         glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
         m_InitialMousePosition = mouse;
 
-        // Mouse Pan, Rotate, Zoom
+        // LeftAlt + Left/Right/Middle mouse buttons
         if (Input::IsKeyPressed(Key::LeftAlt))
         {
             if (Input::IsMouseButtonPressed(Mouse::ButtonMiddle))
@@ -37,9 +37,8 @@ namespace Jade
             else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
                 MouseZoom(delta.y);
         }
-
-        // Camera movement
-        if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
+        // Right mouse button + WASDQE
+        else if (Input::IsMouseButtonPressed(Mouse::ButtonRight))
         {
             // Rotate camera by rotating around focal point
             MouseRotate(delta);
