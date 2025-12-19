@@ -1,4 +1,5 @@
 include "./vendor/premake/premake_customization/solution_items.lua"
+include "Dependencies.lua"
 
 workspace "Jade"
     architecture "x86_64"
@@ -17,17 +18,6 @@ workspace "Jade"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-
--- Include directories relative to root folder (solution directory)
-IncludeDir = {}
-IncludeDir["GLFW"] = "%{wks.location}/Jade/vendor/GLFW/include"
-IncludeDir["Glad"] = "%{wks.location}/Jade/vendor/Glad/include"
-IncludeDir["ImGui"] = "%{wks.location}/Jade/vendor/imgui"
-IncludeDir["glm"] = "%{wks.location}/Jade/vendor/glm"
-IncludeDir["stb_image"] = "%{wks.location}/Jade/vendor/stb_image"
-IncludeDir["entt"] = "%{wks.location}/Jade/vendor/entt/include"
-IncludeDir["yaml_cpp"] = "%{wks.location}/Jade/vendor/yaml-cpp/include"
-IncludeDir["ImGuizmo"] = "%{wks.location}/Jade/vendor/ImGuizmo"
 
 group "Dependencies"
     include "vendor/premake"

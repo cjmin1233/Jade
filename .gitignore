@@ -386,3 +386,8 @@ imgui.ini
 
 # My files
 MyFiles/
+
+# directories
+Jade/vendor/VulkanSDK
+Jade-Editor/assets/cache
+scripts/__pycache__
