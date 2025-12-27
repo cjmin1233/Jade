@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Jade/Renderer/Shader.h"
 
 #include <glm/glm.hpp>
@@ -89,8 +89,19 @@ namespace Jade
 
         void CompileShader(const std::unordered_map<GLenum, std::string>& shaderSources);
 
+        void CompileOrGetVulkanBinaries(const std::unordered_map<GLenum, std::string>& shaderSources);
+        void CompileOrGetOpenGLBinaries();
+        void CreateProgram();
+        void Reflect(GLenum stage, const std::vector<uint32_t>& shaderData);
+
     private:
         uint32_t m_RendererID;
+        std::string m_FilePath;
         std::string m_Name;
+
+        std::unordered_map<GLenum, std::vector<uint32_t>> m_VulkanSPIRV;    // Cache of Vulkan SPIR-V binaries
+        std::unordered_map<GLenum, std::vector<uint32_t>> m_OpenGLSPIRV;    // Cache of OpenGL SPIR-V binaries
+
+        std::unordered_map<GLenum, std::string> m_OpenGLSourceCode;         // Cache of OpenGL source code strings
     };
 }

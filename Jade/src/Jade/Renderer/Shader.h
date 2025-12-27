@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <glm/glm.hpp>
 
 namespace Jade
@@ -18,6 +18,7 @@ namespace Jade
 
         virtual const std::string& GetName() const = 0;
 
+#pragma region Uniform Setters
         virtual void SetUniformInt(const std::string& name, int value) = 0;
         virtual void SetUniformIntArray(const std::string& name, int* values, uint32_t count) = 0;
 
@@ -28,6 +29,7 @@ namespace Jade
 
         virtual void SetUniformMat3(const std::string& name, const glm::mat3& value) = 0;
         virtual void SetUniformMat4(const std::string& name, const glm::mat4& value) = 0;
+#pragma endregion
 
     };
 

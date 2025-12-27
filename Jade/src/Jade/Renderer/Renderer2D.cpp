@@ -4,8 +4,10 @@
 #include "Jade/Renderer/VertexArray.h"
 #include "Jade/Renderer/Shader.h"
 #include "Jade/Renderer/RenderCommand.h"
+#include "Jade/Renderer/UniformBuffer.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Jade
 {
@@ -67,6 +69,13 @@ namespace Jade
         glm::vec2 ViewMax{ 0.0f };
 
         Renderer2D::Statistics Stats;
+
+        struct CameraData
+        {
+            glm::mat4 ViewProjection;
+        };
+        CameraData CameraBuffer;
+        Ref<UniformBuffer> CameraUniformBuffer;
     };
 
     static Renderer2DData s_Data;
@@ -185,9 +194,9 @@ namespace Jade
         for (uint32_t i = 0; i < s_Data.MaxTextureSlots; ++i)
             samplers[i] = i;
 
-        s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetUniformIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+        s_Data.TextureShader = Shader::Create("assets/shaders/texture.glsl");
+        //s_Data.TextureShader->Bind();
+        //s_Data.TextureShader->SetUniformIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
 
         // Set all texture slots to the white texture initially
         for (int i = 0; i < s_Data.MaxTextureSlots; ++i)
@@ -195,6 +204,8 @@ namespace Jade
             s_Data.TextureSlots[i] = s_Data.WhiteTexture;
             s_Data.TextureSlots[i]->Bind(i);
         }
+
+        s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Renderer2DData::CameraData), 0);
     }
 
     void Renderer2D::Shutdown()
@@ -211,8 +222,10 @@ namespace Jade
         // Set view projection matrix
         glm::mat4 viewProj = camera.GetProjectionMatrix() * glm::inverse(transform);
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetUniformMat4("u_ViewProjection", viewProj);
+        //s_Data.TextureShader->Bind();
+        //s_Data.TextureShader->SetUniformMat4("u_ViewProjection", viewProj);
+        s_Data.CameraBuffer.ViewProjection = viewProj;
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
         // Calculate view bounds for culling
         if (s_Data.CullingEnabled)
@@ -252,8 +265,10 @@ namespace Jade
         // Set view projection matrix
         glm::mat4 viewProj = camera.GetViewProjectionMatrix();
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetUniformMat4("u_ViewProjection", viewProj);
+        //s_Data.TextureShader->Bind();
+        //s_Data.TextureShader->SetUniformMat4("u_ViewProjection", viewProj);
+        s_Data.CameraBuffer.ViewProjection = viewProj;
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Renderer2DData::CameraData));
 
         // Calculate view bounds for culling
         if (s_Data.CullingEnabled)
@@ -311,6 +326,7 @@ namespace Jade
         uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.QuadVertexBufferPtr - (uint8_t*)s_Data.QuadVertexBufferBase);
         s_Data.QuadVertexBuffer->SetData(s_Data.QuadVertexBufferBase, dataSize);
 
+        s_Data.TextureShader->Bind();
         RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
         s_Data.Stats.DrawCalls++;
     }
